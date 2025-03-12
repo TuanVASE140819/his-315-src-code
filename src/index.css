@@ -95,7 +95,40 @@ code {
 .font-custom {
   font-family: var(--font-mono) !important;
 }
+
 .font-outline {
+  text-shadow:
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white,
+    -1px 0px 0 white,
+    1px 0px 0 white,
+    0px -1px 0 white,
+    0px 1px 0 white,
+    -0.5px -0.5px 0 white,
+    0.5px -0.5px 0 white,
+    -0.5px 0.5px 0 white,
+    0.5px 0.5px 0 white;
+}
+
+.font-outline-1 {
+  text-shadow:
+    -3px -3px 0 white,
+    3px -3px 0 white,
+    -3px 3px 0 white,
+    3px 3px 0 white,
+    -3px 0px 0 white,
+    3px 0px 0 white,
+    0px -3px 0 white,
+    0px 3px 0 white,
+    -2px -2px 0 white,
+    2px -2px 0 white,
+    -2px 2px 0 white,
+    2px 2px 0 white;
+}
+
+.font-outline-2 {
   text-shadow:
     -4px -4px 0 white,
     4px -4px 0 white,
@@ -109,4 +142,14 @@ code {
     3px -3px 0 white,
     -3px 3px 0 white,
     3px 3px 0 white;
+}
+
+.img-outline {
+  filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white)
+    drop-shadow(1px -1px 0 white) drop-shadow(-1px 1px 0 white);
+}
+
+.img-outline-2 {
+  filter: drop-shadow(3px 3px 0 white) drop-shadow(-3px -3px 0 white)
+    drop-shadow(3px -3px 0 white) drop-shadow(-3px 3px 0 white);
 }

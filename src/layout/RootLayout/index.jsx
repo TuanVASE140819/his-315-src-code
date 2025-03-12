@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link, Outlet, useLocation,useNavigate } from 'react-router-dom'
+import {
+  useDispatch,
+  //  useSelector
+} from 'react-redux'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  ContactsOutlined,
+  // ContactsOutlined,
 } from '@ant-design/icons'
 import logo from '../../assets/images/logo/logo.png'
 import ButtonLogout from '../../components/common/ButtonLogout'
-import Notification from '../../components/common/Notification'
+// import Notification from '../../components/common/Notification'
 import Profile from '../../components/common/Profile'
 import LoadingPage from '../../pages/LoadingPage'
 import { updateInfoUserToStore } from '../../redux/actions/userActions'
@@ -32,9 +35,10 @@ const itemsMenu = [
   // },
 ]
 
-function RootLayout(props) {
+const RootLayout = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { infoUser } = useSelector((state) => state.User)
+  // const { infoUser } = useSelector((state) => state.User)
   const token = Cookies.get('accessToken')
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
@@ -43,7 +47,6 @@ function RootLayout(props) {
   const {
     token: { colorBgContainer },
   } = theme.useToken()
-  const dispatch = useDispatch()
 
   const getRouteName = useMemo(() => {
     return (pathname) => {
@@ -78,7 +81,9 @@ function RootLayout(props) {
     setSelectedKeys(selectedKeys)
   }
   useEffect(() => {
-    token && dispatch(updateInfoUserToStore(navigate)) //fetch info user by access token
+    const loginFirstTime = localStorage.getItem('loginFirstTime')
+    if (loginFirstTime) localStorage.removeItem('loginFirstTime')
+    else if (token) dispatch(updateInfoUserToStore(navigate)) //fetch info user by access token
   }, [])
 
   return (
@@ -112,16 +117,19 @@ function RootLayout(props) {
             collapsible
             collapsed={collapsed}
           >
-            <div className='h-16 flex  justify-center items-center'>
+            <div className='h-16 flex justify-center items-center'>
               {!collapsed ? (
                 <Link to='/'>
-                  <h2 className='text-lg font-semibold text-white'>
+                  <div className='text-lg font-bold font-sans font-outline text-amber-500 hover:text-amber-400 transition-colors  duration-300'>
                     NGHI88 - Admin
-                  </h2>
+                  </div>
                 </Link>
               ) : (
                 <Link to='/'>
-                  <img className='w-12 py-3' src={logo} />
+                  <img
+                    className='w-11 hover:w-[2.85rem] transition-transform duration-300 py-3 img-outline'
+                    src={logo}
+                  />
                 </Link>
               )}
             </div>
@@ -203,7 +211,4 @@ function RootLayout(props) {
     </>
   )
 }
-
-RootLayout.propTypes = {}
-
 export default RootLayout

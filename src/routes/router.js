@@ -9,10 +9,11 @@ export const route = [
     isAuth: true,
     redirectPath: '/login',
   },
-  // {
-  //   path: '/chamcong/checkinout',
-  //   Component: CheckInOut,
-  //   isAuth: true,
-  //   redirectPath: '/login',
-  // },
+  {
+    path: '/test',
+    Component: Dashboard,
+    isLayout: true,
+    // isAuth: true,
+    redirectPath: '/login',
+  },
 ]

@@ -7,18 +7,24 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
+function* resetInfoUser() {
+  yield Cookies.remove('accessToken')
+  yield localStorage.clear()
+  yield put({
+    type: COMMON.DISPATCH_RESET_STORE,
+  })
+  yield put({
+    type: COMMON.DISPATCH_LOADING_SCREEN,
+    payload: false,
+  })
+}
 function* loginUser({ payload, navigate, action }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
-    const { data } = yield call(() =>
-      userServices.login({
-        email: payload?.email,
-        passWord: payload?.password,
-      }),
-    )
+    const { data } = yield call(() => userServices.login(payload))
     if (!data?.accessToken || !data.refreshToken) {
       return ToastCus.fire({
         icon: 'error',
@@ -36,7 +42,20 @@ function* loginUser({ payload, navigate, action }) {
         // sameSite: 'Strict',
       })
     })
-    localStorage.setItem('userEmail', payload?.email)
+    const { data: infoUser } = yield call(() => userServices.getInfoUser())
+    if (!infoUser || !infoUser?.isAdmin) {
+      yield resetInfoUser()
+      yield navigate('/login')
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Tài khoản không có quyền truy cập',
+      })
+    }
+    yield put({
+      type: USER.DISPATCH_INFO_LOGIN,
+      payload: infoUser,
+    })
+    yield localStorage.setItem('loginFirstTime', true)
     yield navigate('/')
     yield action.resetForm()
     ToastCus.fire({
@@ -44,6 +63,8 @@ function* loginUser({ payload, navigate, action }) {
       title: 'Đăng nhập thành công',
     })
   } catch (error) {
+    yield resetInfoUser()
+    yield navigate('/login')
     console.log(error)
     ToastCus.fire({
       icon: 'error',
@@ -63,26 +84,16 @@ function* getInfoUser({ navigate }) {
     payload: true,
   })
   try {
-    const email = localStorage.getItem('userEmail')
-    const { data } = yield call(() => userServices.getInfoByEmail(email))
+    const { data } = yield call(() => userServices.getInfoUser())
     yield put({
       type: USER.DISPATCH_INFO_LOGIN,
       payload: data,
     })
-    // Cookies.set('accessToken', data.token, {
-    //   // expires,
-    //   // secure: true,
-    //   // sameSite: 'Strict',
-    // })
   } catch (error) {
     console.log(error)
     if (error?.response?.status === 401) {
-      yield Cookies.remove('accessToken')
-      yield localStorage.removeItem('userEmail')
+      yield resetInfoUser()
       yield navigate('/login')
-      yield put({
-        type: COMMON.DISPATCH_RESET_STORE,
-      })
       ToastCus.fire({
         icon: 'error',
         title: 'Vui lòng đăng nhập lại',
@@ -103,12 +114,8 @@ function* getInfoUser({ navigate }) {
 
 function* logoutUser({ navigate }) {
   try {
-    yield Cookies.remove('accessToken')
-    yield localStorage.removeItem('userEmail')
+    yield resetInfoUser()
     yield navigate('/login')
-    yield put({
-      type: COMMON.DISPATCH_RESET_STORE,
-    })
     ToastCus.fire({
       icon: 'success',
       title: 'Đăng xuất thành công!',
