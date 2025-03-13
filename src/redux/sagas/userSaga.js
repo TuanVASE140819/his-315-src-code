@@ -18,6 +18,28 @@ function* resetInfoUser() {
     payload: false,
   })
 }
+
+function* logoutUserError({ error }) {
+  try {
+    yield resetInfoUser()
+    ToastCus.fire({
+      icon: 'error',
+      title: error ?? 'Vui lòng đăng nhập lại',
+    })
+  } catch (error) {
+    console.log(error)
+    ToastCus.fire({
+      icon: 'error',
+      title: error?.response?.data?.message || 'Cưỡng chế đăng xuất thất bại',
+    })
+  } finally {
+    yield put({
+      type: COMMON.DISPATCH_LOADING_SCREEN,
+      payload: false,
+    })
+  }
+}
+
 function* loginUser({ payload, navigate, action }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -44,12 +66,9 @@ function* loginUser({ payload, navigate, action }) {
     })
     const { data: infoUser } = yield call(() => userServices.getInfoUser())
     if (!infoUser || !infoUser?.isAdmin) {
-      yield resetInfoUser()
+      yield logoutUserError({ error: 'Tài khoản không có quyền truy cập' })
       yield navigate('/login')
-      return ToastCus.fire({
-        icon: 'error',
-        title: 'Tài khoản không có quyền truy cập',
-      })
+      return
     }
     yield put({
       type: USER.DISPATCH_INFO_LOGIN,
@@ -63,13 +82,7 @@ function* loginUser({ payload, navigate, action }) {
       title: 'Đăng nhập thành công',
     })
   } catch (error) {
-    yield resetInfoUser()
-    yield navigate('/login')
     console.log(error)
-    ToastCus.fire({
-      icon: 'error',
-      title: error?.response?.data?.message || 'Có lỗi xảy ra',
-    })
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -91,19 +104,6 @@ function* getInfoUser({ navigate }) {
     })
   } catch (error) {
     console.log(error)
-    if (error?.response?.status === 401) {
-      yield resetInfoUser()
-      yield navigate('/login')
-      ToastCus.fire({
-        icon: 'error',
-        title: 'Vui lòng đăng nhập lại',
-      })
-      return
-    }
-    ToastCus.fire({
-      icon: 'error',
-      title: error?.response?.data?.message || 'Có lỗi xảy ra',
-    })
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -124,7 +124,7 @@ function* logoutUser({ navigate }) {
     console.log(error)
     ToastCus.fire({
       icon: 'error',
-      title: error?.response?.data?.message || 'Đăng xuất thất bại',
+      title: error?.response?.data?.message ?? 'Đăng xuất thất bại',
     })
   } finally {
     yield put({
@@ -138,4 +138,5 @@ export function* userSaga() {
   yield takeLatest(USER.GET_LOGIN_API, loginUser)
   yield takeLatest(USER.UPDATE_INFO_USER_ACCESS_TOKEN, getInfoUser)
   yield takeLatest(USER.LOGOUT_USER, logoutUser)
+  yield takeLatest(USER.LOGOUT_USER_ERROR, logoutUserError)
 }

@@ -12,6 +12,11 @@ export const logoutUser = (navigate) => ({
   navigate,
 })
 
+export const logoutUserError = (error) => ({
+  type: USER.LOGOUT_USER_ERROR,
+  error,
+})
+
 export const updateInfoUserToStore = (navigate) => ({
   type: USER.UPDATE_INFO_USER_ACCESS_TOKEN,
   navigate,
