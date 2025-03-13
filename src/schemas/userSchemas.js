@@ -5,7 +5,7 @@ export const loginSchema = Yup.object().shape({
   password: Yup.string().required('Vui lòng nhập mật khẩu'),
 })
 export const changePasswordSchema = Yup.object().shape({
-  oldPassword: Yup.string().required('Vui lòng nhập mật khẩu cũ'),
+  oldPassword: Yup.string().required('Vui lòng nhập mật khẩu hiện tại'),
   newPassword: Yup.string().required('Vui lòng nhập mật khẩu mới'),
-  confirmNewPassword: Yup.string().required('Vui lòng nhập mật khẩu mới'),
+  confirmNewPassword: Yup.string().required('Vui lòng nhập xác nhận mật khẩu mới'),
 })

@@ -20,3 +20,9 @@ export const logoutUserError = (error) => ({
 export const updateInfoUserToStore = () => ({
   type: USER.UPDATE_INFO_USER_ACCESS_TOKEN,
 })
+
+export const putChangePasswordAction = (payload, handleReload) => ({
+  type: USER.PUT_CHANGE_PASSWORD,
+  payload,
+  handleReload,
+})

@@ -118,7 +118,7 @@ function* logoutUser({ navigate }) {
     yield navigate('/login')
     ToastCus.fire({
       icon: 'success',
-      title: 'Đăng xuất thành công!',
+      title: 'Đăng xuất thành công',
     })
   } catch (error) {
     console.log(error)
@@ -134,9 +134,33 @@ function* logoutUser({ navigate }) {
   }
 }
 
+function* putChangePasswordSaga({ payload, handleReload }) {
+  yield put({
+    type: COMMON.DISPATCH_LOADING_SCREEN,
+    payload: true,
+  })
+  try {
+    console.log(payload)
+    // const { data } = yield call(() => userServices.getInfoUser())
+    yield handleReload()
+    ToastCus.fire({
+      icon: 'success',
+      title: 'Đổi mật khẩu thành công',
+    })
+  } catch (error) {
+    console.log(error)
+  } finally {
+    yield put({
+      type: COMMON.DISPATCH_LOADING_SCREEN,
+      payload: false,
+    })
+  }
+}
+
 export function* userSaga() {
   yield takeLatest(USER.GET_LOGIN_API, loginUser)
-  yield takeLatest(USER.UPDATE_INFO_USER_ACCESS_TOKEN, getInfoUser)
   yield takeLatest(USER.LOGOUT_USER, logoutUser)
   yield takeLatest(USER.LOGOUT_USER_ERROR, logoutUserError)
+  yield takeLatest(USER.UPDATE_INFO_USER_ACCESS_TOKEN, getInfoUser)
+  yield takeLatest(USER.PUT_CHANGE_PASSWORD, putChangePasswordSaga)
 }
