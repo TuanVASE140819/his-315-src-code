@@ -10,6 +10,7 @@ import {
   MenuUnfoldOutlined,
   TeamOutlined,
   DollarOutlined,
+  ClusterOutlined,
 } from '@ant-design/icons'
 import logo from '../../assets/images/logo/logo.png'
 import ButtonLogout from '../../components/common/ButtonLogout'
@@ -49,6 +50,18 @@ const menuItems = [
         key: '/dudoan/giaidau',
         title: 'Giải đấu',
         label: <Link to={'dudoan/giaidau'}>Giải đấu</Link>,
+      },
+    ],
+  },
+  {
+    key: '/danhmuc',
+    label: 'Danh mục',
+    icon: <ClusterOutlined />,
+    children: [
+      {
+        key: '/danhmuc/doithidau',
+        title: 'Đội thi đấu',
+        label: <Link to={'danhmuc/doithidau'}>Đội thi đấu</Link>,
       },
     ],
   },
@@ -132,7 +145,7 @@ const RootLayout = () => {
             <div className='h-16 flex justify-center items-center'>
               {!collapsed ? (
                 <Link to='/'>
-                  <div className='text-lg font-bold font-sans font-outline text-amber-500 hover:text-amber-400 transition-colors duration-300'>
+                  <div className='text-lg hover:text-[18.75px] font-bold font-sans font-outline transition-all duration-300 animate-blink'>
                     NGHI88 - Admin
                   </div>
                 </Link>

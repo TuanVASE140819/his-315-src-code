@@ -1,6 +1,7 @@
 import Dashboard from '../pages/Dashboard'
 import Account from '../components/layouts/Account/Account'
 import League from '../components/layouts/League/League'
+import Team from '../components/layouts/Team/Team'
 
 export const route = [
   {
@@ -20,6 +21,13 @@ export const route = [
   {
     path: '/dudoan/giaidau',
     Component: League,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/danhmuc/doithidau',
+    Component: Team,
     isLayout: true,
     isAuth: true,
     redirectPath: '/login',
