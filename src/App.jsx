@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { route } from './routes/router'
 import AuthComponent from './layout/AuthComponent'
 import RootLayout from './layout/RootLayout'
 import LayoutDefault from './layout/LayoutDefault/LayoutDefault'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
-import { route } from './routes/router'
 
 function App() {
   return (

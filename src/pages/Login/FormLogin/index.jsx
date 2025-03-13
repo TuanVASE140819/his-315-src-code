@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import { Button, Input } from 'antd'
 import { LockOutlined, UserOutlined, KeyOutlined } from '@ant-design/icons'
 // import ToastCus from '../../../components/common/Toast'
-import { loginSchema } from '../../../schemas/login/loginSchemas'
+import { loginSchema } from '../../../schemas/userSchemas'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '../../../redux/actions/userActions'
 
@@ -28,7 +28,7 @@ function FormLogin() {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <div className='text-left flex flex-col gap-4'>
+      <div className='text-left flex flex-col gap-2'>
         <div className='flex flex-col'>
           <label className='text-base text-left' htmlFor='email'>
             Email
@@ -41,11 +41,11 @@ function FormLogin() {
             onChange={formik.handleChange}
             status={formik.errors.email && formik.touched.email ? 'error' : ''}
           />
-          {formik.touched.email && formik.errors.email && (
-            <span className='text-left text-red-500'>
-              *{formik.errors.email}
-            </span>
-          )}
+          <div className='text-left text-red-500 h-5 text-sm'>
+            {formik.touched.email && formik.errors.email
+              ? `*${formik.errors.email}`
+              : ''}
+          </div>
         </div>
         <div className='flex flex-col'>
           <label className='text-base text-left' htmlFor='password'>
@@ -61,11 +61,11 @@ function FormLogin() {
               formik.errors.password && formik.touched.password ? 'error' : ''
             }
           />
-          {formik.touched.password && formik.errors.password && (
-            <span className='text-left text-red-500'>
-              *{formik.errors.password}
-            </span>
-          )}
+          <div className='text-left text-red-500 h-5 text-sm'>
+            {formik.touched.password && formik.errors.password
+              ? `*${formik.errors.password}`
+              : ''}
+          </div>
         </div>
         <Button size='large' type='primary' htmlType='submit' className='mt-5'>
           Đăng nhập

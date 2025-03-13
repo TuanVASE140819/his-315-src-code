@@ -21,17 +21,17 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const { response } = error
+    const { message } = error?.response?.data
+    if (response && response.status === 401) {
       // Cookies.remove('accessToken')
       store.dispatch(
-        logoutUserError(
-          error?.response?.data?.message ?? 'Tài khoản không có quyền thao tác',
-        ),
+        logoutUserError(message ?? 'Tài khoản không có quyền thao tác'),
       )
     } else {
       ToastCus.fire({
         icon: 'error',
-        title: error?.response?.data?.message ?? 'Thao tác thất bại',
+        title: message ?? 'Thao tác thất bại',
       })
     }
     return Promise.reject(error)

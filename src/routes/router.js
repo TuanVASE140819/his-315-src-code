@@ -1,5 +1,6 @@
 import Dashboard from '../pages/Dashboard'
-// import CheckInOut from '../components/layouts/ChamCong/CheckInOut'
+import Account from '../components/layouts/Account/Account'
+import League from '../components/layouts/League/League'
 
 export const route = [
   {
@@ -10,10 +11,17 @@ export const route = [
     redirectPath: '/login',
   },
   {
-    path: '/test',
-    Component: Dashboard,
+    path: '/nguoidung/taikhoan',
+    Component: Account,
     isLayout: true,
-    // isAuth: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/dudoan/giaidau',
+    Component: League,
+    isLayout: true,
+    isAuth: true,
     redirectPath: '/login',
   },
 ]

@@ -91,7 +91,7 @@ function* loginUser({ payload, navigate, action }) {
   }
 }
 
-function* getInfoUser({ navigate }) {
+function* getInfoUser() {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,

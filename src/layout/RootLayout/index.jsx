@@ -8,11 +8,13 @@ import { Button, ConfigProvider, Layout, Menu, theme } from 'antd'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  // ContactsOutlined,
+  TeamOutlined,
+  DollarOutlined,
 } from '@ant-design/icons'
 import logo from '../../assets/images/logo/logo.png'
 import ButtonLogout from '../../components/common/ButtonLogout'
 // import Notification from '../../components/common/Notification'
+import ChangePassword from '../../components/common/ChangePassword/ChangePassword'
 import Profile from '../../components/common/Profile'
 import LoadingPage from '../../pages/LoadingPage'
 import { updateInfoUserToStore } from '../../redux/actions/userActions'
@@ -20,19 +22,36 @@ import Cookies from 'js-cookie'
 
 const { Header, Sider, Content } = Layout
 
-const itemsMenu = [
-  // {
-  //   key: 'sub1',
-  //   label: 'Chấm công',
-  //   icon: <ContactsOutlined />,
-  //   children: [
-  //     {
-  //       key: '/chamcong/checkinout',
-  //       title: 'Check in/out',
-  //       label: <Link to={'chamcong/checkinout'}>Check in/out</Link>,
-  //     },
-  //   ],
-  // },
+const menuItems = [
+  {
+    key: '/nguoidung',
+    label: 'Người dùng',
+    icon: <TeamOutlined />,
+    children: [
+      {
+        key: '/nguoidung/taikhoan',
+        title: 'Tài khoản',
+        label: <Link to={'nguoidung/taikhoan'}>Tài khoản</Link>,
+      },
+      {
+        key: '/nguoidung/doimatkhau',
+        title: 'Đổi mật khẩu',
+        label: 'Đổi mật khẩu',
+      },
+    ],
+  },
+  {
+    key: '/dudoan',
+    label: 'Dự đoán',
+    icon: <DollarOutlined />,
+    children: [
+      {
+        key: '/dudoan/giaidau',
+        title: 'Giải đấu',
+        label: <Link to={'dudoan/giaidau'}>Giải đấu</Link>,
+      },
+    ],
+  },
 ]
 
 const RootLayout = () => {
@@ -44,48 +63,41 @@ const RootLayout = () => {
   const [collapsed, setCollapsed] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState([])
   const [openKeys, setOpenKeys] = useState([])
+  const [menuTitle, setmenuTitle] = useState(null)
+  const [isModalChangePassword, setisModalChangePassword] = useState(false)
   const {
     token: { colorBgContainer },
   } = theme.useToken()
 
-  const getRouteName = useMemo(() => {
-    return (pathname) => {
-      let title
-      if (!pathname || pathname === '/') return 'Trang chủ'
-      itemsMenu?.map((item) => {
-        const temp = item?.children?.find(
-          (child) => child?.key === pathname,
-        )?.title
-        title = temp ? temp : ''
-      })
-      return title
-    }
-  }, [])
-
-  useEffect(() => {
-    const path = location.pathname
-    setSelectedKeys([path])
-    const openKey = itemsMenu.find((item) =>
-      item.children?.some((child) => child.key === path),
-    )?.key
-    setOpenKeys(openKey ? [openKey] : [])
-  }, [location.pathname])
-
-  // Handle submenu open/close
   const onOpenChange = (keys) => {
     setOpenKeys(keys)
   }
-
-  // Handle menu item selection
-  const onSelect = ({ key, selectedKeys }) => {
-    setSelectedKeys(selectedKeys)
+  const onSelect = (e) => {
+    if (e.key.includes('doimatkhau')) return handleOpenChangePassword()
+    setSelectedKeys([e.key])
+    setmenuTitle(e?.item?.props?.title)
   }
+  const handleOpenChangePassword = () => {
+    setisModalChangePassword(true)
+  }
+  const handleCloseChangePassword = () => {
+    setisModalChangePassword(false)
+  }
+
+  useEffect(() => {
+    const path = location.pathname
+    const openSub = menuItems?.find(({ key }) => path?.includes(key))
+    const openItem = openSub?.children?.find(({ key }) => path?.includes(key))
+    setOpenKeys(openSub?.key ? [openSub?.key] : [])
+    setSelectedKeys(openItem?.key ? [openItem?.key] : [])
+    setmenuTitle(openItem?.title)
+  }, [location.pathname])
+
   useEffect(() => {
     const loginFirstTime = localStorage.getItem('loginFirstTime')
     if (loginFirstTime) localStorage.removeItem('loginFirstTime')
-    else if (token) dispatch(updateInfoUserToStore(navigate)) //fetch info user by access token
+    else if (token) dispatch(updateInfoUserToStore()) //fetch info user by access token
   }, [])
-
   return (
     <>
       <Layout className='hidden lg:flex'>
@@ -120,7 +132,7 @@ const RootLayout = () => {
             <div className='h-16 flex justify-center items-center'>
               {!collapsed ? (
                 <Link to='/'>
-                  <div className='text-lg font-bold font-sans font-outline text-amber-500 hover:text-amber-400 transition-colors  duration-300'>
+                  <div className='text-lg font-bold font-sans font-outline text-amber-500 hover:text-amber-400 transition-colors duration-300'>
                     NGHI88 - Admin
                   </div>
                 </Link>
@@ -140,7 +152,7 @@ const RootLayout = () => {
               openKeys={openKeys}
               onOpenChange={onOpenChange}
               onSelect={onSelect}
-              items={itemsMenu}
+              items={menuItems}
             />
           </Sider>
         </ConfigProvider>
@@ -175,7 +187,7 @@ const RootLayout = () => {
                 />
                 <div className=' flex flex-col gap-1'>
                   <h2 className='font-semibold leading-none text-lg text-gray-700'>
-                    {getRouteName(location.pathname)}
+                    {menuTitle ?? 'Trang chủ'}
                   </h2>
                 </div>
               </div>
@@ -207,6 +219,10 @@ const RootLayout = () => {
           </Content>
         </Layout>
       </Layout>
+      <ChangePassword
+        open={isModalChangePassword}
+        handleClose={handleCloseChangePassword}
+      />
       <LoadingPage />
     </>
   )
