@@ -140,8 +140,12 @@ function* putChangePasswordSaga({ payload, handleReload }) {
     payload: true,
   })
   try {
-    console.log(payload)
-    // const { data } = yield call(() => userServices.getInfoUser())
+    yield call(() =>
+      userServices.postChangePassword({
+        oldPassword: payload?.oldPassword,
+        newPassword: payload?.newPassword,
+      }),
+    )
     yield handleReload()
     ToastCus.fire({
       icon: 'success',

@@ -22,7 +22,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     const { response } = error
-    const { message } = error?.response?.data
+    const message = error?.response?.data?.message ?? error?.response?.data
     if (response && response.status === 401) {
       // Cookies.remove('accessToken')
       store.dispatch(
