@@ -4,9 +4,12 @@ import { TrophyOutlined, EditOutlined } from '@ant-design/icons'
 
 const LeagueList = ({ list }) => {
   return (
-    <ul className='flex flex-col gap-2 mt-2 border rounded-md p-2 h-[45.7rem] overflow-auto'>
-      {list?.map((item) => (
-        <li className='hover:bg-sky-100 transition-all duration-300 border rounded-md p-2 flex gap-2 cursor-pointer'>
+    <ul className='flex flex-col gap-2 mt-2 border rounded-md p-2 h-[79.5vh] overflow-auto'>
+      {list?.map((item, index) => (
+        <li
+          key={index}
+          className='hover:bg-sky-100 transition-all duration-300 border rounded-md p-2 flex gap-2 cursor-pointer'
+        >
           <Avatar
             shape='square'
             icon={<TrophyOutlined className='text-2xl' />}

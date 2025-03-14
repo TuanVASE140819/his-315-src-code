@@ -10,7 +10,7 @@ import {
   MenuUnfoldOutlined,
   TeamOutlined,
   DollarOutlined,
-  ClusterOutlined,
+  FolderOpenOutlined,
 } from '@ant-design/icons'
 import logo from '../../assets/images/logo/logo.png'
 import ButtonLogout from '../../components/common/ButtonLogout'
@@ -47,16 +47,16 @@ const menuItems = [
     icon: <DollarOutlined />,
     children: [
       {
-        key: '/dudoan/giaidau',
-        title: 'Giải đấu',
-        label: <Link to={'dudoan/giaidau'}>Giải đấu</Link>,
+        key: '/dudoan/trandau',
+        title: 'Trận đấu',
+        label: <Link to={'dudoan/trandau'}>Trận đấu</Link>,
       },
     ],
   },
   {
     key: '/danhmuc',
     label: 'Danh mục',
-    icon: <ClusterOutlined />,
+    icon: <FolderOpenOutlined />,
     children: [
       {
         key: '/danhmuc/doithidau',
@@ -103,7 +103,11 @@ const RootLayout = () => {
     const openItem = openSub?.children?.find(({ key }) => path?.includes(key))
     setOpenKeys(openSub?.key ? [openSub?.key] : [])
     setSelectedKeys(openItem?.key ? [openItem?.key] : [])
-    setmenuTitle(openItem?.title)
+    setmenuTitle(
+      openSub && openItem
+        ? `${openSub?.label} / ${openItem?.title}`
+        : 'Trang chủ',
+    )
   }, [location.pathname])
 
   useEffect(() => {
@@ -199,8 +203,8 @@ const RootLayout = () => {
                   }}
                 />
                 <div className=' flex flex-col gap-1'>
-                  <h2 className='font-semibold leading-none text-lg text-gray-700'>
-                    {menuTitle ?? 'Trang chủ'}
+                  <h2 className='font-custom leading-none text-gray-600'>
+                    {menuTitle}
                   </h2>
                 </div>
               </div>
