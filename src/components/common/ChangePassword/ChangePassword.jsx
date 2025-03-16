@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { Modal, Input, Divider } from 'antd'
-// import ToastCus from '../../../components/common/Toast'
 import { changePasswordSchema } from '../../../schemas/userSchemas'
 import {
   putChangePasswordAction,
@@ -16,16 +15,26 @@ const ChangePassword = ({ open, handleClose }) => {
   const [modal, contextHolder] = Modal.useModal()
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       oldPassword: '',
       newPassword: '',
       confirmNewPassword: '',
     },
-    onSubmit: (value) => {
-      handleSubmit(value)
+    onSubmit: (values) => {
+      handleSubmit(values)
     },
     validationSchema: changePasswordSchema,
   })
+
+  const isErrorOld = useMemo(() => {
+    const touched = formik?.touched?.oldPassword
+    const error = formik?.errors?.oldPassword
+    if (touched) {
+      if (error) return `*${error}`
+    }
+    return ''
+  }, [formik])
 
   const isErrorNew = useMemo(() => {
     const { oldPassword, newPassword } = formik?.values
@@ -34,14 +43,14 @@ const ChangePassword = ({ open, handleClose }) => {
     if (touched) {
       if (error) return `*${error}`
       if (oldPassword && newPassword && oldPassword === newPassword)
-        return '*Mật khẩu mới giống mật khẩu hiện tại'
+        return '*Mật khẩu mới phải khác mật khẩu hiện tại'
     }
     return ''
   }, [formik])
 
   const isErrorConfirm = useMemo(() => {
     const { newPassword, confirmNewPassword } = formik?.values
-    const touched = formik?.touched?.newPassword
+    const touched = formik?.touched?.confirmNewPassword
     const error = formik?.errors?.confirmNewPassword
     if (touched) {
       if (error) return `*${error}`
@@ -50,7 +59,7 @@ const ChangePassword = ({ open, handleClose }) => {
         confirmNewPassword &&
         newPassword !== confirmNewPassword
       )
-        return '*Mật khẩu mới giống mật khẩu hiện tại'
+        return '*Mật khẩu nhập lại phải giống mật khẩu mới'
     }
     return ''
   }, [formik])
@@ -125,16 +134,10 @@ const ChangePassword = ({ open, handleClose }) => {
               name='oldPassword'
               value={formik.values.oldPassword}
               onChange={formik.handleChange}
-              status={
-                formik.errors.oldPassword && formik.touched.oldPassword
-                  ? 'error'
-                  : ''
-              }
+              status={isErrorOld ? 'error' : ''}
             />
             <div className='text-left text-red-500 h-4 text-xs'>
-              {formik.touched.oldPassword && formik.errors.oldPassword
-                ? `*${formik.errors.oldPassword}`
-                : ''}
+              {isErrorOld}
             </div>
           </div>
           <Divider style={{ margin: 0, padding: 0 }} />
