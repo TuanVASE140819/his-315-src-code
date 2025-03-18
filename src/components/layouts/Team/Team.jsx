@@ -1,19 +1,36 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Input, Divider, Spin } from 'antd'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Button, Input, Divider, Spin, Tag } from 'antd'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { categoryServices } from '../../../redux/services/categoryServices'
+import { teamServices } from '../../../redux/services/teamServices'
 import CategoryList from './CategoryList/CategoryList'
 import CategoryModal from './CategoryModal/CategoryModal'
+import TeamList from './TeamList/TeamList'
+import TeamModal from './TeamModal/TeamModal'
+import ToastCus from '../../common/Toast'
 
 const Team = () => {
   const [searchCategory, setsearchCategory] = useState('')
-  const [isModalCategory, setisModalCategory] = useState(false)
-  const [isLoadingCategory, setisLoadingCategory] = useState(false)
   const [listCategory, setlistCategory] = useState([])
-  const [isLoadingInfoCategory, setisLoadingInfoCategory] = useState(false)
   const [infoCategory, setinfoCategory] = useState(null)
   const [itemSelectedCategory, setitemSelectedCategory] = useState(null)
+  const [isModalCategory, setisModalCategory] = useState(false)
+  const [isLoadingCategory, setisLoadingCategory] = useState(false)
+  const [isLoadingInfoCategory, setisLoadingInfoCategory] = useState(false)
 
+  const [searchTeam, setsearchTeam] = useState('')
+  const [listTeam, setlistTeam] = useState([])
+  const [infoTeam, setinfoTeam] = useState(null)
+  const [isModalTeam, setisModalTeam] = useState(false)
+  const [isLoadingTeam, setisLoadingTeam] = useState(false)
+  const [isLoadingInfoTeam, setisLoadingInfoTeam] = useState(false)
+
+  const errorToastCus = () => {
+    ToastCus.fire({
+      icon: 'error',
+      title: 'Lấy dữ liệu thất bại',
+    })
+  }
   const handleOpenModalCategory = () => {
     setisModalCategory(true)
   }
@@ -25,8 +42,7 @@ const Team = () => {
     handleOpenModalCategory()
   }
   const onClickEditCategory = (info) => {
-    const { id } = info
-    getInfoCategory(id)
+    getInfoCategory(info?.id)
     handleOpenModalCategory()
   }
   const onChangeSearchCategory = (e) => {
@@ -41,7 +57,14 @@ const Team = () => {
     getListCategory(searchCategory)
   }
   const onClickItemCategory = (info) => {
+    if (isLoadingTeam) {
+      return ToastCus.fire({
+        icon: 'warning',
+        title: 'Vui lòng đợi tải dữ liệu',
+      })
+    }
     setitemSelectedCategory(info)
+    getListTeam(info?.id, searchTeam)
   }
   const getListCategory = async (kw) => {
     try {
@@ -50,6 +73,7 @@ const Team = () => {
       setlistCategory(data)
     } catch (error) {
       console.log('getListCategory : ', error)
+      errorToastCus()
     } finally {
       setisLoadingCategory(false)
     }
@@ -60,9 +84,74 @@ const Team = () => {
       const { data } = await categoryServices.getInfoCategoryById(id)
       setinfoCategory(data)
     } catch (error) {
-      console.log('getListCategory : ', error)
+      console.log('getInfoCategory : ', error)
+      errorToastCus()
     } finally {
       setisLoadingInfoCategory(false)
+    }
+  }
+
+  const handleOpenModalTeam = () => {
+    setisModalTeam(true)
+  }
+  const handleCloseModalTeam = () => {
+    setisModalTeam(false)
+  }
+  const onClickAddTeam = () => {
+    if (!itemSelectedCategory) {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Vui lòng chọn bộ môn',
+      })
+    }
+    setinfoTeam(null)
+    handleOpenModalTeam()
+  }
+  const onClickEditTeam = (info) => {
+    getInfoTeam(info?.id)
+    handleOpenModalTeam()
+  }
+  const onChangeSearchTeam = (e) => {
+    setsearchTeam(e.target.value)
+  }
+  const onClickSearchTeam = () => {
+    const keyword = `${searchTeam ?? ''}`?.trim()
+    setsearchTeam(keyword)
+    getListTeam(keyword)
+  }
+  const onLoadTeam = () => {
+    getListTeam(searchTeam)
+  }
+  const getListTeam = async (ctId, kw) => {
+    if (!ctId) {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Vui lòng chọn bộ môn',
+      })
+    }
+    try {
+      setisLoadingTeam(true)
+      const { data } = await teamServices.getListTeamSearch(ctId, kw)
+      setlistTeam(data)
+    } catch (error) {
+      console.log('getListTeam : ', error)
+      errorToastCus()
+    } finally {
+      setTimeout(() => {
+        setisLoadingTeam(false)
+      }, 500)
+    }
+  }
+  const getInfoTeam = async (id) => {
+    try {
+      setisLoadingInfoTeam(true)
+      const { data } = await teamServices.getInfoTeamById(id)
+      setinfoTeam(data)
+    } catch (error) {
+      console.log('getInfoTeam : ', error)
+      errorToastCus()
+    } finally {
+      setisLoadingInfoTeam(false)
     }
   }
   useEffect(() => {
@@ -110,35 +199,47 @@ const Team = () => {
         </div>
         <div className='h-full col-span-3 p-2'>
           <div className='flex justify-between items-center'>
-            <div className='font-medium text-xl text-gray-500'>Đội thi đấu</div>
-            <Button type='primary' icon={<PlusOutlined />}>
+            <div className='flex gap-2'>
+              <div className='font-medium text-xl text-gray-500'>
+                Đội thi đấu
+              </div>
+
+              <Tag
+                color={itemSelectedCategory ? 'blue' : 'red'}
+                className='m-0 p-0 px-2 flex items-center text-base'
+              >
+                {itemSelectedCategory
+                  ? itemSelectedCategory?.name
+                  : 'Chưa chọn bộ môn'}
+              </Tag>
+            </div>
+            <Button
+              type='primary'
+              icon={<PlusOutlined />}
+              onClick={onClickAddTeam}
+            >
               Thêm
             </Button>
           </div>
           <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
-          <div className='flex justify-between items-center gap-2'>
+          <div className='flex justify-start items-center gap-2'>
             <Input
-              className='w-full'
+              className='w-96'
               placeholder='Nhập từ khóa...'
               allowClear
-              value={searchCategory}
-              onChange={onChangeSearchCategory}
+              value={searchTeam}
+              onChange={onChangeSearchTeam}
             />
             <Button
-              loading={isLoadingCategory}
+              loading={isLoadingTeam}
               type='primary'
               className='w-8'
               icon={<SyncOutlined />}
-              onClick={onClickSearchCategory}
+              onClick={onClickSearchTeam}
             />
           </div>
-          <Spin spinning={isLoadingCategory}>
-            <CategoryList
-              list={listCategory}
-              itemSelected={itemSelectedCategory}
-              onClickItem={onClickItemCategory}
-              onClickEdit={onClickEditCategory}
-            />
+          <Spin spinning={isLoadingTeam}>
+            <TeamList list={listTeam} onClickEdit={onClickEditTeam} />
           </Spin>
         </div>
       </div>
@@ -148,6 +249,13 @@ const Team = () => {
         infoEdit={infoCategory}
         handleClose={handleCloseModalCategory}
         onLoad={onLoadCategory}
+      />
+      <TeamModal
+        open={isModalTeam}
+        loading={isLoadingInfoTeam}
+        infoEdit={infoTeam}
+        handleClose={handleCloseModalTeam}
+        onLoad={onLoadTeam}
       />
     </>
   )

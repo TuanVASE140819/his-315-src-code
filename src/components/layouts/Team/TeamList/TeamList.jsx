@@ -1,13 +1,13 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { Avatar, Checkbox, Popconfirm, Empty } from 'antd'
-import { BarsOutlined, EditOutlined } from '@ant-design/icons'
-import { putActiveCategoryAction } from '../../../../redux/actions/categoryActions'
+import { FileImageOutlined, EditOutlined } from '@ant-design/icons'
+// import { putActiveCategoryAction } from '../../../../redux/actions/categoryActions'
 
-const CategoryList = ({ list, itemSelected, onClickItem, onClickEdit }) => {
+const TeamList = ({ list, onClickEdit }) => {
   const dispatch = useDispatch()
   const handleSubmit = (info) => {
-    dispatch(putActiveCategoryAction(info))
+    // dispatch(putActiveCategoryAction(info))
   }
 
   return (
@@ -20,13 +20,18 @@ const CategoryList = ({ list, itemSelected, onClickItem, onClickEdit }) => {
       {list?.map((item, index) => (
         <li
           key={index}
-          onClick={() => onClickItem(item)}
-          className={`${itemSelected?.id === item?.id ? 'bg-sky-100' : 'bg-white'} hover:bg-slate-100 transition-all duration-300 border rounded-md p-2 flex gap-2 cursor-pointer`}
+          className='bg-white hover:bg-slate-100 transition-all duration-300 border rounded-md p-2 flex gap-2 cursor-pointer'
         >
           <Avatar
             shape='square'
             size={30}
-            icon={<BarsOutlined className='text-lg' />}
+            icon={
+              item?.imageUrl ? (
+                <img src={item?.imageUrl} />
+              ) : (
+                <FileImageOutlined className='text-lg' />
+              )
+            }
             className='bg-amber-500 bg-opacity-70'
           />
           <div className='w-full flex justify-start items-center gap-2'>
@@ -63,4 +68,4 @@ const CategoryList = ({ list, itemSelected, onClickItem, onClickEdit }) => {
   )
 }
 
-export default CategoryList
+export default TeamList
