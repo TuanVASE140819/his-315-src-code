@@ -3,7 +3,10 @@ import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
 import { Modal, Input, Checkbox } from 'antd'
 import { addCategorySchema } from '../../../../schemas/categorySchemas'
-import { postInfoCategoryAction } from '../../../../redux/actions/categoryActions'
+import {
+  postInfoCategoryAction,
+  putInfoCategoryAction,
+} from '../../../../redux/actions/categoryActions'
 import ToastCus from '../../../../components/common/Toast'
 import moment from 'moment'
 // const dateMoment = 'YYYY-MM-DDTHH:mm:ss' //moment.ISO_8601
@@ -42,12 +45,12 @@ const CategoryModal = ({ open, loading, infoEdit, handleClose, onLoad }) => {
     dispatch(postInfoCategoryAction(values, handleReload))
   }
   const handleSubmitEdit = (values) => {
+    // ToastCus.fire({
+    //   icon: 'success',
+    //   title: 'Chỉnh sửa bộ môn thành công',
+    // })
     handleClose()
-    ToastCus.fire({
-      icon: 'success',
-      title: 'Chỉnh sửa bộ môn thành công',
-    })
-    // dispatch(postInfoCategoryAction(values, handleReload))
+    dispatch(putInfoCategoryAction(values, handleReload))
   }
   const handleOk = () => {
     formik.handleSubmit()
@@ -129,13 +132,13 @@ const CategoryModal = ({ open, loading, infoEdit, handleClose, onLoad }) => {
                 }
               />
             </div>
-            <div className='flex items-center gap-2'>
+            {/* <div className='flex items-center gap-2'>
               <div className='font-medium'>Sử dụng</div>
               <Checkbox
                 checked={formik.values.isActive}
-                onChange={onChangeActive}
+                // onChange={onChangeActive}
               />
-            </div>
+            </div> */}
           </>
         )}
       </div>

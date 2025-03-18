@@ -5,3 +5,12 @@ export const postInfoCategoryAction = (payload, handleReload) => ({
   payload,
   handleReload,
 })
+export const putInfoCategoryAction = (payload, handleReload) => ({
+  type: CATEGORY.PUT_INFO_CATEGORY,
+  payload,
+  handleReload,
+})
+export const putActiveCategoryAction = (payload) => ({
+  type: CATEGORY.PUT_ACTIVE_CATEGORY,
+  payload,
+})

@@ -24,7 +24,9 @@ const Team = () => {
     setinfoCategory(null)
     handleOpenModalCategory()
   }
-  const onClickEditCategory = () => {
+  const onClickEditCategory = (info) => {
+    const { id } = info
+    getInfoCategory(id)
     handleOpenModalCategory()
   }
   const onChangeSearchCategory = (e) => {
@@ -39,9 +41,7 @@ const Team = () => {
     getListCategory(searchCategory)
   }
   const onClickItemCategory = (info) => {
-    const { id } = info
     setitemSelectedCategory(info)
-    getInfoCategory(id)
   }
   const getListCategory = async (kw) => {
     try {
@@ -83,7 +83,6 @@ const Team = () => {
             </Button>
           </div>
           <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
-
           <div className='flex justify-between items-center gap-2'>
             <Input
               className='w-full'
@@ -92,8 +91,6 @@ const Team = () => {
               value={searchCategory}
               onChange={onChangeSearchCategory}
             />
-            {/* <div className='flex justify-between items-center gap-2 w-full'>
-          </div> */}
             <Button
               loading={isLoadingCategory}
               type='primary'
@@ -119,6 +116,30 @@ const Team = () => {
             </Button>
           </div>
           <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
+          <div className='flex justify-between items-center gap-2'>
+            <Input
+              className='w-full'
+              placeholder='Nhập từ khóa...'
+              allowClear
+              value={searchCategory}
+              onChange={onChangeSearchCategory}
+            />
+            <Button
+              loading={isLoadingCategory}
+              type='primary'
+              className='w-8'
+              icon={<SyncOutlined />}
+              onClick={onClickSearchCategory}
+            />
+          </div>
+          <Spin spinning={isLoadingCategory}>
+            <CategoryList
+              list={listCategory}
+              itemSelected={itemSelectedCategory}
+              onClickItem={onClickItemCategory}
+              onClickEdit={onClickEditCategory}
+            />
+          </Spin>
         </div>
       </div>
       <CategoryModal
