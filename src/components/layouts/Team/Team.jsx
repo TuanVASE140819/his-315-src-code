@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { Button, Input, Divider, Spin, Tag } from 'antd'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { categoryServices } from '../../../redux/services/categoryServices'
 import { teamServices } from '../../../redux/services/teamServices'
+import { putActiveCategoryAction } from '../../../redux/actions/categoryActions'
+import { putActiveTeamAction } from '../../../redux/actions/teamActions'
 import CategoryList from './CategoryList/CategoryList'
 import CategoryModal from './CategoryModal/CategoryModal'
 import TeamList from './TeamList/TeamList'
@@ -10,6 +13,7 @@ import TeamModal from './TeamModal/TeamModal'
 import ToastCus from '../../common/Toast'
 
 const Team = () => {
+  const dispatch = useDispatch()
   const [searchCategory, setsearchCategory] = useState('')
   const [listCategory, setlistCategory] = useState([])
   const [infoCategory, setinfoCategory] = useState(null)
@@ -25,6 +29,12 @@ const Team = () => {
   const [isLoadingTeam, setisLoadingTeam] = useState(false)
   const [isLoadingInfoTeam, setisLoadingInfoTeam] = useState(false)
 
+  const handleSubmitActiveCategory = (info) => {
+    dispatch(putActiveCategoryAction(info, onLoadCategory))
+  }
+  const handleSubmitActiveTeam = (info) => {
+    dispatch(putActiveTeamAction(info, onLoadTeam))
+  }
   const errorToastCus = () => {
     ToastCus.fire({
       icon: 'error',
@@ -53,12 +63,13 @@ const Team = () => {
     setsearchCategory(keyword)
     getListCategory(keyword)
   }
-  const onLoadCategory = () => {
-    getListCategory(searchCategory)
+  const onLoadCategory = async () => {
+    await getListCategory(searchCategory)
   }
   const onClickItemCategory = (info) => {
     if (isLoadingTeam) {
-      return ToastCus.fire({
+      return
+      ToastCus.fire({
         icon: 'warning',
         title: 'Vui lòng đợi tải dữ liệu',
       })
@@ -117,10 +128,10 @@ const Team = () => {
   const onClickSearchTeam = () => {
     const keyword = `${searchTeam ?? ''}`?.trim()
     setsearchTeam(keyword)
-    getListTeam(keyword)
+    getListTeam(itemSelectedCategory?.id, keyword)
   }
-  const onLoadTeam = () => {
-    getListTeam(searchTeam)
+  const onLoadTeam = async () => {
+    await getListTeam(itemSelectedCategory?.id, searchTeam)
   }
   const getListTeam = async (ctId, kw) => {
     if (!ctId) {
@@ -194,6 +205,7 @@ const Team = () => {
               itemSelected={itemSelectedCategory}
               onClickItem={onClickItemCategory}
               onClickEdit={onClickEditCategory}
+              handleSubmit={handleSubmitActiveCategory}
             />
           </Spin>
         </div>
@@ -239,7 +251,11 @@ const Team = () => {
             />
           </div>
           <Spin spinning={isLoadingTeam}>
-            <TeamList list={listTeam} onClickEdit={onClickEditTeam} />
+            <TeamList
+              list={isLoadingTeam ? [] : listTeam}
+              onClickEdit={onClickEditTeam}
+              handleSubmit={handleSubmitActiveTeam}
+            />
           </Spin>
         </div>
       </div>
@@ -254,6 +270,7 @@ const Team = () => {
         open={isModalTeam}
         loading={isLoadingInfoTeam}
         infoEdit={infoTeam}
+        infoCategory={itemSelectedCategory}
         handleClose={handleCloseModalTeam}
         onLoad={onLoadTeam}
       />

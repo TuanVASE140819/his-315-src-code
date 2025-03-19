@@ -58,10 +58,10 @@ const CategoryModal = ({ open, loading, infoEdit, handleClose, onLoad }) => {
   const handleCancel = () => {
     handleClose()
   }
-  const handleReload = () => {
+  const handleReload = async () => {
     handleClose()
     formik.resetForm()
-    onLoad()
+    await onLoad()
   }
 
   return (

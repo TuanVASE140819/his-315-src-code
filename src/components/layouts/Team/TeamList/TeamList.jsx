@@ -1,15 +1,8 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
 import { Avatar, Checkbox, Popconfirm, Empty } from 'antd'
 import { FileImageOutlined, EditOutlined } from '@ant-design/icons'
-// import { putActiveCategoryAction } from '../../../../redux/actions/categoryActions'
 
-const TeamList = ({ list, onClickEdit }) => {
-  const dispatch = useDispatch()
-  const handleSubmit = (info) => {
-    // dispatch(putActiveCategoryAction(info))
-  }
-
+const TeamList = ({ list, onClickEdit, handleSubmit }) => {
   return (
     <ul className='flex flex-col gap-2 mt-2 border rounded-md p-2 h-[79.5vh] overflow-auto bg-[#fdfdfd]'>
       {!list?.length && (
@@ -34,6 +27,7 @@ const TeamList = ({ list, onClickEdit }) => {
             }
             className='bg-amber-500 bg-opacity-70'
           />
+
           <div className='w-full flex justify-start items-center gap-2'>
             <div className='font-medium text-gray-600 leading-4'>
               {item?.name}

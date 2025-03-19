@@ -50,18 +50,14 @@ function* putInfoCategorySaga({ payload, handleReload }) {
     })
   }
 }
-function* putActiveCategorySaga({ payload }) {
+function* putActiveCategorySaga({ payload, onLoadCategory }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
-    yield call(() =>
-      categoryServices.putActiveCategory({
-        id: payload?.id,
-        isAtive: payload?.isAtive ? false : true,
-      }),
-    )
+    yield call(() => categoryServices.putActiveCategory(payload?.id))
+    yield onLoadCategory()
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng bộ môn thành công',

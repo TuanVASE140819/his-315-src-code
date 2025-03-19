@@ -9,7 +9,7 @@ const getBase64 = (file) =>
     reader.onload = () => resolve(reader.result)
     reader.onerror = (error) => reject(error)
   })
-const UploadImage = ({ fileList, setfileList }) => {
+const UploadImage = ({ fileList, setfileList, maxLength }) => {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
 
@@ -51,7 +51,7 @@ const UploadImage = ({ fileList, setfileList }) => {
         customRequest={(e) => e.onSuccess()}
         className='upload-custom'
       >
-        {fileList?.length >= 1 ? null : uploadButton}
+        {fileList?.length >= maxLength ? null : uploadButton}
       </Upload>
       {previewImage && (
         <Image
