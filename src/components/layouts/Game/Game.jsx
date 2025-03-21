@@ -1,46 +1,219 @@
-import React from 'react'
-import { Button, Select, Input, Divider } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Button, Input, Divider, Spin, Tag, Select } from 'antd'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
+import { leagueServices } from '../../../redux/services/leagueServices'
+import { commonServices } from '../../../redux/services/commonServices'
+import { putActiveLeagueAction } from '../../../redux/actions/leagueActions'
+import { getListCategoryAction } from '../../../redux/actions/commonActions'
+// import { teamServices } from '../../../redux/services/teamServices'
+// import { putActiveCategoryAction } from '../../../redux/actions/categoryActions'
 import LeagueList from './LeagueList/LeagueList'
+import LeagueModal from './LeagueModal/LeagueModal'
+import ToastCus from '../../common/Toast'
 
 const Game = () => {
-  const onClickSearch = () => {}
+  const dispatch = useDispatch()
+  const { listCategory } = useSelector((state) => state.Common)
+  // const [listCategory, setlistCategory] = useState([])
+  const [filterCategory, setfilterCategory] = useState('all')
+  const [searchLeague, setsearchLeague] = useState('')
+  const [listLeague, setlistLeague] = useState([])
+  const [infoLeague, setinfoLeague] = useState(null)
+  const [itemSelectedLeague, setitemSelectedLeague] = useState(null)
+  const [isModalLeague, setisModalLeague] = useState(false)
+  const [isLoadingLeague, setisLoadingLeague] = useState(false)
+  const [isLoadingInfoLeague, setisLoadingInfoLeague] = useState(false)
+
+  // const getListCategory = async () => {
+  //   try {
+  //     const { data } = await commonServices.getListCategory()
+  //     setlistCategory(data)
+  //   } catch (error) {
+  //     console.log('getListCategory : ', error)
+  //     errorToastCus()
+  //   }
+  // }
+
+  //****************************** LEAGUE ****************************************//
+  const handleSubmitActiveLeague = (info) => {
+    dispatch(putActiveLeagueAction(info, onLoadLeague))
+  }
+  const errorToastCus = () => {
+    ToastCus.fire({
+      icon: 'error',
+      title: 'Lấy dữ liệu thất bại',
+    })
+  }
+  const handleOpenModalLeague = () => {
+    setisModalLeague(true)
+  }
+  const handleCloseModalLeague = () => {
+    setisModalLeague(false)
+  }
+  const onClickAddLeague = () => {
+    setinfoLeague(null)
+    handleOpenModalLeague()
+  }
+  const onClickEditLeague = (info) => {
+    getInfoLeague(info?.id)
+    handleOpenModalLeague()
+  }
+  const onChangeFilterCategory = (value) => {
+    setfilterCategory(value)
+  }
+  const onChangeSearchLeague = (e) => {
+    setsearchLeague(e.target.value)
+  }
+  const onClickSearchLeague = () => {
+    const keyword = `${searchLeague ?? ''}`?.trim()
+    setsearchLeague(keyword)
+    if (!filterCategory) setfilterCategory('all')
+    getListLeague(filterCategory, keyword)
+  }
+  const onLoadLeague = async () => {
+    await getListLeague(filterCategory, searchLeague)
+  }
+  const onClickItemLeague = (info) => {
+    // if (isLoadingTeam) {
+    //   return
+    //   ToastCus.fire({
+    //     icon: 'warning',
+    //     title: 'Vui lòng đợi tải dữ liệu',
+    //   })
+    // }
+    setitemSelectedLeague(info)
+    // getListTeam(info?.id, searchTeam)
+  }
+  const getListLeague = async (ctId, kw) => {
+    try {
+      setisLoadingLeague(true)
+      const { data } = await leagueServices.getListLeagueSearch(
+        ctId === 'all' ? null : ctId,
+        kw,
+      )
+      setlistLeague(data)
+    } catch (error) {
+      console.log('getListLeague : ', error)
+      errorToastCus()
+    } finally {
+      setisLoadingLeague(false)
+    }
+  }
+  const getInfoLeague = async (id) => {
+    try {
+      setisLoadingInfoLeague(true)
+      const { data } = await leagueServices.getInfoLeagueById(id)
+      setinfoLeague(data)
+    } catch (error) {
+      console.log('getInfoLeague : ', error)
+      errorToastCus()
+    } finally {
+      setisLoadingInfoLeague(false)
+    }
+  }
+  useEffect(() => {
+    // getListCategory()
+    dispatch(getListCategoryAction())
+    onLoadLeague()
+  }, [])
 
   return (
-    <div className='grid grid-cols-4 h-full'>
-      <div className='h-full border-e p-2'>
-        <div className='flex justify-between items-center'>
-          <div className='font-medium text-xl text-gray-500'>Giải đấu</div>
-          <Button type='primary' icon={<PlusOutlined />}>
-            Thêm
-          </Button>
-        </div>
-        <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
+    <>
+      <div className='grid grid-cols-4 h-full'>
+        <div className='h-full border-e p-2'>
+          <div className='flex justify-between items-center'>
+            <div className='font-medium text-xl text-gray-500'>Giải đấu</div>
+            <Button
+              type='primary'
+              icon={<PlusOutlined />}
+              onClick={onClickAddLeague}
+            >
+              Thêm
+            </Button>
+          </div>
+          <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
 
-        <div className='flex justify-between items-center gap-2'>
-          <Select className='w-44' placeholder='Chọn bộ môn...' />
-          <Input
-            className='w-48'
-            placeholder='Nhập từ khóa...'
-            onClick={onClickSearch}
-          />
-          {/* <div className='flex justify-between items-center gap-2 w-full'>
+          <div className='flex justify-between items-center gap-2'>
+            <Select
+              showSearch
+              className='w-44'
+              placeholder='Chọn bộ môn...'
+              filterOption={(input, option) =>
+                `${option?.label ?? ''}`
+                  ?.toLowerCase()
+                  ?.includes(`${input ?? ''}`?.toLowerCase())
+              }
+              value={filterCategory}
+              onChange={onChangeFilterCategory}
+              options={[
+                {
+                  key: 'all',
+                  value: 'all',
+                  label: 'Tất cả bộ môn',
+                },
+                ...listCategory?.map((item) => ({
+                  key: item?.id,
+                  value: item?.id,
+                  label: item?.name,
+                })),
+              ]}
+            />
+            <Input
+              className='w-48'
+              placeholder='Nhập từ khóa...'
+              allowClear
+              value={searchLeague}
+              onChange={onChangeSearchLeague}
+            />
+            {/* <div className='flex justify-between items-center gap-2 w-full'>
           </div> */}
-          <Button type='primary' icon={<SyncOutlined />} />
+            <Button
+              loading={isLoadingLeague}
+              className='w-8'
+              type='primary'
+              icon={<SyncOutlined />}
+              onClick={onClickSearchLeague}
+            />
+          </div>
+          <Spin spinning={isLoadingLeague}>
+            <LeagueList
+              list={listLeague}
+              itemSelected={itemSelectedLeague}
+              onClickItem={onClickItemLeague}
+              onClickEdit={onClickEditLeague}
+              handleSubmit={handleSubmitActiveLeague}
+            />
+          </Spin>
         </div>
-        <LeagueList
-          list={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-        />
+        <div className='h-full col-span-3 p-2'>
+          <div className='flex justify-between items-center'>
+            <div className='flex gap-2'>
+              <div className='font-medium text-xl text-gray-500'>Trận đấu</div>
+              <Tag
+                color={itemSelectedLeague ? 'blue' : 'red'}
+                className='m-0 p-0 px-2 flex items-center text-base'
+              >
+                {itemSelectedLeague
+                  ? itemSelectedLeague?.name
+                  : 'Chưa chọn giải đấu'}
+              </Tag>
+            </div>
+            <Button type='primary' icon={<PlusOutlined />}>
+              Thêm
+            </Button>
+          </div>
+          <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
+        </div>
       </div>
-      <div className='h-full col-span-3 p-2'>
-        <div className='flex justify-between items-center'>
-          <div className='font-medium text-xl text-gray-500'>Trận đấu</div>
-          <Button type='primary' icon={<PlusOutlined />}>
-            Thêm
-          </Button>
-        </div>
-        <Divider style={{ margin: '0.5rem 0', padding: 0 }} /></div>
-    </div>
+      <LeagueModal
+        open={isModalLeague}
+        loading={isLoadingInfoLeague}
+        infoEdit={infoLeague}
+        handleClose={handleCloseModalLeague}
+        onLoad={onLoadLeague}
+      />
+    </>
   )
 }
 

@@ -39,7 +39,7 @@ const TeamList = ({ list, onClickEdit, handleSubmit }) => {
                 <p>
                   Bạn thực sự muốn
                   <span className='font-medium'>
-                    &nbsp;{item?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'} -{' '}
+                    &nbsp;{item?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'}&nbsp;-&nbsp;
                     {item?.name}?
                   </span>
                 </p>

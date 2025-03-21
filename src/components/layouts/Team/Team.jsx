@@ -29,11 +29,10 @@ const Team = () => {
   const [isLoadingTeam, setisLoadingTeam] = useState(false)
   const [isLoadingInfoTeam, setisLoadingInfoTeam] = useState(false)
 
+  
+//****************************** CATEGORY ****************************************//
   const handleSubmitActiveCategory = (info) => {
     dispatch(putActiveCategoryAction(info, onLoadCategory))
-  }
-  const handleSubmitActiveTeam = (info) => {
-    dispatch(putActiveTeamAction(info, onLoadTeam))
   }
   const errorToastCus = () => {
     ToastCus.fire({
@@ -101,7 +100,14 @@ const Team = () => {
       setisLoadingInfoCategory(false)
     }
   }
+  useEffect(() => {
+    onLoadCategory()
+  }, [])
 
+//****************************** TEAM ****************************************// 
+  const handleSubmitActiveTeam = (info) => {
+    dispatch(putActiveTeamAction(info, onLoadTeam))
+  }
   const handleOpenModalTeam = () => {
     setisModalTeam(true)
   }
@@ -165,9 +171,6 @@ const Team = () => {
       setisLoadingInfoTeam(false)
     }
   }
-  useEffect(() => {
-    onLoadCategory()
-  }, [])
   return (
     <>
       <div className='grid grid-cols-4 h-full'>
