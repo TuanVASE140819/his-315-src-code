@@ -10,6 +10,7 @@ import { getListCategoryAction } from '../../../redux/actions/commonActions'
 // import { putActiveCategoryAction } from '../../../redux/actions/categoryActions'
 import LeagueList from './LeagueList/LeagueList'
 import LeagueModal from './LeagueModal/LeagueModal'
+import GameList from './GameList/GameList'
 import ToastCus from '../../common/Toast'
 
 const Game = () => {
@@ -204,6 +205,29 @@ const Game = () => {
             </Button>
           </div>
           <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
+          <div className='flex justify-start items-center gap-2'>
+            <Input
+              className='w-96'
+              placeholder='Nhập từ khóa...'
+              allowClear
+            // value={searchLeague}
+            // onChange={onChangeSearchLeague}
+            />
+            <Button
+              // loading={isLoadingLeague}
+              className='w-8'
+              type='primary'
+              icon={<SyncOutlined />}
+            // onClick={onClickSearchLeague}
+            />
+          </div>
+          <Spin
+            spinning={false}
+          >
+            <GameList
+            list={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            />
+          </Spin>
         </div>
       </div>
       <LeagueModal

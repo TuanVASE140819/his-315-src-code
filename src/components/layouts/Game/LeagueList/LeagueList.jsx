@@ -20,7 +20,7 @@ const LeagueList = ({
         <li
           key={index}
           onClick={() => onClickItem(item)}
-          className={`${itemSelected?.id && itemSelected?.id === item?.id ? 'bg-sky-100' : 'bg-white'} hover:bg-slate-100 transition-all duration-300 border rounded-md p-2 flex gap-2 cursor-pointer`}
+          className={`${itemSelected?.id && itemSelected?.id === item?.id ? 'bg-sky-100' : 'bg-white'} hover:bg-slate-100 transition-all duration-300 border rounded-md shadow-md p-2 flex gap-2 cursor-pointer`}
         >
           <Avatar
             shape='square'
