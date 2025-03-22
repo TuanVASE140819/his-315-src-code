@@ -24,9 +24,8 @@ const CategoryList = ({
         >
           <Avatar
             shape='square'
-            size={30}
             icon={<BarsOutlined className='text-lg' />}
-            className='bg-amber-500 bg-opacity-70'
+            className='bg-amber-500 bg-opacity-70 w-[33.18px] h-[30px]'
           />
           <div className='w-full flex justify-start items-center gap-2'>
             <div className='font-medium text-gray-600 leading-4'>

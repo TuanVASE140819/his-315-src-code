@@ -94,6 +94,7 @@ const Team = () => {
       const { data } = await categoryServices.getInfoCategoryById(id)
       setinfoCategory(data)
     } catch (error) {
+      handleCloseModalCategory()
       console.log('getInfoCategory : ', error)
       errorToastCus()
     } finally {
@@ -165,6 +166,7 @@ const Team = () => {
       const { data } = await teamServices.getInfoTeamById(id)
       setinfoTeam(data)
     } catch (error) {
+      handleCloseModalTeam()
       console.log('getInfoTeam : ', error)
       errorToastCus()
     } finally {

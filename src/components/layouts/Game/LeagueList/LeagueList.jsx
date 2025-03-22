@@ -25,7 +25,7 @@ const LeagueList = ({
           <Avatar
             shape='square'
             icon={<TrophyOutlined className='text-2xl' />}
-            className='bg-amber-500 bg-opacity-70 w-12 h-12'
+            className='bg-amber-500 bg-opacity-70 w-[56.35px] h-[48px]'
           />
           <div className='w-full grid content-between'>
             <div className='flex justify-between items-center'>

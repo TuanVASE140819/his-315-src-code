@@ -17,7 +17,6 @@ const TeamList = ({ list, onClickEdit, handleSubmit }) => {
         >
           <Avatar
             shape='square'
-            size={30}
             icon={
               item?.imageUrl ? (
                 <img src={item?.imageUrl} />
@@ -25,7 +24,7 @@ const TeamList = ({ list, onClickEdit, handleSubmit }) => {
                 <FileImageOutlined className='text-lg' />
               )
             }
-            className='bg-amber-500 bg-opacity-70'
+            className='bg-amber-500 bg-opacity-70 w-[33.18px] h-[30px]'
           />
 
           <div className='w-full flex justify-start items-center gap-2'>
@@ -39,7 +38,8 @@ const TeamList = ({ list, onClickEdit, handleSubmit }) => {
                 <p>
                   Bạn thực sự muốn
                   <span className='font-medium'>
-                    &nbsp;{item?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'}&nbsp;-&nbsp;
+                    &nbsp;{item?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'}
+                    &nbsp;-&nbsp;
                     {item?.name}?
                   </span>
                 </p>
