@@ -107,6 +107,7 @@ const Game = () => {
       const { data } = await leagueServices.getInfoLeagueById(id)
       setinfoLeague(data)
     } catch (error) {
+      handleCloseModalLeague()
       console.log('getInfoLeague : ', error)
       errorToastCus()
     } finally {
