@@ -9,7 +9,6 @@ function* postInfoLeagueSaga({ payload, handleReload }) {
     payload: true,
   })
   try {
-    console.log(payload)
     yield call(() =>
       leagueServices.postInfoLeague({
         categoryId: payload?.categoryId,
@@ -36,7 +35,6 @@ function* putInfoLeagueSaga({ payload, handleReload }) {
     payload: true,
   })
   try {
-    console.log(payload)
     yield call(() =>
       leagueServices.putInfoLeague({
         id: payload?.id,

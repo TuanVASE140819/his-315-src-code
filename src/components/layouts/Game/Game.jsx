@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Input, Divider, Spin, Tag, Select } from 'antd'
-import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
+import { PlusOutlined, SyncOutlined, SaveOutlined } from '@ant-design/icons'
 import { leagueServices } from '../../../redux/services/leagueServices'
-import { commonServices } from '../../../redux/services/commonServices'
+// import { commonServices } from '../../../redux/services/commonServices'
 import { putActiveLeagueAction } from '../../../redux/actions/leagueActions'
-import { getListCategoryAction } from '../../../redux/actions/commonActions'
-// import { teamServices } from '../../../redux/services/teamServices'
-// import { putActiveCategoryAction } from '../../../redux/actions/categoryActions'
+import {
+  getListCategoryAction,
+  getListTeamAction,
+} from '../../../redux/actions/commonActions'
+import { gameServices } from '../../../redux/services/gameServices'
+import { postInfoGameAction } from '../../../redux/actions/gameActions'
 import LeagueList from './LeagueList/LeagueList'
 import LeagueModal from './LeagueModal/LeagueModal'
 import GameList from './GameList/GameList'
@@ -26,6 +29,9 @@ const Game = () => {
   const [isLoadingLeague, setisLoadingLeague] = useState(false)
   const [isLoadingInfoLeague, setisLoadingInfoLeague] = useState(false)
 
+  const [listAddGame, setlistAddGame] = useState([])
+  const [isLoadingGame, setisLoadingGame] = useState(false)
+
   // const getListCategory = async () => {
   //   try {
   //     const { data } = await commonServices.getListCategory()
@@ -35,6 +41,12 @@ const Game = () => {
   //     errorToastCus()
   //   }
   // }
+
+  useEffect(() => {
+    // getListCategory()
+    dispatch(getListCategoryAction())
+    onLoadLeague()
+  }, [])
 
   //****************************** LEAGUE ****************************************//
   const handleSubmitActiveLeague = (info) => {
@@ -83,8 +95,10 @@ const Game = () => {
     //     title: 'Vui lòng đợi tải dữ liệu',
     //   })
     // }
+    handleResetAddGame()
     setitemSelectedLeague(info)
     // getListTeam(info?.id, searchTeam)
+    dispatch(getListTeamAction(info?.categoryId))
   }
   const getListLeague = async (ctId, kw) => {
     try {
@@ -114,11 +128,66 @@ const Game = () => {
       setisLoadingInfoLeague(false)
     }
   }
-  useEffect(() => {
-    // getListCategory()
-    dispatch(getListCategoryAction())
-    onLoadLeague()
-  }, [])
+
+  //****************************** GAME ****************************************//
+  const onClickAddGame = () => {
+    if (!itemSelectedLeague) {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Vui lòng chọn giải đấu',
+      })
+    }
+    setlistAddGame((prev) => {
+      const newItem = {
+        leagueId: itemSelectedLeague?.id,
+        description: null,
+        startTime: null,
+        // createdBy: 0,
+        gameItem: [],
+      }
+      return [newItem, ...prev]
+    })
+  }
+  const onClickCancelGame = () => {
+    handleResetAddGame()
+  }
+  const handleResetAddGame = () => {
+    setlistAddGame([])
+  }
+  const handleReloadGame = async () => {
+    handleResetAddGame()
+  }
+  const handleSubmitAddGame = () => {
+    let arrGame = []
+    for (const item of listAddGame) {
+      if (!item?.description || !item?.startTime) {
+        return ToastCus.fire({
+          icon: 'error',
+          title: 'Vui lòng kiểm tra lại thông tin trận đấu',
+        })
+      }
+      if (!item?.gameItem?.length) {
+        return ToastCus.fire({
+          icon: 'error',
+          title: 'Vui lòng thêm kết quả',
+        })
+      }
+      let arrGameItem = []
+      let tempOrder = 1
+      for (const itemGI of item?.gameItem) {
+        if (!itemGI?.name || !itemGI?.odds) {
+          return ToastCus.fire({
+            icon: 'error',
+            title: 'Vui lòng kiểm tra lại thông tin kết quả',
+          })
+        }
+        arrGameItem.push({ ...itemGI, displayOrder: tempOrder })
+        tempOrder += 1
+      }
+      arrGame.push({ ...item, gameItem: arrGameItem })
+    }
+    dispatch(postInfoGameAction(arrGame, handleReloadGame))
+  }
 
   return (
     <>
@@ -201,7 +270,11 @@ const Game = () => {
                   : 'Chưa chọn giải đấu'}
               </Tag>
             </div>
-            <Button type='primary' icon={<PlusOutlined />}>
+            <Button
+              type='primary'
+              icon={<PlusOutlined />}
+              onClick={onClickAddGame}
+            >
               Thêm
             </Button>
           </div>
@@ -211,22 +284,36 @@ const Game = () => {
               className='w-96'
               placeholder='Nhập từ khóa...'
               allowClear
-            // value={searchLeague}
-            // onChange={onChangeSearchLeague}
+              // value={searchLeague}
+              // onChange={onChangeSearchLeague}
             />
             <Button
               // loading={isLoadingLeague}
               className='w-8'
               type='primary'
               icon={<SyncOutlined />}
-            // onClick={onClickSearchLeague}
+              // onClick={onClickSearchLeague}
             />
+            {listAddGame?.length > 0 && (
+              <>
+                <Button className='ml-auto' onClick={onClickCancelGame}>
+                  Hủy bỏ
+                </Button>
+                <Button
+                  type='primary'
+                  icon={<SaveOutlined />}
+                  onClick={handleSubmitAddGame}
+                >
+                  Lưu
+                </Button>
+              </>
+            )}
           </div>
-          <Spin
-            spinning={false}
-          >
+          <Spin spinning={isLoadingGame}>
             <GameList
-            list={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+              list={[1,2]}
+              listAdd={listAddGame}
+              setlistAdd={setlistAddGame}
             />
           </Spin>
         </div>

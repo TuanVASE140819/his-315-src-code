@@ -16,6 +16,7 @@ const TeamList = ({ list, onClickEdit, handleSubmit }) => {
           className='bg-white hover:bg-slate-100 transition-all duration-300 border rounded-md shadow-md p-2 flex gap-2 cursor-pointer'
         >
           <Avatar
+            key={item?.imageUrl}
             shape='square'
             icon={
               item?.imageUrl ? (

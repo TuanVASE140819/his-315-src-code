@@ -29,8 +29,11 @@ const Team = () => {
   const [isLoadingTeam, setisLoadingTeam] = useState(false)
   const [isLoadingInfoTeam, setisLoadingInfoTeam] = useState(false)
 
-  
-//****************************** CATEGORY ****************************************//
+  useEffect(() => {
+    onLoadCategory()
+  }, [])
+
+  //****************************** CATEGORY ****************************************//
   const handleSubmitActiveCategory = (info) => {
     dispatch(putActiveCategoryAction(info, onLoadCategory))
   }
@@ -101,11 +104,8 @@ const Team = () => {
       setisLoadingInfoCategory(false)
     }
   }
-  useEffect(() => {
-    onLoadCategory()
-  }, [])
 
-//****************************** TEAM ****************************************// 
+  //****************************** TEAM ****************************************//
   const handleSubmitActiveTeam = (info) => {
     dispatch(putActiveTeamAction(info, onLoadTeam))
   }
@@ -257,7 +257,7 @@ const Team = () => {
           </div>
           <Spin spinning={isLoadingTeam}>
             <TeamList
-              list={isLoadingTeam ? [] : listTeam}
+              list={listTeam} //isLoadingTeam ? [] : listTeam
               onClickEdit={onClickEditTeam}
               handleSubmit={handleSubmitActiveTeam}
             />

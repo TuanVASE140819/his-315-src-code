@@ -3,6 +3,7 @@ import { COMMON } from '../constants/constants'
 const initialState = {
   isLoadingScreen: false,
   listCategory: [],
+  listTeam: [],
 }
 
 const Common = (state = initialState, { type, payload }) => {
@@ -15,6 +16,9 @@ const Common = (state = initialState, { type, payload }) => {
         break
       case COMMON.DISPATCH_LIST_CATEGORY:
         draft.listCategory = payload
+        break
+      case COMMON.DISPATCH_LIST_TEAM:
+        draft.listTeam = payload
         break
       default:
         return state
