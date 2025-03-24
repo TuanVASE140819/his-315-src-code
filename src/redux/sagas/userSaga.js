@@ -27,7 +27,7 @@ function* logoutUserError({ error }) {
       title: error ?? 'Vui lòng đăng nhập lại',
     })
   } catch (error) {
-    console.log(error)
+    console.log('logoutUserError : ', error)
     ToastCus.fire({
       icon: 'error',
       title: error?.response?.data?.message || 'Cưỡng chế đăng xuất thất bại',
@@ -82,7 +82,7 @@ function* loginUser({ payload, navigate, action }) {
       title: 'Đăng nhập thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('loginUser : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -103,7 +103,7 @@ function* getInfoUser() {
       payload: data,
     })
   } catch (error) {
-    console.log(error)
+    console.log('getInfoUser : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -121,7 +121,7 @@ function* logoutUser({ navigate }) {
       title: 'Đăng xuất thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('logoutUser : ', error)
     ToastCus.fire({
       icon: 'error',
       title: error?.response?.data?.message ?? 'Đăng xuất thất bại',
@@ -152,7 +152,7 @@ function* putChangePasswordSaga({ payload, handleReload }) {
       title: 'Đổi mật khẩu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putChangePasswordSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,

@@ -22,7 +22,7 @@ function* postInfoTeamSaga({ payload, handleReload }) {
       title: 'Thêm đội thi đấu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('postInfoTeamSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -50,7 +50,7 @@ function* putInfoTeamSaga({ payload, handleReload }) {
       title: 'Chỉnh sửa đội thi đấu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putInfoTeamSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -58,20 +58,20 @@ function* putInfoTeamSaga({ payload, handleReload }) {
     })
   }
 }
-function* putActiveTeamSaga({ payload, onLoadTeam }) {
+function* putToggleActiveTeamSaga({ payload, onLoadTeam }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
-    yield call(() => teamServices.putActiveTeam(payload?.id))
-    yield onLoadTeam() 
+    yield call(() => teamServices.putToggleActiveTeam(payload?.id))
+    yield onLoadTeam()
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng đội thi đấu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putToggleActiveTeamSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -83,5 +83,5 @@ function* putActiveTeamSaga({ payload, onLoadTeam }) {
 export function* teamSaga() {
   yield takeLatest(TEAM.POST_INFO_TEAM, postInfoTeamSaga)
   yield takeLatest(TEAM.PUT_INFO_TEAM, putInfoTeamSaga)
-  yield takeLatest(TEAM.PUT_ACTIVE_TEAM, putActiveTeamSaga)
+  yield takeLatest(TEAM.PUT_TOGGLE_ACTIVE_TEAM, putToggleActiveTeamSaga)
 }

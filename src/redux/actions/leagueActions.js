@@ -10,8 +10,8 @@ export const putInfoLeagueAction = (payload, handleReload) => ({
   payload,
   handleReload,
 })
-export const putActiveLeagueAction = (payload, onLoadLeague) => ({
-  type: LEAGUE.PUT_ACTIVE_LEAGUE,
+export const putToggleActiveLeagueAction = (payload, onLoadLeague) => ({
+  type: LEAGUE.PUT_TOGGLE_ACTIVE_LEAGUE,
   payload,
   onLoadLeague,
 })

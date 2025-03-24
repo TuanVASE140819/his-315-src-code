@@ -7,20 +7,26 @@ import {
   ClockCircleOutlined,
   CrownTwoTone,
 } from '@ant-design/icons'
+import moment from 'moment'
 
-const GameRow = ({ item }) => {
+const GameRow = ({
+  info,
+  onClickEdit,
+  handleToggleActive,
+  handleMatchResult,
+}) => {
   return (
     <li className='bg-white hover:bg-slate-50 transition-all duration-300 border shadow-md rounded-md p-3'>
       <div className='w-full flex justify-start items-center gap-2'>
         <div className='text-base font-medium text-gray-700'>
-          Ngoại hạng Anh: Manchester United vs Newcastle
+          {info?.description}
         </div>
         <Tag
           // color={'orange'}
           className='m-0 p-0 px-1.5 flex justify-start items-center gap-1'
         >
           <ClockCircleOutlined />
-          17:00 21/03/2025
+          {moment(info?.startTime).format('HH:mm - DD/MM/YYYY')}
         </Tag>
         <Popconfirm
           placement='topRight'
@@ -29,52 +35,55 @@ const GameRow = ({ item }) => {
             <p>
               Bạn thực sự muốn
               <span className='font-medium'>
-                {/* &nbsp;{item?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'} */}
+                &nbsp;{info?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'}
                 &nbsp;-&nbsp;
-                {/* {item?.name}? */}
+                {info?.description}?
               </span>
             </p>
           }
-          // onConfirm={() => handleSubmit(item)}
+          onConfirm={() => handleToggleActive(info)}
           okText='Xác nhận'
           cancelText='Hủy bỏ'
           className='ml-auto'
         >
-          <Checkbox
-          // checked={item?.isActive}
-          />
+          <Checkbox checked={info?.isActive} />
         </Popconfirm>
         <EditOutlined
-          // onClick={() => onClickEdit(item)}
+          onClick={() => onClickEdit(info)}
           className='text-lg text-green-500 hover:text-green-700 transition-all duration-300 cursor-pointer'
         />
       </div>
       <ul className='w-full mt-2 flex flex-wrap justify-start gap-3'>
-        {[1, 2, 3, 4, 5].map((item, index) => {
-          const isWin = index === 0 ? true : false
+        {info?.gameItems?.map((item, index) => {
+          const isWin = info?.status === 'Done' && index === 0 ? true : false
           return (
             <li
               key={index}
               className={`min-[1900px]:w-[32.65%] w-[32.3%] border ${isWin ? 'border-amber-500 bg-amber-50 bg-opacity-70' : 'bg-[#fff]'} rounded-md p-2 flex gap-2`}
             >
               <Avatar
+                key={item?.imageUrl}
                 shape='square'
-                icon={<FileImageOutlined className='text-lg' />}
+                icon={
+                  item?.imageUrl ? (
+                    <img src={item?.imageUrl} />
+                  ) : (
+                    <FileImageOutlined className='text-lg' />
+                  )
+                }
                 className='bg-amber-500 bg-opacity-70 w-[50.6px] h-[40px]'
               />
               <div className='w-full flex flex-col text-sm'>
-                <div
-                  className={`font-medium text-gray-700`}
-                >
-                  Newcastle thắng
+                <div className={`font-medium text-gray-700`}>{item?.name}</div>
+                <div className='text-gray-500'>
+                  x{item?.odds}&nbsp;số points
                 </div>
-                <div className='text-gray-500'>x1.5 số points</div>
               </div>
               <div className='w-8 flex items-center'>
                 {isWin && (
                   <CrownTwoTone className='text-lg' twoToneColor='#f59e0b' />
                 )}
-                {!isWin && index === 2 && (
+                {info?.status === 'New' && (
                   <div>
                     <Popconfirm
                       placement='topRight'
@@ -84,9 +93,7 @@ const GameRow = ({ item }) => {
                           <p>
                             Bạn thực sự muốn trả kết quả
                             <span className='font-medium'>
-                              {/* &nbsp;{item?.isActive ? 'NGỪNG SỬ DỤNG' : 'SỬ DỤNG'} */}
-                              &nbsp;Newcastle thắng&nbsp;
-                              {/* {item?.name}? */}
+                              &nbsp;{item?.name}&nbsp;
                             </span>
                           </p>
                           <p className='italic text-xs text-red-500'>
@@ -95,7 +102,7 @@ const GameRow = ({ item }) => {
                           </p>
                         </>
                       }
-                      // onConfirm={() => handleSubmit(item)}
+                      onConfirm={() => handleMatchResult(info, item)}
                       okText='Xác nhận'
                       cancelText='Hủy bỏ'
                       className='ml-auto'

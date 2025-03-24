@@ -3,7 +3,7 @@ import axiosInstance from '../../utils/axiosConfig'
 export const teamServices = {
   postInfoTeam: (payload) => axiosInstance.post('Team/Admin/AddTeam', payload),
   putInfoTeam: (payload) => axiosInstance.put('Team/Admin/UpdateTeam', payload),
-  putActiveTeam: (id) => axiosInstance.put(`Team/Admin/ToggleActive/${id}`),
+  putToggleActiveTeam: (id) => axiosInstance.put(`Team/Admin/ToggleActive/${id}`),
   getListTeamSearch: (categoryId, keyword) =>
     axiosInstance.get('Team/Admin/GetAllTeams', {
       params: { categoryId, keyword },

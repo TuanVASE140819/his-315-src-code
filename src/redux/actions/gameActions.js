@@ -1,17 +1,22 @@
 import { GAME } from '../constants/constants'
 
-export const postInfoGameAction = (payload, handleReloadGame) => ({
+export const postInfoGameAction = (payload, handleReloadAddGame) => ({
   type: GAME.POST_INFO_GAME,
   payload,
-  handleReloadGame,
+  handleReloadAddGame,
 })
 export const putInfoGameAction = (payload, handleReload) => ({
   type: GAME.PUT_INFO_GAME,
   payload,
   handleReload,
 })
-export const putActiveGameAction = (payload, onLoadGame) => ({
-  type: GAME.PUT_ACTIVE_GAME,
+export const putToggleActiveGameAction = (payload, onLoadGame) => ({
+  type: GAME.PUT_TOGGLE_ACTIVE_GAME,
+  payload,
+  onLoadGame,
+})
+export const putMatchResultGameAction = (payload, onLoadGame) => ({
+  type: GAME.PUT_MATCH_RESULT_GAME,
   payload,
   onLoadGame,
 })

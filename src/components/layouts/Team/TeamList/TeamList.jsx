@@ -2,7 +2,7 @@ import React from 'react'
 import { Avatar, Checkbox, Popconfirm, Empty } from 'antd'
 import { FileImageOutlined, EditOutlined } from '@ant-design/icons'
 
-const TeamList = ({ list, onClickEdit, handleSubmit }) => {
+const TeamList = ({ list, onClickEdit, handleToggleActive }) => {
   return (
     <ul className='flex flex-col gap-2 mt-2 border rounded-md p-2 h-[79.5vh] overflow-auto bg-[#fdfdfd]'>
       {!list?.length && (
@@ -45,7 +45,7 @@ const TeamList = ({ list, onClickEdit, handleSubmit }) => {
                   </span>
                 </p>
               }
-              onConfirm={() => handleSubmit(item)}
+              onConfirm={() => handleToggleActive(item)}
               okText='Xác nhận'
               cancelText='Hủy bỏ'
               className='ml-auto'

@@ -10,8 +10,8 @@ export const putInfoCategoryAction = (payload, handleReload) => ({
   payload,
   handleReload,
 })
-export const putActiveCategoryAction = (payload, onLoadCategory) => ({
-  type: CATEGORY.PUT_ACTIVE_CATEGORY,
+export const putToggleActiveCategoryAction = (payload, onLoadCategory) => ({
+  type: CATEGORY.PUT_TOGGLE_ACTIVE_CATEGORY,
   payload,
   onLoadCategory,
 })

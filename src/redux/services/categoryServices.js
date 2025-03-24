@@ -5,7 +5,7 @@ export const categoryServices = {
     axiosInstance.post('Category/Admin/AddCategory', payload),
   putInfoCategory: (payload) =>
     axiosInstance.put('Category/Admin/UpdateCategory', payload),
-  putActiveCategory: (id) =>
+  putToggleActiveCategory: (id) =>
     axiosInstance.put(`Category/Admin/ToggleActive/${id}`),
   getListCategorySearch: (keyword) =>
     axiosInstance.get('Category/Admin/GetAllCategorys', {

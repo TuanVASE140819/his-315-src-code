@@ -4,8 +4,8 @@ import { Button, Input, Divider, Spin, Tag } from 'antd'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { categoryServices } from '../../../redux/services/categoryServices'
 import { teamServices } from '../../../redux/services/teamServices'
-import { putActiveCategoryAction } from '../../../redux/actions/categoryActions'
-import { putActiveTeamAction } from '../../../redux/actions/teamActions'
+import { putToggleActiveCategoryAction } from '../../../redux/actions/categoryActions'
+import { putToggleActiveTeamAction } from '../../../redux/actions/teamActions'
 import CategoryList from './CategoryList/CategoryList'
 import CategoryModal from './CategoryModal/CategoryModal'
 import TeamList from './TeamList/TeamList'
@@ -34,8 +34,8 @@ const Team = () => {
   }, [])
 
   //****************************** CATEGORY ****************************************//
-  const handleSubmitActiveCategory = (info) => {
-    dispatch(putActiveCategoryAction(info, onLoadCategory))
+  const handleToggleActiveCategory = (info) => {
+    dispatch(putToggleActiveCategoryAction(info, onLoadCategory))
   }
   const errorToastCus = () => {
     ToastCus.fire({
@@ -106,8 +106,8 @@ const Team = () => {
   }
 
   //****************************** TEAM ****************************************//
-  const handleSubmitActiveTeam = (info) => {
-    dispatch(putActiveTeamAction(info, onLoadTeam))
+  const handleToggleActiveTeam = (info) => {
+    dispatch(putToggleActiveTeamAction(info, onLoadTeam))
   }
   const handleOpenModalTeam = () => {
     setisModalTeam(true)
@@ -155,9 +155,7 @@ const Team = () => {
       console.log('getListTeam : ', error)
       errorToastCus()
     } finally {
-      setTimeout(() => {
-        setisLoadingTeam(false)
-      }, 500)
+      setisLoadingTeam(false)
     }
   }
   const getInfoTeam = async (id) => {
@@ -210,7 +208,7 @@ const Team = () => {
               itemSelected={itemSelectedCategory}
               onClickItem={onClickItemCategory}
               onClickEdit={onClickEditCategory}
-              handleSubmit={handleSubmitActiveCategory}
+              handleToggleActive={handleToggleActiveCategory}
             />
           </Spin>
         </div>
@@ -259,7 +257,7 @@ const Team = () => {
             <TeamList
               list={listTeam} //isLoadingTeam ? [] : listTeam
               onClickEdit={onClickEditTeam}
-              handleSubmit={handleSubmitActiveTeam}
+              handleToggleActive={handleToggleActiveTeam}
             />
           </Spin>
         </div>

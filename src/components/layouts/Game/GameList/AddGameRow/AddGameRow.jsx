@@ -15,7 +15,7 @@ import 'dayjs/locale/vi'
 moment.locale('vi')
 
 const dateView = 'HH:mm - DD/MM/YYYY'
-const dateMoment = 'YYYY-MM-DD HH:mm:00'
+const dateMoment = 'YYYY-MM-DDTHH:mm:00'
 
 const AddGameRow = ({ info, setlistAdd }) => {
   const { listTeam } = useSelector((state) => state.Common)
@@ -59,7 +59,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
         }
         const editedItem = {
           ...item,
-          gameItem: [...item?.gameItem, newGameItem],
+          gameItems: [...item?.gameItems, newGameItem],
         }
         return index === info?.index ? editedItem : item
       }),
@@ -70,7 +70,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
       prev?.map((item, index) => {
         const editedItem = {
           ...item,
-          gameItem: item?.gameItem?.filter((itemGI, idxGI) => idxGI !== idx),
+          gameItems: item?.gameItems?.filter((itemGI, idxGI) => idxGI !== idx),
         }
         return index === info?.index ? editedItem : item
       }),
@@ -79,13 +79,13 @@ const AddGameRow = ({ info, setlistAdd }) => {
   const onChangeNameGameItem = (value, idx) => {
     setlistAdd((prev) =>
       prev?.map((item, index) => {
-        const editedGameItem = item?.gameItem?.map((itemGI, idxGI) => {
+        const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
           const editedItemGI = { ...itemGI, name: value, teamId: null }
           return idxGI === idx ? editedItemGI : itemGI
         })
         const editedItem = {
           ...item,
-          gameItem: editedGameItem,
+          gameItems: editedGameItem,
         }
         return index === info?.index ? editedItem : item
       }),
@@ -95,7 +95,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
     const newValue = value?.replaceAll(',', '.')?.replace(/[^0-9.]/g, '')
     setlistAdd((prev) =>
       prev?.map((item, index) => {
-        const editedGameItem = item?.gameItem?.map((itemGI, idxGI) => {
+        const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
           const editedItemGI = {
             ...itemGI,
             odds: newValue >= 0 ? newValue : null,
@@ -104,7 +104,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
         })
         const editedItem = {
           ...item,
-          gameItem: editedGameItem,
+          gameItems: editedGameItem,
         }
         return index === info?.index ? editedItem : item
       }),
@@ -115,7 +115,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
     const newNameGI = opt?.info?.name ? `${opt?.info?.name ?? ''} thắng` : null
     await setlistAdd((prev) => {
       const newList = prev?.map((item, index) => {
-        const editedGameItem = item?.gameItem?.map((itemGI, idxGI) => {
+        const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
           const editedItemGI = {
             ...itemGI,
             imageUrl: newImageUrlGI,
@@ -126,7 +126,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
         })
         const editedItem = {
           ...item,
-          gameItem: editedGameItem,
+          gameItems: editedGameItem,
         }
         return index === info?.index ? editedItem : item
       })
@@ -182,7 +182,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
         </div>
       </div>
       <ul className='w-full mt-3 flex flex-wrap justify-start gap-3'>
-        {info?.gameItem?.map((item, index) => (
+        {info?.gameItems?.map((item, index) => (
           <li
             key={index}
             className='min-[1900px]:w-[32.65%] w-[32.3%] border rounded-md p-2 bg-[#fff] flex gap-2'
@@ -267,7 +267,7 @@ const AddGameRow = ({ info, setlistAdd }) => {
         ))}
         <li
           key={'add'}
-          className={`min-[1900px]:w-[32.65%] w-[32.3%] h-[58.0625px] border border-dashed ${!info?.gameItem?.length ? 'border-red-500 text-red-500 bg-red-50 bg-opacity-30' : ''} hover:border-blue-500 text-gray-600 hover:text-blue-500 hover:bg-sky-50 rounded-md p-2 bg-[#fff] flex justify-center items-center gap-2 cursor-pointer`}
+          className={`min-[1900px]:w-[32.65%] w-[32.3%] h-[58.0625px] border border-dashed ${!info?.gameItems?.length ? 'border-red-500 text-red-500 bg-red-50 bg-opacity-30' : ''} hover:border-blue-500 text-gray-600 hover:text-blue-500 hover:bg-sky-50 rounded-md p-2 bg-[#fff] flex justify-center items-center gap-2 cursor-pointer`}
           onClick={onClickAddGameItem}
         >
           <PlusOutlined className='text-base' />

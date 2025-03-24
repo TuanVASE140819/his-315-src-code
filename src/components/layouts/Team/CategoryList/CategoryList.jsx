@@ -7,7 +7,7 @@ const CategoryList = ({
   itemSelected,
   onClickItem,
   onClickEdit,
-  handleSubmit,
+  handleToggleActive,
 }) => {
   return (
     <ul className='flex flex-col gap-2 mt-2 border rounded-md p-2 h-[79.5vh] overflow-auto bg-[#fdfdfd]'>
@@ -43,7 +43,7 @@ const CategoryList = ({
                   </span>
                 </p>
               }
-              onConfirm={() => handleSubmit(item)}
+              onConfirm={() => handleToggleActive(item)}
               okText='Xác nhận'
               cancelText='Hủy bỏ'
               className='ml-auto'

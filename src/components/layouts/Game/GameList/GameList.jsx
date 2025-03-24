@@ -1,9 +1,23 @@
 import React from 'react'
-import { Empty } from 'antd'
+import { Empty, Spin } from 'antd'
 import GameRow from './GameRow/GameRow'
 import AddGameRow from './AddGameRow/AddGameRow'
+import EditGameRow from './EditGameRow/EditGameRow'
 
-const GameList = ({ list, listAdd, setlistAdd }) => {
+const GameList = ({
+  list,
+  listAdd,
+  idEdit,
+  infoEdit,
+  isLoadingInfo,
+  setlistAdd,
+  setinfoEdit,
+  setidEdit,
+  onClickEdit,
+  handleToggleActive,
+  handleMatchResult,
+  handleCloseEdit,
+}) => {
   return (
     <ul className='flex flex-col gap-4 mt-2 border rounded-md p-4 h-[79.5vh] overflow-auto bg-[#fdfdfd]'>
       {!list?.length && !listAdd?.length && (
@@ -18,9 +32,26 @@ const GameList = ({ list, listAdd, setlistAdd }) => {
           setlistAdd={setlistAdd}
         />
       ))}
-      {list?.map((item, index) => (
-        <GameRow key={index} item={item} />
-      ))}
+      {list?.map((item, index) =>
+        item?.id === idEdit ? (
+          <Spin spinning={isLoadingInfo} tip='Đang tải dữ liệu'>
+            <EditGameRow
+              key={index}
+              infoEdit={isLoadingInfo ? null : infoEdit}
+              setinfoEdit={setinfoEdit}
+              handleCloseEdit={handleCloseEdit}
+            />
+          </Spin>
+        ) : (
+          <GameRow
+            key={index}
+            info={item}
+            onClickEdit={onClickEdit}
+            handleToggleActive={handleToggleActive}
+            handleMatchResult={handleMatchResult}
+          />
+        ),
+      )}
     </ul>
   )
 }

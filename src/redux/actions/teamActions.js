@@ -10,8 +10,8 @@ export const putInfoTeamAction = (payload, handleReload) => ({
   payload,
   handleReload,
 })
-export const putActiveTeamAction = (payload, onLoadTeam) => ({
-  type: TEAM.PUT_ACTIVE_TEAM,
+export const putToggleActiveTeamAction = (payload, onLoadTeam) => ({
+  type: TEAM.PUT_TOGGLE_ACTIVE_TEAM,
   payload,
   onLoadTeam,
 })

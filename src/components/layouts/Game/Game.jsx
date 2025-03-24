@@ -4,13 +4,17 @@ import { Button, Input, Divider, Spin, Tag, Select } from 'antd'
 import { PlusOutlined, SyncOutlined, SaveOutlined } from '@ant-design/icons'
 import { leagueServices } from '../../../redux/services/leagueServices'
 // import { commonServices } from '../../../redux/services/commonServices'
-import { putActiveLeagueAction } from '../../../redux/actions/leagueActions'
+import { putToggleActiveLeagueAction } from '../../../redux/actions/leagueActions'
 import {
   getListCategoryAction,
   getListTeamAction,
 } from '../../../redux/actions/commonActions'
 import { gameServices } from '../../../redux/services/gameServices'
-import { postInfoGameAction } from '../../../redux/actions/gameActions'
+import {
+  postInfoGameAction,
+  putToggleActiveGameAction,
+  putMatchResultGameAction,
+} from '../../../redux/actions/gameActions'
 import LeagueList from './LeagueList/LeagueList'
 import LeagueModal from './LeagueModal/LeagueModal'
 import GameList from './GameList/GameList'
@@ -29,8 +33,13 @@ const Game = () => {
   const [isLoadingLeague, setisLoadingLeague] = useState(false)
   const [isLoadingInfoLeague, setisLoadingInfoLeague] = useState(false)
 
+  const [searchGame, setsearchGame] = useState('')
   const [listAddGame, setlistAddGame] = useState([])
+  const [listGame, setlistGame] = useState([])
+  const [idEditGame, setidEditGame] = useState(null)
+  const [infoGame, setinfoGame] = useState(null)
   const [isLoadingGame, setisLoadingGame] = useState(false)
+  const [isLoadingInfoGame, setisLoadingInfoGame] = useState(false)
 
   // const getListCategory = async () => {
   //   try {
@@ -49,8 +58,8 @@ const Game = () => {
   }, [])
 
   //****************************** LEAGUE ****************************************//
-  const handleSubmitActiveLeague = (info) => {
-    dispatch(putActiveLeagueAction(info, onLoadLeague))
+  const handleToggleActiveLeague = (info) => {
+    dispatch(putToggleActiveLeagueAction(info, onLoadLeague))
   }
   const errorToastCus = () => {
     ToastCus.fire({
@@ -88,7 +97,7 @@ const Game = () => {
     await getListLeague(filterCategory, searchLeague)
   }
   const onClickItemLeague = (info) => {
-    // if (isLoadingTeam) {
+    // if (isLoadingGame) {
     //   return
     //   ToastCus.fire({
     //     icon: 'warning',
@@ -97,7 +106,7 @@ const Game = () => {
     // }
     handleResetAddGame()
     setitemSelectedLeague(info)
-    // getListTeam(info?.id, searchTeam)
+    getListGame(info?.id, searchGame)
     dispatch(getListTeamAction(info?.categoryId))
   }
   const getListLeague = async (ctId, kw) => {
@@ -130,6 +139,12 @@ const Game = () => {
   }
 
   //****************************** GAME ****************************************//
+  const handleToggleActiveGame = (info) => {
+    dispatch(putToggleActiveGameAction(info, onLoadGame))
+  }
+  const handleMatchResultGame = (infoGame, infoGameItem) => {
+    dispatch(putMatchResultGameAction({ infoGame, infoGameItem }, onLoadGame))
+  }
   const onClickAddGame = () => {
     if (!itemSelectedLeague) {
       return ToastCus.fire({
@@ -143,10 +158,14 @@ const Game = () => {
         description: null,
         startTime: null,
         // createdBy: 0,
-        gameItem: [],
+        gameItems: [],
       }
       return [newItem, ...prev]
     })
+  }
+  const onClickEditGame = (info) => {
+    getInfoGame(info?.id)
+    setidEditGame(info?.id)
   }
   const onClickCancelGame = () => {
     handleResetAddGame()
@@ -154,8 +173,61 @@ const Game = () => {
   const handleResetAddGame = () => {
     setlistAddGame([])
   }
-  const handleReloadGame = async () => {
+  const handleReloadAddGame = async () => {
     handleResetAddGame()
+    await onLoadGame()
+  }
+  const handleCloseEditGame = () => {
+    handleResetEditGame()
+  }
+  const handleResetEditGame = () => {
+    setidEditGame(null)
+    setinfoGame(null)
+  }
+  const handleReloadEditGame = async () => {
+    handleResetEditGame()
+    await onLoadGame()
+  }
+  const onChangeSearchGame = (e) => {
+    setsearchGame(e.target.value)
+  }
+  const onClickSearchGame = () => {
+    const keyword = `${searchGame ?? ''}`?.trim()
+    setsearchGame(keyword)
+    getListGame(itemSelectedLeague?.id, keyword)
+  }
+  const onLoadGame = async () => {
+    await getListGame(itemSelectedLeague?.id, searchGame)
+  }
+  const getListGame = async (lgId, kw) => {
+    if (!lgId) {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Vui lòng chọn giải đấu',
+      })
+    }
+    try {
+      setisLoadingGame(true)
+      const { data } = await gameServices.getListGameSearch(lgId, kw)
+      setlistGame(data)
+    } catch (error) {
+      console.log('getListGame : ', error)
+      errorToastCus()
+    } finally {
+      setisLoadingGame(false)
+    }
+  }
+  const getInfoGame = async (id) => {
+    try {
+      setisLoadingInfoGame(true)
+      const { data } = await gameServices.getInfoGameById(id)
+      setinfoGame(data)
+    } catch (error) {
+      console.log('getInfoGame : ', error)
+      errorToastCus()
+    } finally {
+      setisLoadingInfoGame(false)
+    }
   }
   const handleSubmitAddGame = () => {
     let arrGame = []
@@ -166,7 +238,7 @@ const Game = () => {
           title: 'Vui lòng kiểm tra lại thông tin trận đấu',
         })
       }
-      if (!item?.gameItem?.length) {
+      if (!item?.gameItems?.length) {
         return ToastCus.fire({
           icon: 'error',
           title: 'Vui lòng thêm kết quả',
@@ -174,7 +246,7 @@ const Game = () => {
       }
       let arrGameItem = []
       let tempOrder = 1
-      for (const itemGI of item?.gameItem) {
+      for (const itemGI of item?.gameItems) {
         if (!itemGI?.name || !itemGI?.odds) {
           return ToastCus.fire({
             icon: 'error',
@@ -184,9 +256,9 @@ const Game = () => {
         arrGameItem.push({ ...itemGI, displayOrder: tempOrder })
         tempOrder += 1
       }
-      arrGame.push({ ...item, gameItem: arrGameItem })
+      arrGame.push({ ...item, gameItems: arrGameItem })
     }
-    dispatch(postInfoGameAction(arrGame, handleReloadGame))
+    dispatch(postInfoGameAction(arrGame, handleReloadAddGame))
   }
 
   return (
@@ -204,7 +276,6 @@ const Game = () => {
             </Button>
           </div>
           <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
-
           <div className='flex justify-between items-center gap-2'>
             <Select
               showSearch
@@ -253,7 +324,7 @@ const Game = () => {
               itemSelected={itemSelectedLeague}
               onClickItem={onClickItemLeague}
               onClickEdit={onClickEditLeague}
-              handleSubmit={handleSubmitActiveLeague}
+              handleSubmit={handleToggleActiveLeague}
             />
           </Spin>
         </div>
@@ -271,6 +342,7 @@ const Game = () => {
               </Tag>
             </div>
             <Button
+              loading={isLoadingGame}
               type='primary'
               icon={<PlusOutlined />}
               onClick={onClickAddGame}
@@ -284,15 +356,15 @@ const Game = () => {
               className='w-96'
               placeholder='Nhập từ khóa...'
               allowClear
-              // value={searchLeague}
-              // onChange={onChangeSearchLeague}
+              value={searchGame}
+              onChange={onChangeSearchGame}
             />
             <Button
-              // loading={isLoadingLeague}
+              loading={isLoadingGame}
               className='w-8'
               type='primary'
               icon={<SyncOutlined />}
-              // onClick={onClickSearchLeague}
+              onClick={onClickSearchGame}
             />
             {listAddGame?.length > 0 && (
               <>
@@ -311,9 +383,17 @@ const Game = () => {
           </div>
           <Spin spinning={isLoadingGame}>
             <GameList
-              list={[1,2]}
+              list={listGame}
               listAdd={listAddGame}
+              idEdit={idEditGame}
+              infoEdit={infoGame}
+              isLoadingInfo={isLoadingInfoGame}
               setlistAdd={setlistAddGame}
+              setinfoEdit={setinfoGame}
+              onClickEdit={onClickEditGame}
+              handleToggleActive={handleToggleActiveGame}
+              handleMatchResult={handleMatchResultGame}
+              handleCloseEdit={handleCloseEditGame}
             />
           </Spin>
         </div>

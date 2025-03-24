@@ -21,7 +21,7 @@ function* postInfoLeagueSaga({ payload, handleReload }) {
       title: 'Thêm giải đấu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('postInfoLeagueSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -48,7 +48,7 @@ function* putInfoLeagueSaga({ payload, handleReload }) {
       title: 'Chỉnh sửa giải đấu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putInfoLeagueSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -56,20 +56,20 @@ function* putInfoLeagueSaga({ payload, handleReload }) {
     })
   }
 }
-function* putActiveLeagueSaga({ payload, onLoadLeague }) {
+function* putToggleActiveLeagueSaga({ payload, onLoadLeague }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
-    yield call(() => leagueServices.putActiveLeague(payload?.id))
+    yield call(() => leagueServices.putToggleActiveLeague(payload?.id))
     yield onLoadLeague()
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng giải đấu thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putToggleActiveLeagueSaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -81,5 +81,5 @@ function* putActiveLeagueSaga({ payload, onLoadLeague }) {
 export function* leagueSaga() {
   yield takeLatest(LEAGUE.POST_INFO_LEAGUE, postInfoLeagueSaga)
   yield takeLatest(LEAGUE.PUT_INFO_LEAGUE, putInfoLeagueSaga)
-  yield takeLatest(LEAGUE.PUT_ACTIVE_LEAGUE, putActiveLeagueSaga)
+  yield takeLatest(LEAGUE.PUT_TOGGLE_ACTIVE_LEAGUE, putToggleActiveLeagueSaga)
 }

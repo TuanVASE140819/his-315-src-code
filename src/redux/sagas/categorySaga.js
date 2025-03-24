@@ -16,7 +16,7 @@ function* postInfoCategorySaga({ payload, handleReload }) {
       title: 'Thêm bộ môn thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('postInfoCategorySaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -42,7 +42,7 @@ function* putInfoCategorySaga({ payload, handleReload }) {
       title: 'Chỉnh sửa bộ môn thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putInfoCategorySaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -50,20 +50,20 @@ function* putInfoCategorySaga({ payload, handleReload }) {
     })
   }
 }
-function* putActiveCategorySaga({ payload, onLoadCategory }) {
+function* putToggleActiveCategorySaga({ payload, onLoadCategory }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
-    yield call(() => categoryServices.putActiveCategory(payload?.id))
+    yield call(() => categoryServices.putToggleActiveCategory(payload?.id))
     yield onLoadCategory()
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng bộ môn thành công',
     })
   } catch (error) {
-    console.log(error)
+    console.log('putToggleActiveCategorySaga : ', error)
   } finally {
     yield put({
       type: COMMON.DISPATCH_LOADING_SCREEN,
@@ -75,5 +75,8 @@ function* putActiveCategorySaga({ payload, onLoadCategory }) {
 export function* categorySaga() {
   yield takeLatest(CATEGORY.POST_INFO_CATEGORY, postInfoCategorySaga)
   yield takeLatest(CATEGORY.PUT_INFO_CATEGORY, putInfoCategorySaga)
-  yield takeLatest(CATEGORY.PUT_ACTIVE_CATEGORY, putActiveCategorySaga)
+  yield takeLatest(
+    CATEGORY.PUT_TOGGLE_ACTIVE_CATEGORY,
+    putToggleActiveCategorySaga,
+  )
 }

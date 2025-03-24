@@ -12,7 +12,7 @@ function* getListCategorySaga() {
       payload: data,
     })
   } catch (error) {
-    console.log(error)
+    console.log('getListCategorySaga : ', error)
   }
 }
 function* getListTeamSaga({ categoryId }) {
@@ -25,7 +25,7 @@ function* getListTeamSaga({ categoryId }) {
       payload: data,
     })
   } catch (error) {
-    console.log(error)
+    console.log('getListTeamSaga : ', error)
   }
 }
 
