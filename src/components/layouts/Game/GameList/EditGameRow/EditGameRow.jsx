@@ -26,7 +26,6 @@ const EditGameRow = ({
   handleCloseEdit,
   handleSubmitEdit,
 }) => {
-  console.log(infoEdit)
   const { listTeam } = useSelector((state) => state.Common)
   const valueDate = useMemo(
     () => (infoEdit?.startTime ? dayjs(infoEdit?.startTime, dateMoment) : null),
@@ -78,7 +77,10 @@ const EditGameRow = ({
       gameItems: prev?.gameItems?.map((itemGI, idxGI) => {
         const editedItemGI = {
           ...itemGI,
-          odds: newValue >= 0 ? newValue : null,
+          odds:
+            (newValue >= 0 && newValue <= 5) || !newValue
+              ? newValue
+              : itemGI?.odds,
         }
         return idxGI === idx ? editedItemGI : itemGI
       }),

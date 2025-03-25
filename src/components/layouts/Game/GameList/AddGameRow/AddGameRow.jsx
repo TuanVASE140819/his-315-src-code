@@ -98,7 +98,10 @@ const AddGameRow = ({ info, setlistAdd }) => {
         const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
           const editedItemGI = {
             ...itemGI,
-            odds: newValue >= 0 ? +newValue : null,
+            odds:
+              (newValue >= 0 && newValue <= 5) || !newValue
+                ? newValue
+                : itemGI?.odds,
           }
           return idxGI === idx ? editedItemGI : itemGI
         })

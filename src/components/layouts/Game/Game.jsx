@@ -20,6 +20,30 @@ import LeagueList from './LeagueList/LeagueList'
 import LeagueModal from './LeagueModal/LeagueModal'
 import GameList from './GameList/GameList'
 import ToastCus from '../../common/Toast'
+import moment from 'moment'
+
+const optionsSatatusGame = [
+  {
+    key: 'all',
+    value: 'all',
+    label: 'Tất cả trạng thái',
+  },
+  {
+    key: 'New',
+    value: 'New',
+    label: 'Sắp diễn ra',
+  },
+  {
+    key: 'Live',
+    value: 'Live',
+    label: 'Chờ trả kết quả',
+  },
+  {
+    key: 'Done',
+    value: 'Done',
+    label: 'Đã trả kết quả',
+  },
+]
 
 const Game = () => {
   const dispatch = useDispatch()
@@ -34,6 +58,7 @@ const Game = () => {
   const [isLoadingLeague, setisLoadingLeague] = useState(false)
   const [isLoadingInfoLeague, setisLoadingInfoLeague] = useState(false)
 
+  const [filterStatusGame, setfilterStatusGame] = useState('all')
   const [searchGame, setsearchGame] = useState('')
   const [listAddGame, setlistAddGame] = useState([])
   const [listGame, setlistGame] = useState([])
@@ -105,9 +130,12 @@ const Game = () => {
     //     title: 'Vui lòng đợi tải dữ liệu',
     //   })
     // }
-    handleResetAddGame()
     setitemSelectedLeague(info)
-    getListGame(info?.id, searchGame)
+    handleResetAddGame()
+    handleResetEditGame()
+    setfilterStatusGame('all')
+    setsearchGame('')
+    getListGame(info?.id, 'all', '')
     dispatch(getListTeamAction(info?.categoryId))
   }
   const getListLeague = async (ctId, kw) => {
@@ -184,17 +212,19 @@ const Game = () => {
     handleResetAddGame()
     await onLoadGame()
   }
-  const handleCloseEditGame = async () => {
+  const handleReloadEditGame = async () => {
     handleResetEditGame()
     await onLoadGame()
+  }
+  const handleCloseEditGame = async () => {
+    handleResetEditGame()
   }
   const handleResetEditGame = () => {
     setidEditGame(null)
     setinfoGame(null)
   }
-  const handleReloadEditGame = async () => {
-    handleResetEditGame()
-    await onLoadGame()
+  const onChangeFilterStatusGame = (value) => {
+    setfilterStatusGame(value)
   }
   const onChangeSearchGame = (e) => {
     setsearchGame(e.target.value)
@@ -202,12 +232,12 @@ const Game = () => {
   const onClickSearchGame = () => {
     const keyword = `${searchGame ?? ''}`?.trim()
     setsearchGame(keyword)
-    getListGame(itemSelectedLeague?.id, keyword)
+    getListGame(itemSelectedLeague?.id, filterStatusGame, keyword)
   }
   const onLoadGame = async () => {
-    await getListGame(itemSelectedLeague?.id, searchGame)
+    await getListGame(itemSelectedLeague?.id, filterStatusGame, searchGame)
   }
-  const getListGame = async (lgId, kw) => {
+  const getListGame = async (lgId, status, kw) => {
     if (!lgId) {
       return ToastCus.fire({
         icon: 'error',
@@ -217,7 +247,36 @@ const Game = () => {
     try {
       setisLoadingGame(true)
       const { data } = await gameServices.getListGameSearch(lgId, kw)
-      setlistGame(data)
+
+      setlistGame(() => {
+        if (status === 'all') return data
+        // ?.sort(
+        //     (a, b) => moment(b?.createdAt) - moment(a?.createdAt),
+        //   )
+        else if (status === 'New')
+          return data
+            ?.filter(
+              (item) =>
+                item?.status === status &&
+                item?.startTime &&
+                moment().isBefore(moment(item?.startTime)),
+            )
+            ?.sort((a, b) => moment(b?.createdAt) - moment(a?.createdAt))
+        else if (status === 'Live')
+          return data
+            ?.filter(
+              (item) =>
+                item?.status === 'New' &&
+                item?.startTime &&
+                moment().isAfter(moment(item?.startTime)),
+            )
+            ?.sort((a, b) => moment(a?.startTime) - moment(b?.startTime))
+        else if (status === 'Done')
+          return data
+            ?.filter((item) => item?.status === status)
+            ?.sort((a, b) => moment(b?.startTime) - moment(a?.startTime))
+        return []
+      })
     } catch (error) {
       console.log('getListGame : ', error)
       errorToastCus()
@@ -255,13 +314,22 @@ const Game = () => {
       let arrGameItem = []
       let tempOrder = 1
       for (const itemGI of item?.gameItems) {
-        if (!itemGI?.name || !itemGI?.odds) {
+        if (
+          !itemGI?.name ||
+          !itemGI?.odds ||
+          itemGI?.odds < 0 ||
+          itemGI?.odds > 5
+        ) {
           return ToastCus.fire({
             icon: 'error',
             title: 'Vui lòng kiểm tra lại thông tin kết quả',
           })
         }
-        arrGameItem.push({ ...itemGI, displayOrder: tempOrder })
+        arrGameItem.push({
+          ...itemGI,
+          odds: +itemGI?.odds,
+          displayOrder: tempOrder,
+        })
         tempOrder += 1
       }
       arrGame.push({ ...item, gameItems: arrGameItem })
@@ -284,19 +352,28 @@ const Game = () => {
     let arrGameItem = []
     let tempOrder = 1
     for (const itemGI of infoGame?.gameItems) {
-      if (!itemGI?.name || !itemGI?.odds) {
+      if (
+        !itemGI?.name ||
+        !itemGI?.odds ||
+        itemGI?.odds < 0 ||
+        itemGI?.odds > 5
+      ) {
         return ToastCus.fire({
           icon: 'error',
           title: 'Vui lòng kiểm tra lại thông tin kết quả',
         })
       }
-      arrGameItem.push({ ...itemGI, displayOrder: tempOrder })
+      arrGameItem.push({
+        ...itemGI,
+        odds: +itemGI?.odds,
+        displayOrder: tempOrder,
+      })
       tempOrder += 1
     }
     dispatch(
       putInfoGameAction(
         { ...infoGame, gameItems: arrGameItem },
-        handleCloseEditGame,
+        handleReloadEditGame,
       ),
     )
   }
@@ -391,6 +468,12 @@ const Game = () => {
           </div>
           <Divider style={{ margin: '0.5rem 0', padding: 0 }} />
           <div className='flex justify-start items-center gap-2'>
+            <Select
+              className='w-40'
+              value={filterStatusGame}
+              onChange={onChangeFilterStatusGame}
+              options={optionsSatatusGame}
+            />
             <Input
               className='w-96'
               placeholder='Nhập từ khóa...'

@@ -9,7 +9,6 @@ function* postInfoGameSaga({ payload, handleReloadAddGame }) {
     payload: true,
   })
   try {
-    console.log(payload)
     yield call(() => gameServices.postInfoGame(payload))
     yield handleReloadAddGame()
     ToastCus.fire({
@@ -52,7 +51,6 @@ function* putToggleActiveGameSaga({ payload, onLoadGame }) {
     payload: true,
   })
   try {
-    console.log(payload)
     // yield call(() => gameServices.putToggleActiveGame(payload?.id))
     yield onLoadGame()
     ToastCus.fire({
@@ -74,7 +72,6 @@ function* putMatchResultGameSaga({ payload, onLoadGame }) {
     payload: true,
   })
   try {
-    console.log(payload)
     // yield call(() => gameServices.putMatchResultGame(payload?.id))
     yield onLoadGame()
     ToastCus.fire({

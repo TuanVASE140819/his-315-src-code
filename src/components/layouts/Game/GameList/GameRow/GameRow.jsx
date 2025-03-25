@@ -38,7 +38,7 @@ const GameRow = ({
         >
           <ClockCircleOutlined />
           {moment(info?.startTime).format('HH:mm - DD/MM/YYYY')}&nbsp;
-          {isDone ? '(Đã trả kết quả)' : isLive ? '(Đang chờ trả kết quả)' : ''}
+          {isDone ? '(Đã trả kết quả)' : isLive ? '(Chờ trả kết quả)' : ''}
         </Tag>
         <Popconfirm
           placement='topRight'
