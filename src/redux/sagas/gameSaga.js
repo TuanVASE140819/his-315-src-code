@@ -10,7 +10,7 @@ function* postInfoGameSaga({ payload, handleReloadAddGame }) {
   })
   try {
     console.log(payload)
-    yield call(() => gameServices.postInfoGame(payload[0]))
+    yield call(() => gameServices.postInfoGame(payload))
     yield handleReloadAddGame()
     ToastCus.fire({
       icon: 'success',
@@ -25,20 +25,14 @@ function* postInfoGameSaga({ payload, handleReloadAddGame }) {
     })
   }
 }
-function* putInfoGameSaga({ payload, handleReload }) {
+function* putInfoGameSaga({ payload, handleCloseEditGame }) {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
-    console.log(payload)
-    // yield call(() =>
-    //   gameServices.putInfoGame({
-    //     id: payload?.id,
-    //     name: payload?.name,
-    //   }),
-    // )
-    yield handleReload()
+    yield call(() => gameServices.putInfoGame(payload))
+    yield handleCloseEditGame()
     ToastCus.fire({
       icon: 'success',
       title: 'Chỉnh sửa trận đấu thành công',

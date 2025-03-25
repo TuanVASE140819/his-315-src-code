@@ -12,11 +12,11 @@ const GameList = ({
   isLoadingInfo,
   setlistAdd,
   setinfoEdit,
-  setidEdit,
   onClickEdit,
   handleToggleActive,
   handleMatchResult,
   handleCloseEdit,
+  handleSubmitEdit,
 }) => {
   return (
     <ul className='flex flex-col gap-4 mt-2 border rounded-md p-4 h-[79.5vh] overflow-auto bg-[#fdfdfd]'>
@@ -36,15 +36,16 @@ const GameList = ({
         item?.id === idEdit ? (
           <Spin spinning={isLoadingInfo} tip='Đang tải dữ liệu'>
             <EditGameRow
-              key={index}
+              key={item?.id}
               infoEdit={isLoadingInfo ? null : infoEdit}
               setinfoEdit={setinfoEdit}
               handleCloseEdit={handleCloseEdit}
+              handleSubmitEdit={handleSubmitEdit}
             />
           </Spin>
         ) : (
           <GameRow
-            key={index}
+            key={item?.id}
             info={item}
             onClickEdit={onClickEdit}
             handleToggleActive={handleToggleActive}

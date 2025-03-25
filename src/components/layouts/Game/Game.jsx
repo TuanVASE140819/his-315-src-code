@@ -12,6 +12,7 @@ import {
 import { gameServices } from '../../../redux/services/gameServices'
 import {
   postInfoGameAction,
+  putInfoGameAction,
   putToggleActiveGameAction,
   putMatchResultGameAction,
 } from '../../../redux/actions/gameActions'
@@ -164,6 +165,12 @@ const Game = () => {
     })
   }
   const onClickEditGame = (info) => {
+    if (info?.status === 'Done') {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Không thể chỉnh sửa trận đấu đã trả kết quả',
+      })
+    }
     getInfoGame(info?.id)
     setidEditGame(info?.id)
   }
@@ -177,8 +184,9 @@ const Game = () => {
     handleResetAddGame()
     await onLoadGame()
   }
-  const handleCloseEditGame = () => {
+  const handleCloseEditGame = async () => {
     handleResetEditGame()
+    await onLoadGame()
   }
   const handleResetEditGame = () => {
     setidEditGame(null)
@@ -260,7 +268,38 @@ const Game = () => {
     }
     dispatch(postInfoGameAction(arrGame, handleReloadAddGame))
   }
-
+  const handleSubmitEditGame = () => {
+    if (!infoGame?.description || !infoGame?.startTime) {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Vui lòng kiểm tra lại thông tin trận đấu',
+      })
+    }
+    if (!infoGame?.gameItems?.length) {
+      return ToastCus.fire({
+        icon: 'error',
+        title: 'Vui lòng thêm kết quả',
+      })
+    }
+    let arrGameItem = []
+    let tempOrder = 1
+    for (const itemGI of infoGame?.gameItems) {
+      if (!itemGI?.name || !itemGI?.odds) {
+        return ToastCus.fire({
+          icon: 'error',
+          title: 'Vui lòng kiểm tra lại thông tin kết quả',
+        })
+      }
+      arrGameItem.push({ ...itemGI, displayOrder: tempOrder })
+      tempOrder += 1
+    }
+    dispatch(
+      putInfoGameAction(
+        { ...infoGame, gameItems: arrGameItem },
+        handleCloseEditGame,
+      ),
+    )
+  }
   return (
     <>
       <div className='grid grid-cols-4 h-full'>
@@ -394,6 +433,7 @@ const Game = () => {
               handleToggleActive={handleToggleActiveGame}
               handleMatchResult={handleMatchResultGame}
               handleCloseEdit={handleCloseEditGame}
+              handleSubmitEdit={handleSubmitEditGame}
             />
           </Spin>
         </div>

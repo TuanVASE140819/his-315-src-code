@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Avatar, Checkbox, Popconfirm, Button, Tag } from 'antd'
 import {
   EditOutlined,
@@ -15,6 +15,17 @@ const GameRow = ({
   handleToggleActive,
   handleMatchResult,
 }) => {
+  const isDone = useMemo(
+    () => (info?.status === 'Done' ? true : false),
+    [info?.status],
+  )
+  const isLive = useMemo(
+    () =>
+      info?.startTime && moment().isAfter(moment(info?.startTime))
+        ? true
+        : false,
+    [info?.startTime, moment],
+  )
   return (
     <li className='bg-white hover:bg-slate-50 transition-all duration-300 border shadow-md rounded-md p-3'>
       <div className='w-full flex justify-start items-center gap-2'>
@@ -22,11 +33,12 @@ const GameRow = ({
           {info?.description}
         </div>
         <Tag
-          // color={'orange'}
+          color={isDone ? 'blue' : isLive ? 'red' : ''}
           className='m-0 p-0 px-1.5 flex justify-start items-center gap-1'
         >
           <ClockCircleOutlined />
-          {moment(info?.startTime).format('HH:mm - DD/MM/YYYY')}
+          {moment(info?.startTime).format('HH:mm - DD/MM/YYYY')}&nbsp;
+          {isDone ? '(Đã trả kết quả)' : isLive ? '(Đang chờ trả kết quả)' : ''}
         </Tag>
         <Popconfirm
           placement='topRight'
@@ -50,12 +62,12 @@ const GameRow = ({
         </Popconfirm>
         <EditOutlined
           onClick={() => onClickEdit(info)}
-          className='text-lg text-green-500 hover:text-green-700 transition-all duration-300 cursor-pointer'
+          className={`text-lg ${isDone ? 'text-gray-500 hover:text-gray-700' : 'text-green-500 hover:text-green-700'}  transition-all duration-300 cursor-pointer`}
         />
       </div>
       <ul className='w-full mt-2 flex flex-wrap justify-start gap-3'>
         {info?.gameItems?.map((item, index) => {
-          const isWin = info?.status === 'Done' && index === 0 ? true : false
+          const isWin = isDone && item?.isWin ? true : false
           return (
             <li
               key={index}
@@ -83,7 +95,7 @@ const GameRow = ({
                 {isWin && (
                   <CrownTwoTone className='text-lg' twoToneColor='#f59e0b' />
                 )}
-                {info?.status === 'New' && (
+                {!isDone && isLive && (
                   <div>
                     <Popconfirm
                       placement='topRight'

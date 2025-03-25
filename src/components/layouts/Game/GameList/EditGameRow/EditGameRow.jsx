@@ -18,127 +18,92 @@ moment.locale('vi')
 
 const dateView = 'HH:mm - DD/MM/YYYY'
 const dateMoment = 'YYYY-MM-DDTHH:mm:00'
+const dateViewBy = 'DD/MM/YYYY HH:mm:ss'
 
-const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
+const EditGameRow = ({
+  infoEdit,
+  setinfoEdit,
+  handleCloseEdit,
+  handleSubmitEdit,
+}) => {
+  console.log(infoEdit)
   const { listTeam } = useSelector((state) => state.Common)
   const valueDate = useMemo(
     () => (infoEdit?.startTime ? dayjs(infoEdit?.startTime, dateMoment) : null),
     [infoEdit?.startTime],
   )
 
-  // const onClickDeleteGame = () => {
-  //   setlistAdd((prev) => prev?.filter((item, index) => index !== info?.index))
-  // }
-  // const onChangeDescription = (e) => {
-  //   setlistAdd((prev) =>
-  //     prev?.map((item, index) => {
-  //       const editedItem = { ...item, description: e.target.value }
-  //       return index === info?.index ? editedItem : item
-  //     }),
-  //   )
-  // }
-  // const onChangeStartTime = (date, dateString) => {
-  //   setlistAdd((prev) =>
-  //     prev?.map((item, index) => {
-  //       const editedItem = {
-  //         ...item,
-  //         startTime: dateString
-  //           ? moment(dateString, dateView).format(dateMoment)
-  //           : null,
-  //       }
-  //       return index === info?.index ? editedItem : item
-  //     }),
-  //   )
-  // }
-  // const onClickAddGameItem = () => {
-  //   setlistAdd((prev) =>
-  //     prev?.map((item, index) => {
-  //       const newGameItem = {
-  //         imageUrl: null,
-  //         name: null,
-  //         odds: null,
-  //         teamId: null,
-  //       }
-  //       const editedItem = {
-  //         ...item,
-  //         gameItems: [...item?.gameItems, newGameItem],
-  //       }
-  //       return index === info?.index ? editedItem : item
-  //     }),
-  //   )
-  // }
-  // const onClickDeleteGameItem = (idx) => {
-  //   setlistAdd((prev) =>
-  //     prev?.map((item, index) => {
-  //       const editedItem = {
-  //         ...item,
-  //         gameItems: item?.gameItems?.filter((itemGI, idxGI) => idxGI !== idx),
-  //       }
-  //       return index === info?.index ? editedItem : item
-  //     }),
-  //   )
-  // }
-  // const onChangeNameGameItem = (value, idx) => {
-  //   setlistAdd((prev) =>
-  //     prev?.map((item, index) => {
-  //       const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
-  //         const editedItemGI = { ...itemGI, name: value, teamId: null }
-  //         return idxGI === idx ? editedItemGI : itemGI
-  //       })
-  //       const editedItem = {
-  //         ...item,
-  //         gameItems: editedGameItem,
-  //       }
-  //       return index === info?.index ? editedItem : item
-  //     }),
-  //   )
-  // }
-  // const onChangeOddsGameItem = (value, idx) => {
-  //   const newValue = value?.replaceAll(',', '.')?.replace(/[^0-9.]/g, '')
-  //   setlistAdd((prev) =>
-  //     prev?.map((item, index) => {
-  //       const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
-  //         const editedItemGI = {
-  //           ...itemGI,
-  //           odds: newValue >= 0 ? newValue : null,
-  //         }
-  //         return idxGI === idx ? editedItemGI : itemGI
-  //       })
-  //       const editedItem = {
-  //         ...item,
-  //         gameItems: editedGameItem,
-  //       }
-  //       return index === info?.index ? editedItem : item
-  //     }),
-  //   )
-  // }
-  // const onChangeTeamIdGameItem = async (value, opt, idx) => {
-  //   const newImageUrlGI = opt?.info?.imageUrl
-  //   const newNameGI = opt?.info?.name ? `${opt?.info?.name ?? ''} thắng` : null
-  //   await setlistAdd((prev) => {
-  //     const newList = prev?.map((item, index) => {
-  //       const editedGameItem = item?.gameItems?.map((itemGI, idxGI) => {
-  //         const editedItemGI = {
-  //           ...itemGI,
-  //           imageUrl: newImageUrlGI,
-  //           name: newNameGI,
-  //           teamId: value,
-  //         }
-  //         return idxGI === idx ? editedItemGI : itemGI
-  //       })
-  //       const editedItem = {
-  //         ...item,
-  //         gameItems: editedGameItem,
-  //       }
-  //       return index === info?.index ? editedItem : item
-  //     })
-  //     return newList
-  //   })
-  // }
+  const onChangeDescription = (e) => {
+    setinfoEdit((prev) => ({ ...prev, description: e.target.value }))
+  }
+  const onChangeStartTime = (date, dateString) => {
+    setinfoEdit((prev) => ({
+      ...prev,
+      startTime: dateString
+        ? moment(dateString, dateView).format(dateMoment)
+        : null,
+    }))
+  }
+  const onClickAddGameItem = () => {
+    const newGameItem = {
+      imageUrl: null,
+      name: null,
+      odds: null,
+      teamId: null,
+    }
+    setinfoEdit((prev) => ({
+      ...prev,
+      gameItems: [...prev?.gameItems, newGameItem],
+    }))
+  }
+  const onClickDeleteGameItem = (idx) => {
+    setinfoEdit((prev) => ({
+      ...prev,
+      gameItems: prev?.gameItems?.filter((itemGI, idxGI) => idxGI !== idx),
+    }))
+  }
+  const onChangeNameGameItem = (value, idx) => {
+    setinfoEdit((prev) => ({
+      ...prev,
+      gameItems: prev?.gameItems?.map((itemGI, idxGI) => {
+        const editedItemGI = { ...itemGI, name: value, teamId: null }
+        return idxGI === idx ? editedItemGI : itemGI
+      }),
+    }))
+  }
+  const onChangeOddsGameItem = (value, idx) => {
+    const newValue = value?.replaceAll(',', '.')?.replace(/[^0-9.]/g, '')
+    setinfoEdit((prev) => ({
+      ...prev,
+      gameItems: prev?.gameItems?.map((itemGI, idxGI) => {
+        const editedItemGI = {
+          ...itemGI,
+          odds: newValue >= 0 ? newValue : null,
+        }
+        return idxGI === idx ? editedItemGI : itemGI
+      }),
+    }))
+  }
+  const onChangeTeamIdGameItem = async (value, opt, idx) => {
+    const newImageUrlGI = opt?.info?.imageUrl
+    const newNameGI = opt?.info?.name ? `${opt?.info?.name ?? ''} thắng` : null
+    await setinfoEdit((prev) => ({
+      ...prev,
+      gameItems: prev?.gameItems?.map((itemGI, idxGI) => {
+        const editedItemGI = {
+          ...itemGI,
+          imageUrl: newImageUrlGI,
+          name: newNameGI,
+          teamId: value,
+        }
+        return idxGI === idx ? editedItemGI : itemGI
+      }),
+    }))
+  }
   return (
     <li className='bg-white hover:bg-slate-50 transition-all duration-300 border shadow-md rounded-md p-3'>
       {infoEdit ? (
-        <>
+        <div className='flex flex-col gap-3'>
           <div className='w-full grid grid-cols-3 items-center'>
             <div className='col-span-2 pr-1.5'>
               <Input
@@ -148,7 +113,7 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
                 className='font-medium text-gray-700'
                 value={infoEdit?.description}
                 status={!infoEdit?.description ? 'error' : ''}
-                // onChange={onChangeDescription}
+                onChange={onChangeDescription}
               />
             </div>
             <div className='pl-1.5 flex justify-start items-center gap-2'>
@@ -163,7 +128,7 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
                 format={dateView}
                 value={valueDate}
                 status={!valueDate ? 'error' : ''}
-                // onChange={onChangeStartTime}
+                onChange={onChangeStartTime}
                 panelRender={(panel) => (
                   <div className='custom-datepanel'>
                     <style>
@@ -181,7 +146,7 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
               />
               <SaveOutlined
                 className='ml-auto text-lg text-blue-500 hover:text-blue-700 transition-all duration-300 cursor-pointer'
-                // onClick={() => onClickDeleteGameItem(index)}
+                onClick={handleSubmitEdit}
               />
               <CloseOutlined
                 className='text-lg text-red-500 hover:text-red-700 transition-all duration-300 cursor-pointer'
@@ -189,7 +154,7 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
               />
             </div>
           </div>
-          <ul className='w-full mt-3 flex flex-wrap justify-start gap-3'>
+          <ul className='w-full flex flex-wrap justify-start gap-3'>
             {infoEdit?.gameItems?.map((item, index) => (
               <li
                 key={index}
@@ -216,7 +181,9 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
                     style={{ fontSize: '11px' }}
                     value={item?.name}
                     status={!item?.name ? 'error' : ''}
-                    // onChange={(e) => onChangeNameGameItem(e.target.value, index)}
+                    onChange={(e) =>
+                      onChangeNameGameItem(e.target.value, index)
+                    }
                   />
                   <Input
                     size='small'
@@ -228,7 +195,9 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
                     suffix='số points'
                     value={item?.odds}
                     status={!item?.odds && item?.odds !== 0 ? 'error' : ''}
-                    // onChange={(e) => onChangeOddsGameItem(e.target.value, index)}
+                    onChange={(e) =>
+                      onChangeOddsGameItem(e.target.value, index)
+                    }
                   />
                 </div>
                 <div className='flex flex-col items-center gap-1'>
@@ -249,9 +218,9 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
                             ?.includes(`${input ?? ''}`?.toLowerCase())
                         }
                         value={item?.teamId}
-                        // onChange={(value, opt) =>
-                        //   onChangeTeamIdGameItem(value, opt, index)
-                        // }
+                        onChange={(value, opt) =>
+                          onChangeTeamIdGameItem(value, opt, index)
+                        }
                         options={listTeam?.map((item) => ({
                           key: item?.id,
                           value: item?.id,
@@ -265,7 +234,7 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
                   </Popover>
                   <DeleteOutlined
                     className='text-lg text-red-500 hover:text-red-700 transition-all duration-300 cursor-pointer'
-                    // onClick={() => onClickDeleteGameItem(index)}
+                    onClick={() => onClickDeleteGameItem(index)}
                   />
                 </div>
               </li>
@@ -273,12 +242,30 @@ const EditGameRow = ({ infoEdit, setinfoEdit, handleCloseEdit }) => {
             <li
               key={'add'}
               className={`min-[1900px]:w-[32.65%] w-[32.3%] h-[58.0625px] border border-dashed ${!infoEdit?.gameItems?.length ? 'border-red-500 text-red-500 bg-red-50 bg-opacity-30' : ''} hover:border-blue-500 text-gray-600 hover:text-blue-500 hover:bg-sky-50 rounded-md p-2 bg-[#fff] flex justify-center items-center gap-2 cursor-pointer`}
-              // onClick={onClickAddGameItem}
+              onClick={onClickAddGameItem}
             >
               <PlusOutlined className='text-base' />
             </li>
           </ul>
-        </>
+          <div className='flex justify-between items-center text-xs italic text-gray-500'>
+            <div>
+              Người tạo:&nbsp;{infoEdit?.createdBy}
+              {infoEdit?.createdAt
+                ? ` - ${moment(infoEdit?.createdAt).format(dateViewBy)}`
+                : ''}
+            </div>
+            <div>
+              {infoEdit?.updatedBy && (
+                <>
+                  Người sửa:&nbsp;{infoEdit?.updatedBy}
+                  {infoEdit?.updatedAt
+                    ? ` - ${moment(infoEdit?.updatedAt).format(dateViewBy)}`
+                    : ''}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       ) : (
         <div className='h-24'></div>
       )}

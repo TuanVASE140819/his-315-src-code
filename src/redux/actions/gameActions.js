@@ -5,10 +5,10 @@ export const postInfoGameAction = (payload, handleReloadAddGame) => ({
   payload,
   handleReloadAddGame,
 })
-export const putInfoGameAction = (payload, handleReload) => ({
+export const putInfoGameAction = (payload, handleCloseEditGame) => ({
   type: GAME.PUT_INFO_GAME,
   payload,
-  handleReload,
+  handleCloseEditGame,
 })
 export const putToggleActiveGameAction = (payload, onLoadGame) => ({
   type: GAME.PUT_TOGGLE_ACTIVE_GAME,
