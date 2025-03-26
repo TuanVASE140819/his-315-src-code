@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { COMMON } from '../constants/constants'
 import { commonServices } from '../services/commonServices'
-import { teamServices } from '../services/teamServices'
+// import { teamServices } from '../services/teamServices'
 // import ToastCus from '../../components/common/Toast'
 
 function* getListCategorySaga() {
@@ -17,9 +17,7 @@ function* getListCategorySaga() {
 }
 function* getListTeamSaga({ categoryId }) {
   try {
-    const { data } = yield call(() =>
-      teamServices.getListTeamSearch(categoryId, ''),
-    )
+    const { data } = yield call(() => commonServices.getListTeam(categoryId))
     yield put({
       type: COMMON.DISPATCH_LIST_TEAM,
       payload: data,

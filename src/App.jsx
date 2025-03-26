@@ -13,19 +13,10 @@ function App() {
         <Routes>
           <Route path='/' element={<RootLayout />}>
             {route?.map(
-              ({
-                index,
-                path,
-                Component,
-                isLayout,
-                isAuth,
-                isCheckIn,
-                redirectPath,
-              }) => {
+              ({ index, path, Component, isLayout, isAuth, redirectPath }) => {
                 const element = (
                   <AuthComponent
                     isAuth={isAuth}
-                    isCheckIn={isCheckIn}
                     Component={Component}
                     redirectPath={redirectPath}
                   />

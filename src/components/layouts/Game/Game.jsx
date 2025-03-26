@@ -448,14 +448,31 @@ const Game = () => {
           <div className='flex justify-between items-center'>
             <div className='flex gap-2'>
               <div className='font-medium text-xl text-gray-500'>Trận đấu</div>
-              <Tag
-                color={itemSelectedLeague ? 'blue' : 'red'}
-                className='m-0 p-0 px-2 flex items-center text-base'
-              >
-                {itemSelectedLeague
-                  ? itemSelectedLeague?.name
-                  : 'Chưa chọn giải đấu'}
-              </Tag>
+              {itemSelectedLeague ? (
+                <>
+                  <Tag
+                    color='blue'
+                    className='m-0 p-0 px-2 flex items-center text-base'
+                  >
+                    {itemSelectedLeague?.name}
+                  </Tag>
+                  <Tag
+                    color='blue'
+                    className='m-0 p-0 px-2 flex items-center text-base'
+                  >
+                    {itemSelectedLeague?.categoryName}
+                  </Tag>
+                </>
+              ) : (
+                <>
+                  <Tag
+                    color='red'
+                    className='m-0 p-0 px-2 flex items-center text-base'
+                  >
+                    Chưa chọn giải đấu
+                  </Tag>
+                </>
+              )}
             </div>
             <Button
               loading={isLoadingGame}

@@ -5,8 +5,8 @@ export const gameServices = {
   putInfoGame: (payload) => axiosInstance.put('Game/Admin/UpdateGame', payload),
   putToggleActiveGame: (id) =>
     axiosInstance.put(`Game/Admin/ToggleActive/${id}`),
-  putMatchResultGame: (id) =>
-    axiosInstance.put(`Game/Admin/ToggleActive/${id}`),
+  putMatchResultGame: (gameItemId) =>
+    axiosInstance.put(`Game/Admin/UpdateResult?gameItemId=${gameItemId}`),
   getListGameSearch: (leagueId, keyword) =>
     axiosInstance.get('Game/Admin/GetAllGames', {
       params: { leagueId, keyword },
