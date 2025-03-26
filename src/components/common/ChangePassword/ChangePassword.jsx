@@ -125,52 +125,64 @@ const ChangePassword = ({ open, handleClose }) => {
         cancelText='Đóng'
         onCancel={handleCancel}
       >
-        <div className='grid grid-flow-row gap-2'>
-          <div>
-            <div className='font-medium flex'>
-              Mật khẩu hiện tại<span className='text-red-500'>&nbsp;(*)</span>
+        <form>
+          <input
+            type='text'
+            name='username'
+            autoComplete='username'
+            readOnly
+            hidden
+          />
+          <div className='grid grid-flow-row gap-2'>
+            <div>
+              <div className='font-medium flex'>
+                Mật khẩu hiện tại<span className='text-red-500'>&nbsp;(*)</span>
+              </div>
+              <Input.Password
+                name='oldPassword'
+                value={formik.values.oldPassword}
+                onChange={formik.handleChange}
+                status={isErrorOld ? 'error' : ''}
+                autoComplete='current-password'
+              />
+              <div className='text-left text-red-500 h-4 text-xs'>
+                {isErrorOld}
+              </div>
             </div>
-            <Input.Password
-              name='oldPassword'
-              value={formik.values.oldPassword}
-              onChange={formik.handleChange}
-              status={isErrorOld ? 'error' : ''}
-            />
-            <div className='text-left text-red-500 h-4 text-xs'>
-              {isErrorOld}
+            <Divider style={{ margin: 0, padding: 0 }} />
+            <div>
+              <div className='font-medium flex'>
+                Mật khẩu mới<span className='text-red-500'>&nbsp;(*)</span>
+              </div>
+              <Input.Password
+                name='newPassword'
+                value={formik.values.newPassword}
+                onChange={formik.handleChange}
+                status={isErrorNew ? 'error' : ''}
+                autoComplete='new-password'
+              />
+              <div className='text-left text-red-500 h-4 text-xs'>
+                {isErrorNew}
+              </div>
+            </div>
+            <div>
+              <div className='font-medium flex'>
+                Nhập lại mật khẩu mới
+                <span className='text-red-500'>&nbsp;(*)</span>
+              </div>
+              <Input.Password
+                name='confirmNewPassword'
+                value={formik.values.confirmNewPassword}
+                onChange={formik.handleChange}
+                status={isErrorConfirm ? 'error' : ''}
+                autoComplete='new-password'
+              />
+              <div className='text-left text-red-500 h-4 text-xs'>
+                {isErrorConfirm}
+              </div>
             </div>
           </div>
-          <Divider style={{ margin: 0, padding: 0 }} />
-          <div>
-            <div className='font-medium flex'>
-              Mật khẩu mới<span className='text-red-500'>&nbsp;(*)</span>
-            </div>
-            <Input.Password
-              name='newPassword'
-              value={formik.values.newPassword}
-              onChange={formik.handleChange}
-              status={isErrorNew ? 'error' : ''}
-            />
-            <div className='text-left text-red-500 h-4 text-xs'>
-              {isErrorNew}
-            </div>
-          </div>
-          <div>
-            <div className='font-medium flex'>
-              Nhập lại mật khẩu mới
-              <span className='text-red-500'>&nbsp;(*)</span>
-            </div>
-            <Input.Password
-              name='confirmNewPassword'
-              value={formik.values.confirmNewPassword}
-              onChange={formik.handleChange}
-              status={isErrorConfirm ? 'error' : ''}
-            />
-            <div className='text-left text-red-500 h-4 text-xs'>
-              {isErrorConfirm}
-            </div>
-          </div>
-        </div>
+        </form>
       </Modal>
     </>
   )
