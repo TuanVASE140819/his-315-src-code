@@ -35,6 +35,11 @@ const menuItems = [
         label: <Link to={'nguoidung/taikhoan'}>Tài khoản</Link>,
       },
       {
+        key: '/nguoidung/khachhang',
+        title: 'Khách hàng',
+        label: <Link to={'nguoidung/khachhang'}>Khách hàng</Link>,
+      },
+      {
         key: '/nguoidung/doimatkhau',
         title: 'Đổi mật khẩu',
         label: 'Đổi mật khẩu',

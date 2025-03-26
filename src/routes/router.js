@@ -2,6 +2,7 @@ import Dashboard from '../pages/Dashboard'
 import Account from '../components/layouts/Account/Account'
 import Game from '../components/layouts/Game/Game'
 import Team from '../components/layouts/Team/Team'
+import Customer from '../components/layouts/Customer/Customer'
 
 export const route = [
   {
@@ -14,6 +15,13 @@ export const route = [
   {
     path: '/nguoidung/taikhoan',
     Component: Account,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/nguoidung/khachhang',
+    Component: Customer,
     isLayout: true,
     isAuth: true,
     redirectPath: '/login',

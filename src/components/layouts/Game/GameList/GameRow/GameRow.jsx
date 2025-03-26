@@ -76,6 +76,7 @@ const GameRow = ({
               <Avatar
                 key={item?.imageUrl}
                 shape='square'
+                className='bg-amber-500 bg-opacity-70 w-[50.6px] h-[40px]'
                 icon={
                   item?.imageUrl ? (
                     <img src={item?.imageUrl} />
@@ -83,7 +84,6 @@ const GameRow = ({
                     <FileImageOutlined className='text-lg' />
                   )
                 }
-                className='bg-amber-500 bg-opacity-70 w-[50.6px] h-[40px]'
               />
               <div className='w-full flex flex-col text-sm'>
                 <div className={`font-medium text-gray-700`}>{item?.name}</div>

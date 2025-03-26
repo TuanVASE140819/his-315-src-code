@@ -1,8 +1,8 @@
 export const formattedNumber = (
   number, // * số nhập vào  null || undefined => number = 0
 ) =>
-  number !== null || undefined
-    ? number?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  typeof +number === 'number' && !isNaN(+number)
+    ? number?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     : `0`
 
 export const roundToDecimal = (num, decimalPlaces) => {
