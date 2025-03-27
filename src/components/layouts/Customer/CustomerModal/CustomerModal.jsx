@@ -87,7 +87,7 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
   }
   const onLoad = () => {
     handleReset()
-    getListHistory(fromDate, toDate, filterType, pageIndex)
+    getListHistory(today, today, 'all', 1)
   }
   const getListHistory = async (from, to, type, page) => {
     try {
