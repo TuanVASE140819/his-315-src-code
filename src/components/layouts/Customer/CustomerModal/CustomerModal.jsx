@@ -86,6 +86,7 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
     getListHistory(fromDate, toDate, filterType, pageIndex)
   }
   const onLoad = () => {
+    handleReset()
     getListHistory(fromDate, toDate, filterType, pageIndex)
   }
   const getListHistory = async (from, to, type, page) => {
@@ -117,7 +118,6 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
     }
   }
   useEffect(() => {
-    handleReset()
     info?.id && onLoad()
   }, [info])
 
