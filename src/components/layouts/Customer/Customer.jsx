@@ -8,7 +8,7 @@ import { customerServices } from '../../../redux/services/customerServices'
 import CustomerList from './CustomerList/CustomerList'
 import CustomerModal from './CustomerModal/CustomerModal'
 import ToastCus from '../../common/Toast'
-const PAGE_SIZE = 11
+const PAGE_SIZE = 50
 const HEIGHT = 730
 
 const Customer = () => {
