@@ -1,15 +1,5 @@
-import React, { useMemo } from 'react'
-import {
-  List,
-  Avatar,
-  Switch,
-  Tag,
-  Popconfirm,
-  // Skeleton,
-  // ConfigProvider,
-  // Table,
-  // Checkbox,
-} from 'antd'
+import React from 'react'
+import { List, Avatar, Switch, Tag, Popconfirm, Button } from 'antd'
 import {
   EyeOutlined,
   UserOutlined,
@@ -19,11 +9,17 @@ import {
 } from '@ant-design/icons'
 import { formattedNumber } from '../../../../utils/formattedNumber'
 import VirtualList from 'rc-virtual-list'
+import moment from 'moment'
+const dateView = 'DD/MM/YYYY'
+const dateViewFull = 'DD/MM/YYYY HH:mm:ss'
 
-const CustomerList = () => {
-  const randomNumber = (min, max) =>
-    Math.floor(Math.random() * (max - min + 1)) + min
-  const dataSource = useMemo(() => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [])
+const CustomerList = ({
+  height,
+  list,
+  onClickItem,
+  onScroll,
+  handleToggleActive,
+}) => {
   // const columns = useMemo(
   //   () => [
   //     {
@@ -104,9 +100,15 @@ const CustomerList = () => {
   return (
     <>
       <List bordered>
-        <VirtualList height={730} itemKey={(item) => item} data={dataSource}>
+        <VirtualList
+          // className='h-[79.4vh] overflow-auto'
+          itemKey={(item) => item?.email}
+          data={list}
+          height={height}
+          onScroll={onScroll}
+        >
           {(item) => (
-            <List.Item key={item}>
+            <List.Item key={item?.id}>
               <List.Item.Meta
                 avatar={
                   <Avatar
@@ -117,28 +119,42 @@ const CustomerList = () => {
                   />
                 }
                 title={
-                  <div className='text-gray-700 hover:text-blue-500 cursor-pointer'>
-                    {'Nguyễn Hoàng Tiến'}
-                    <span
-                      className={`ml-3 text-xs font-medium ${item === 1 ? 'text-red-500' : 'text-gray-500'}`}
-                    >
-                      {'admin@gmail.com'}
-                    </span>
-                  </div>
+                  <>
+                    <div className='flex justify-start items-center gap-3'>
+                      <div
+                        className='text-gray-700 hover:text-blue-500 cursor-pointer'
+                        onClick={() => onClickItem(item)}
+                      >
+                        {item?.fullName}
+                      </div>
+                      <div
+                        className={`text-xs ${item?.isActive ? 'text-gray-500' : 'text-red-500'}`}
+                      >
+                        {item?.email}
+                      </div>
+                    </div>
+                  </>
                 }
                 description={
-                  <div className='flex justify-start items-center gap-1'>
-                    <Tag>0123456789</Tag>
-                    <Tag>Nam</Tag>
-                    <Tag>01/01/2000</Tag>
+                  <div className='text-xs italic'>
+                    {item?.createdAt
+                      ? moment(item?.createdAt).format(dateViewFull)
+                      : ''}
                   </div>
                 }
               />
               <div className='flex justify-end items-center gap-5'>
-                <div className='text-end font-medium flex items-center gap-1 pr-12'>
-                  <div className='pt-0.5'>
-                    {formattedNumber(randomNumber(0, 1000000000))}
-                  </div>
+                <div className='flex justify-between items-center w-60'>
+                  <Tag>{item?.phone}</Tag>
+                  <Tag>{item?.sex}</Tag>
+                  <Tag>
+                    {item?.dateOfBirth
+                      ? moment(item?.dateOfBirth).format(dateView)
+                      : ''}
+                  </Tag>
+                </div>
+                <div className='text-end font-medium flex justify-end items-center gap-1 px-12 w-72'>
+                  <div className='pt-0.5'>{formattedNumber(item?.points)}</div>
                   <CrownOutlined className='text-amber-500' />
                 </div>
                 <Popconfirm
@@ -149,13 +165,15 @@ const CustomerList = () => {
                       Bạn thực sự muốn
                       <span className='font-medium'>
                         &nbsp;
-                        {/* {text ? 'KHÓA TÀI KHOẢN' : 'KÍCH HOẠT TÀI KHOẢN'} */}
+                        {item?.isActive
+                          ? 'KHÓA TÀI KHOẢN'
+                          : 'KÍCH HOẠT TÀI KHOẢN'}
                         &nbsp;-&nbsp;
-                        {/* {record?.email}? */}
+                        {item?.email}?
                       </span>
                     </p>
                   }
-                  // onConfirm={() => handleToggleActive(record)}
+                  onConfirm={() => handleToggleActive(item)}
                   okText='Xác nhận'
                   cancelText='Hủy bỏ'
                   className='ml-auto'
@@ -164,10 +182,13 @@ const CustomerList = () => {
                     size='small'
                     checkedChildren={<CheckOutlined />}
                     unCheckedChildren={<CloseOutlined />}
-                    value={item === 1 ? false : true}
+                    value={item?.isActive}
                   />
                 </Popconfirm>
-                <EyeOutlined className='text-xl text-blue-500 hover:text-blue-700  transition-all duration-300 cursor-pointer' />
+                <EyeOutlined
+                  className='text-xl text-blue-500 hover:text-blue-700  transition-all duration-300 cursor-pointer'
+                  onClick={() => onClickItem(item)}
+                />
               </div>
             </List.Item>
           )}

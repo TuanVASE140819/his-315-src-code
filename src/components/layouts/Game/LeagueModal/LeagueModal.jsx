@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
-import { Modal, Input, Select, Checkbox } from 'antd'
+import { Modal, Input, Select } from 'antd'
 import { addLeagueSchema } from '../../../../schemas/leagueSchemas'
 import {
   postInfoLeagueAction,

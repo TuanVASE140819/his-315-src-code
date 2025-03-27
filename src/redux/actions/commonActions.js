@@ -7,3 +7,6 @@ export const getListTeamAction = (categoryId) => ({
   type: COMMON.GET_LIST_TEAM,
   categoryId,
 })
+export const getListTransactionTypeAction = () => ({
+  type: COMMON.GET_LIST_TRANSACTION_TYPE,
+})

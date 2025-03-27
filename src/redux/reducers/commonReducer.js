@@ -4,6 +4,7 @@ const initialState = {
   isLoadingScreen: false,
   listCategory: [],
   listTeam: [],
+  listTransactionType: [],
 }
 
 const Common = (state = initialState, { type, payload }) => {
@@ -19,6 +20,9 @@ const Common = (state = initialState, { type, payload }) => {
         break
       case COMMON.DISPATCH_LIST_TEAM:
         draft.listTeam = payload
+        break
+      case COMMON.DISPATCH_LIST_TRANSACTION_TYPE:
+        draft.listTransactionType = payload
         break
       default:
         return state

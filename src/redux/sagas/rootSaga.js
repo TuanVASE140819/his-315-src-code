@@ -5,9 +5,11 @@ import { categorySaga } from './categorySaga'
 import { teamSaga } from './teamSaga'
 import { leagueSaga } from './leagueSaga'
 import { gameSaga } from './gameSaga'
+import { customerSaga } from './customerSaga'
 
 export function* rootSaga() {
   yield all([
+    customerSaga(),
     gameSaga(),
     leagueSaga(),
     teamSaga(),
