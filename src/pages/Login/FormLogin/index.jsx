@@ -39,6 +39,7 @@ function FormLogin() {
             placeholder='Nhập tài khoản'
             onChange={formik.handleChange}
             status={formik.errors.email && formik.touched.email ? 'error' : ''}
+            autoComplete='email'
           />
           <div className='text-left text-red-500 h-5 text-sm'>
             {formik.touched.email && formik.errors.email
@@ -59,6 +60,7 @@ function FormLogin() {
             status={
               formik.errors.password && formik.touched.password ? 'error' : ''
             }
+            autoComplete='current-password'
           />
           <div className='text-left text-red-500 h-5 text-sm'>
             {formik.touched.password && formik.errors.password
