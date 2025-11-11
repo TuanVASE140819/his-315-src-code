@@ -3,7 +3,10 @@ import { LEAGUE, COMMON } from '../constants/constants'
 import { leagueServices } from '../services/leagueServices'
 import ToastCus from '../../components/common/Toast'
 
-function* postInfoLeagueSaga({ payload, handleReload }) {
+function* postInfoLeagueSaga({
+  payload,
+  handleReload,
+}: import('../../types').PostLeagueAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
@@ -15,7 +18,7 @@ function* postInfoLeagueSaga({ payload, handleReload }) {
         name: payload?.name,
       }),
     )
-    yield handleReload()
+    if (handleReload) yield call(() => handleReload())
     ToastCus.fire({
       icon: 'success',
       title: 'Thêm giải đấu thành công',
@@ -29,7 +32,10 @@ function* postInfoLeagueSaga({ payload, handleReload }) {
     })
   }
 }
-function* putInfoLeagueSaga({ payload, handleReload }) {
+function* putInfoLeagueSaga({
+  payload,
+  handleReload,
+}: import('../../types').PutLeagueAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
@@ -42,7 +48,7 @@ function* putInfoLeagueSaga({ payload, handleReload }) {
         categoryId: payload?.categoryId,
       }),
     )
-    yield handleReload()
+    if (handleReload) yield call(() => handleReload())
     ToastCus.fire({
       icon: 'success',
       title: 'Chỉnh sửa giải đấu thành công',
@@ -56,14 +62,17 @@ function* putInfoLeagueSaga({ payload, handleReload }) {
     })
   }
 }
-function* putToggleActiveLeagueSaga({ payload, onLoadLeague }) {
+function* putToggleActiveLeagueSaga({
+  payload,
+  onLoadLeague,
+}: import('../../types').ToggleActiveLeagueAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => leagueServices.putToggleActiveLeague(payload?.id))
-    yield onLoadLeague()
+    if (onLoadLeague) yield call(() => onLoadLeague())
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng giải đấu thành công',
@@ -78,8 +87,8 @@ function* putToggleActiveLeagueSaga({ payload, onLoadLeague }) {
   }
 }
 
-export function* leagueSaga() {
-  yield takeLatest(LEAGUE.POST_INFO_LEAGUE as any, postInfoLeagueSaga as any)
-  yield takeLatest(LEAGUE.PUT_INFO_LEAGUE as any, putInfoLeagueSaga as any)
-  yield takeLatest(LEAGUE.PUT_TOGGLE_ACTIVE_LEAGUE as any, putToggleActiveLeagueSaga as any)
+export function* leagueSaga(): import('../../types/saga.types').SagaGen {
+  yield takeLatest(LEAGUE.POST_INFO_LEAGUE, postInfoLeagueSaga)
+  yield takeLatest(LEAGUE.PUT_INFO_LEAGUE, putInfoLeagueSaga)
+  yield takeLatest(LEAGUE.PUT_TOGGLE_ACTIVE_LEAGUE, putToggleActiveLeagueSaga)
 }

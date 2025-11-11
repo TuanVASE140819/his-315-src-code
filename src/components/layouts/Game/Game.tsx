@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import useAppSelector from '../../../redux/store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
 import { Button, Input, Divider, Spin, Tag, Select } from 'antd'
 import { PlusOutlined, SyncOutlined, SaveOutlined } from '@ant-design/icons'
 import { leagueServices } from '../../../redux/services/leagueServices'
@@ -22,6 +21,11 @@ import LeagueModal from './LeagueModal/LeagueModal'
 import GameList from './GameList/GameList'
 import ToastCus from '../../common/Toast'
 import moment from 'moment'
+import type {
+  CreateGameBatchPayload,
+  UpdateGamePayload,
+  UpdateGameResultPayload,
+} from '../../../types/game.types'
 
 const optionsSatatusGame = [
   {
@@ -47,7 +51,8 @@ const optionsSatatusGame = [
 ]
 
 const Game = () => {
-  const dispatch = useDispatch()
+  // use typed dispatch hook (migration-friendly)
+  const dispatch = useAppDispatch()
   const { listCategory } = useAppSelector((state) => state.Common)
   // const [listCategory, setlistCategory] = useState([])
   const [filterCategory, setfilterCategory] = useState('all')
@@ -173,7 +178,13 @@ const Game = () => {
     dispatch(putToggleActiveGameAction(info, onLoadGame))
   }
   const handleMatchResultGame = (infoGame, infoGameItem) => {
-    dispatch(putMatchResultGameAction({ infoGame, infoGameItem }, onLoadGame))
+    const payload: UpdateGameResultPayload = {
+      gameItemId: infoGameItem?.id,
+      infoGameItem: infoGameItem ? { id: infoGameItem.id } : undefined,
+      homeScore: infoGame?.homeScore,
+      awayScore: infoGame?.awayScore,
+    }
+    dispatch(putMatchResultGameAction(payload, onLoadGame))
   }
   const onClickAddGame = () => {
     if (!itemSelectedLeague) {
@@ -262,7 +273,10 @@ const Game = () => {
                 item?.startTime &&
                 moment().isBefore(moment(item?.startTime)),
             )
-            ?.sort((a, b) => moment(b?.createdAt) - moment(a?.createdAt))
+            ?.sort(
+              (a, b) =>
+                moment(b?.createdAt).valueOf() - moment(a?.createdAt).valueOf(),
+            )
         else if (status === 'Live')
           return data
             ?.filter(
@@ -271,11 +285,17 @@ const Game = () => {
                 item?.startTime &&
                 moment().isAfter(moment(item?.startTime)),
             )
-            ?.sort((a, b) => moment(a?.startTime) - moment(b?.startTime))
+            ?.sort(
+              (a, b) =>
+                moment(a?.startTime).valueOf() - moment(b?.startTime).valueOf(),
+            )
         else if (status === 'Done')
           return data
             ?.filter((item) => item?.status === status)
-            ?.sort((a, b) => moment(b?.startTime) - moment(a?.startTime))
+            ?.sort(
+              (a, b) =>
+                moment(b?.startTime).valueOf() - moment(a?.startTime).valueOf(),
+            )
         return []
       })
     } catch (error) {
@@ -298,7 +318,7 @@ const Game = () => {
     }
   }
   const handleSubmitAddGame = () => {
-    let arrGame = []
+    let arrGame: CreateGameBatchPayload = []
     for (const item of listAddGame) {
       if (!item?.description || !item?.startTime) {
         return ToastCus.fire({
@@ -371,12 +391,19 @@ const Game = () => {
       })
       tempOrder += 1
     }
-    dispatch(
-      putInfoGameAction(
-        { ...infoGame, gameItems: arrGameItem },
-        handleReloadEditGame,
-      ),
-    )
+    const payload: UpdateGamePayload = {
+      id: infoGame.id,
+      leagueId: infoGame.leagueId,
+      homeTeamId: infoGame.homeTeamId,
+      awayTeamId: infoGame.awayTeamId,
+      startTime: infoGame.startTime,
+      homeScore: infoGame.homeScore,
+      awayScore: infoGame.awayScore,
+      status: infoGame.status,
+      gameItems: arrGameItem,
+    }
+
+    dispatch(putInfoGameAction(payload, handleReloadEditGame))
   }
   return (
     <>

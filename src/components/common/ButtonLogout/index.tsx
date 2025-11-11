@@ -1,11 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { useAppDispatch } from '../../../redux/store/hooks'
 import { logoutUser } from '../../../redux/actions/userActions'
 const ButtonLogout = () => {
-  // useAppDispatch provides a typed dispatch; keep a fallback to useDispatch
-  const dispatch = useAppDispatch() || useDispatch()
+  // useAppDispatch provides a typed dispatch
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const handleLogout = () => {
     dispatch(logoutUser(navigate))

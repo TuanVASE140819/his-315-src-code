@@ -3,7 +3,9 @@ import { SagaIterator } from 'redux-saga'
 import { NHANVIEN, COMMON } from '../constants/constants'
 import { nhanVienServices } from '../services/nhanVienServices'
 
-function* getListNhanVienSaga(action: any): SagaIterator {
+function* getListNhanVienSaga(
+  action: import('../../types').GetListNhanVienAction,
+): import('../../types/saga.types').SagaGen {
   const payload = action?.payload || {}
   yield put({ type: COMMON.DISPATCH_LOADING_SCREEN, payload: true })
   try {
@@ -24,5 +26,5 @@ function* getListNhanVienSaga(action: any): SagaIterator {
 }
 
 export function* nhanVienSaga(): SagaIterator {
-  yield takeLatest(NHANVIEN.GET_LIST_NHANVIEN as any, getListNhanVienSaga as any)
+  yield takeLatest(NHANVIEN.GET_LIST_NHANVIEN, getListNhanVienSaga)
 }

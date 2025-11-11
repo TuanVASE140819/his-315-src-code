@@ -1,7 +1,8 @@
 import { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { Table, Input, Button, Spin } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons'
-import { useDispatch, useSelector } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
 import { getListNhanVienAction } from '../../../redux/actions/nhanVienActions'
 import getColumns from './columns'
 
@@ -27,8 +28,8 @@ const NhanVien = () => {
   const [pageIndex, setPageIndex] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [keyword, setKeyword] = useState<string>('')
-  const dispatch = useDispatch()
-  const stateNhanVien: any = useSelector((s: any) => s.NhanVien)
+  const dispatch = useAppDispatch()
+  const stateNhanVien: any = useAppSelector((s: any) => s.NhanVien)
   const pageSizeSyncedRef = useRef(false)
   const pageSizeRef = useRef(pageSize)
 
@@ -87,11 +88,16 @@ const NhanVien = () => {
 
   const toggleDaNghi = useCallback((key: any) => {
     setData((prev) =>
-      prev.map((r) => (r.key === key ? { ...r, daNghiViec: !r.daNghiViec } : r)),
+      prev.map((r) =>
+        r.key === key ? { ...r, daNghiViec: !r.daNghiViec } : r,
+      ),
     )
   }, [])
 
-  const columns = useMemo(() => getColumns({ toggleDaNghi, handleDelete }), [toggleDaNghi, handleDelete])
+  const columns = useMemo(
+    () => getColumns({ toggleDaNghi, handleDelete }),
+    [toggleDaNghi, handleDelete],
+  )
 
   return (
     <div className='p-4'>
@@ -101,7 +107,9 @@ const NhanVien = () => {
             placeholder='Tìm kiếm...'
             style={{ width: 260 }}
             value={keyword}
-            onChange={(e) => setKeyword((e.target as any).value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setKeyword(e.target.value)
+            }
             suffix={<ReloadOutlined onClick={onResetFilters} />}
             onPressEnter={onSearch}
           />
@@ -116,7 +124,7 @@ const NhanVien = () => {
 
       <Spin spinning={loading}>
         <Table
-          columns={columns as any}
+          columns={columns as ColumnsType<any>}
           dataSource={(stateNhanVien.list || []).map((it: any, idx: number) =>
             mapApiToRow(it, idx + (pageIndex - 1) * pageSize),
           )}

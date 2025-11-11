@@ -1,7 +1,13 @@
 import { Space, Tooltip, Button, Checkbox, Popconfirm } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
-export const getColumns = ({ toggleDaNghi, handleDelete }: { toggleDaNghi: any; handleDelete: any }) => {
+export const getColumns = ({
+  toggleDaNghi,
+  handleDelete,
+}: {
+  toggleDaNghi: any
+  handleDelete: any
+}) => {
   return [
     { title: 'STT', dataIndex: 'stt', width: 70, fixed: 'left' },
     {
@@ -72,7 +78,10 @@ export const getColumns = ({ toggleDaNghi, handleDelete }: { toggleDaNghi: any; 
       dataIndex: 'daNghiViec',
       width: 120,
       render: (_: any, record: any) => (
-        <Checkbox checked={record.daNghiViec} onChange={() => toggleDaNghi(record.key)} />
+        <Checkbox
+          checked={record.daNghiViec}
+          onChange={() => toggleDaNghi(record.key)}
+        />
       ),
     },
     {
@@ -85,7 +94,10 @@ export const getColumns = ({ toggleDaNghi, handleDelete }: { toggleDaNghi: any; 
           <Tooltip title='Sửa'>
             <Button type='text' icon={<EditOutlined />} />
           </Tooltip>
-          <Popconfirm title='Xác nhận xoá?' onConfirm={() => handleDelete(record.key)}>
+          <Popconfirm
+            title='Xác nhận xoá?'
+            onConfirm={() => handleDelete(record.key)}
+          >
             <Tooltip title='Xoá'>
               <Button type='text' danger icon={<DeleteOutlined />} />
             </Tooltip>

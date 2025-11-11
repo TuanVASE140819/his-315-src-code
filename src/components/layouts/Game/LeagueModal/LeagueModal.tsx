@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../../../../redux/store/hooks'
 import { useFormik } from 'formik'
 import { Modal, Input, Select } from 'antd'
 import { addLeagueSchema } from '../../../../schemas/leagueSchemas'
@@ -12,8 +12,8 @@ import moment from 'moment'
 // const dateMoment = 'YYYY-MM-DDTHH:mm:ss' //moment.ISO_8601
 const dateView = 'DD/MM/YYYY HH:mm:ss'
 const LeagueModal = ({ open, loading, infoEdit, handleClose, onLoad }) => {
-  const dispatch = useDispatch()
-  const { listCategory } = useSelector((state) => state.Common)
+  const dispatch = useAppDispatch()
+  const { listCategory } = useAppSelector((state) => state.Common)
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -118,10 +118,9 @@ const LeagueModal = ({ open, loading, infoEdit, handleClose, onLoad }) => {
             className='w-full'
             filterOption={(input, option) =>
               `${option?.label ?? ''}`
-                ?.toLowerCase()
-                ?.includes(`${input ?? ''}`?.toLowerCase())
+                .toLowerCase()
+                .includes(`${input ?? ''}`.toLowerCase())
             }
-            name='categoryId'
             value={formik.values.categoryId}
             onChange={onChangeCategoryId}
             status={isErrorCategoryId ? 'error' : ''}

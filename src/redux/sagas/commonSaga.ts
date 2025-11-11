@@ -15,7 +15,9 @@ function* getListCategorySaga(): SagaIterator {
   }
 }
 
-function* getListTeamSaga({ categoryId }: any): SagaIterator {
+function* getListTeamSaga({
+  categoryId,
+}: import('../../types').GetListTeamAction): SagaIterator {
   try {
     const { data }: any = yield call(() =>
       commonServices.getListTeam(categoryId),

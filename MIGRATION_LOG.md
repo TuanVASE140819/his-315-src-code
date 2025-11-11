@@ -20,10 +20,12 @@ Summary of changes made so far (incremental migration toward full TypeScript):
   - plus small fixes in other saga files as part of earlier steps.
 
 Notes / rationale:
+
 - The changes are intentionally incremental and conservative: we prefer to make small, verifiable changes that reduce TypeScript noise and keep the app runnable.
 - Many files still have implicit-any or typing mismatches. The next phase is to methodically convert key UI pages and redux artifacts to `.ts`/`.tsx` and add types (actions, state, services).
 
 Next recommended steps:
+
 1. Convert remaining `.jsx` files to `.tsx` (start with `src/pages/HeThong/NhanVien/index.jsx`).
 2. Add stronger typings for Redux actions/state (create central `src/types/redux.d.ts` or update existing `src/types/*`).
 3. Annotate sagas with `SagaIterator` and type action params as specific action interfaces rather than `any`.

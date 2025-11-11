@@ -30,9 +30,12 @@ axiosInstance.interceptors.response.use(
     const { response } = error
     const message = error?.response?.data?.message ?? error?.response?.data
     if (response && response.status === 401) {
-      // during incremental migration we cast to any to satisfy the store.dispatch type
+      // dispatch logout error action
+      // cast through unknown to satisfy store.dispatch type here during migration
       store.dispatch(
-        (logoutUserError(message ?? 'Tài khoản không có quyền thao tác') as any),
+        logoutUserError(
+          message ?? 'Tài khoản không có quyền thao tác',
+        ) as unknown as any,
       )
     } else {
       ToastCus.fire({

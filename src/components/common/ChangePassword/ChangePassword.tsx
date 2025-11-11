@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../../redux/store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { Modal, Input, Divider } from 'antd'
@@ -10,7 +10,7 @@ import {
 } from '../../../redux/actions/userActions'
 
 const ChangePassword = ({ open, handleClose }) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [modal, contextHolder] = Modal.useModal()
 

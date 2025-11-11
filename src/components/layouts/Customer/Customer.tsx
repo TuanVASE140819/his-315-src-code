@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../../redux/store/hooks'
 import { Button, Input, Divider, Spin } from 'antd'
 import { SyncOutlined } from '@ant-design/icons'
 import { getListTransactionTypeAction } from '../../../redux/actions/commonActions'
@@ -12,7 +12,7 @@ const PAGE_SIZE = 50
 const HEIGHT = 730
 
 const Customer = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const [isModal, setisModal] = useState(false)
   const [searchText, setsearchText] = useState(null)
   const [isLoading, setisLoading] = useState(false)

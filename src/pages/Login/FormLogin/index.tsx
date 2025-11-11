@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { Button, Input, Select } from 'antd'
@@ -13,14 +13,16 @@ import {
 import { RootState } from '../../../types'
 
 function FormLogin() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const [company, setCompany] = useState<any>(null)
   const [department, setDepartment] = useState<any>(null)
 
-  const companies = useSelector((state: RootState) => state.User.companies)
-  const departments = useSelector((state: RootState) => state.User.departments)
+  const companies = useAppSelector((state: RootState) => state.User.companies)
+  const departments = useAppSelector(
+    (state: RootState) => state.User.departments,
+  )
 
   const handleSubmit = (values, action) => {
     // Build payload per API spec: { username, password, menuThaoTac, idKhoaPhong }

@@ -1,22 +1,14 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLocalStorage } from './useLocalStorage'
+import type { MenuProps } from 'antd'
 
 const MENU_STORAGE = {
   SELECTED_KEYS: 'app:menuSelectedKeys',
   OPEN_KEYS: 'app:menuOpenKeys',
   COLLAPSED: 'app:siderCollapsed',
 }
-
-interface MenuItem {
-  key: string
-  label: string | React.ReactNode
-  icon?: React.ReactNode
-  children?: MenuItem[]
-  title?: string
-}
-
-export function useMenuState(menuItems: MenuItem[]) {
+export function useMenuState(menuItems: MenuProps['items']) {
   const location = useLocation()
 
   const [collapsed, setCollapsed] = useLocalStorage<boolean>(
@@ -69,11 +61,17 @@ export function useMenuState(menuItems: MenuItem[]) {
    */
   useEffect(() => {
     const path = location.pathname
-    const openSub = menuItems?.find(({ key }) => path?.includes(key))
-    const openItem = openSub?.children?.find(({ key }) => path?.includes(key))
+    // items coming from AntD can include divider/menu types without keys
+    const openSub = (menuItems as any[])?.find(
+      (mi: any) =>
+        typeof mi?.key === 'string' && path?.includes(String(mi.key)),
+    )
+    const openItem = (openSub?.children as any[])?.find(
+      (c: any) => typeof c?.key === 'string' && path?.includes(String(c.key)),
+    )
 
-    const derivedOpen = openSub?.key ? [openSub.key] : []
-    const derivedSelected = openItem?.key ? [openItem.key] : []
+    const derivedOpen = openSub?.key ? [String(openSub.key)] : []
+    const derivedSelected = openItem?.key ? [String(openItem.key)] : []
 
     // Only update selectedKeys if it actually changed
     if (derivedSelected.length > 0 && derivedSelected[0] !== selectedKeys[0]) {

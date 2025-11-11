@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../redux/store/hooks'
 import { Link, Outlet } from 'react-router-dom'
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd'
+import type { MenuProps } from 'antd'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -86,12 +87,17 @@ const menuItems = [
         title: 'Đội thi đấu',
         label: <Link to={'/danhmuc/doithidau'}>Đội thi đấu</Link>,
       },
+      {
+        key: '/danhmuc/doitac',
+        title: 'Đối tác',
+        label: <Link to={'/danhmuc/doitac'}>Đối tác</Link>,
+      },
     ],
   },
 ]
 
 const RootLayout = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const token = Cookies.get('accessToken')
 
   // Use custom hooks for cleaner state management
@@ -114,7 +120,7 @@ const RootLayout = () => {
     toggleCollapsed,
     handleOpenChange,
     handleSelect,
-  } = useMenuState(menuItems as any)
+  } = useMenuState(menuItems)
 
   const [isModalChangePassword, setisModalChangePassword] = useState(false)
 
@@ -160,7 +166,7 @@ const RootLayout = () => {
 
     const loginFirstTime = localStorage.getItem('loginFirstTime')
     if (loginFirstTime) localStorage.removeItem('loginFirstTime')
-    else if (token) dispatch(updateInfoUserToStore() as any) // fetch info user by access token
+    else if (token) dispatch(updateInfoUserToStore()) // fetch info user by access token
   }, [])
   return (
     <>

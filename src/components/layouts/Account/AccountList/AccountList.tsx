@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react'
 import { Table, ConfigProvider, Checkbox } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import { RollbackOutlined, EditOutlined } from '@ant-design/icons'
 
 const AccountList = () => {
   const dataSource = useMemo(() => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [])
-  const columns = useMemo(
+  const columns: ColumnsType<any> = useMemo(
     () => [
       {
         key: 'stt',

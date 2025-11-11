@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../../../redux/store/hooks'
 import { useFormik } from 'formik'
 import { Modal, Input, Checkbox } from 'antd'
 import { addCategorySchema } from '../../../../schemas/categorySchemas'
@@ -12,7 +12,7 @@ import moment from 'moment'
 // const dateMoment = 'YYYY-MM-DDTHH:mm:ss' //moment.ISO_8601
 const dateView = 'DD/MM/YYYY HH:mm:ss'
 const CategoryModal = ({ open, loading, infoEdit, handleClose, onLoad }) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {

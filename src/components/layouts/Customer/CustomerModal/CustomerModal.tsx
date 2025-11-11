@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import {
   Modal,
   Input,
@@ -12,6 +11,7 @@ import {
   Button,
   Pagination,
 } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import { CrownOutlined, SyncOutlined } from '@ant-design/icons'
 import { formattedNumber } from '../../../../utils/formattedNumber'
 import { customerServices } from '../../../../redux/services/customerServices'
@@ -40,8 +40,10 @@ const typeColor = [
   },
 ]
 
+import { useAppSelector } from '../../../../redux/store/hooks'
+
 const CustomerModal = ({ open, loading, info, handleClose }) => {
-  const { listTransactionType } = useSelector((state) => state.Common)
+  const { listTransactionType } = useAppSelector((state) => state.Common)
   const today = useMemo(() => moment().format(dateMoment), [])
   const [fromDate, setfromDate] = useState(today)
   const [toDate, settoDate] = useState(today)
@@ -89,6 +91,21 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
     handleReset()
     getListHistory(today, today, 'all', 1)
   }
+  const disabledDateFrom = (current) => {
+    // disable future dates
+    return current && current > dayjs(today).endOf('day')
+  }
+
+  const disabledDateTo = (current) => {
+    if (!current) return false
+    // disable dates before fromDate and after today
+    if (valueFromDate)
+      return (
+        current < valueFromDate.startOf('day') ||
+        current > dayjs(today).endOf('day')
+      )
+    return current > dayjs(today).endOf('day')
+  }
   const getListHistory = async (from, to, type, page) => {
     try {
       setisLoading(true)
@@ -121,7 +138,7 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
     info?.id && onLoad()
   }, [info])
 
-  const columns = useMemo(
+  const columns: ColumnsType<any> = useMemo(
     () => [
       {
         key: 'key',
@@ -188,7 +205,7 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
         key: 'description',
         dataIndex: 'description',
         title: 'Mô tả',
-        align: 'center',
+        align: 'left',
         render: (text) => <div className='text-start'>{text}</div>,
       },
     ],
@@ -238,23 +255,20 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
           <div className='w-72 flex justify-between items-center gap-1'>
             <DatePicker
               allowClear={false}
-              needConfirm={false}
               placeholder='dd/mm/yyyy'
-              locale={{ ...locale, week: { start: 1 } }}
+              locale={locale}
               format={dateView}
-              maxDate={dayjs(today)}
+              disabledDate={disabledDateFrom}
               value={valueFromDate}
               onChange={(date, dateString) => onChangeDate('from', dateString)}
             />
             <span className='text-2xl text-gray-700'>-</span>
             <DatePicker
               allowClear={false}
-              needConfirm={false}
               placeholder='dd/mm/yyyy'
-              locale={{ ...locale, week: { start: 1 } }}
+              locale={locale}
               format={dateView}
-              minDate={valueFromDate}
-              maxDate={dayjs(today)}
+              disabledDate={disabledDateTo}
               value={valueToDate}
               onChange={(date, dateString) => onChangeDate('to', dateString)}
             />
@@ -268,7 +282,11 @@ const CustomerModal = ({ open, loading, info, handleClose }) => {
               ...listTransactionType?.map((item) => ({
                 key: item?.id,
                 value: item?.id,
-                label: item?.typeName,
+                // some backends may return `typeName` key historically; prefer `name`
+                label:
+                  item && 'typeName' in item
+                    ? (item as any).typeName
+                    : item?.name,
               })),
             ]}
           />

@@ -1,5 +1,6 @@
 import { NavigateFunction } from 'react-router-dom'
 import { FormikHelpers } from 'formik'
+import type { SagaIterator } from '@redux-saga/core'
 
 // Saga action payload types
 export interface LoginUserAction {
@@ -37,3 +38,16 @@ export interface PutChangePasswordAction {
   payload: any
   handleReload: () => void
 }
+
+// Generic saga action wrapper used by sagas
+export interface SagaAction<T = any> {
+  type: string
+  payload?: T
+  [key: string]: any
+}
+
+export type SagaGen = SagaIterator
+
+// Temporary alias for action type casts during incremental migration.
+// Replace 'as SagaActionType' with proper action types later.
+export type SagaActionType = any

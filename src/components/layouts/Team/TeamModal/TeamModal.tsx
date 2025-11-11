@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../../../redux/store/hooks'
 import { useFormik } from 'formik'
 import { Modal, Input, Checkbox, Image } from 'antd'
 import { EyeOutlined, DeleteOutlined } from '@ant-design/icons'
@@ -21,7 +21,7 @@ const TeamModal = ({
   handleClose,
   onLoad,
 }) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const [fileImage, setfileImage] = useState([])
   const formik = useFormik({
     enableReinitialize: true,

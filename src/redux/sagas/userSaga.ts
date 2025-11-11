@@ -33,9 +33,7 @@ function* resetInfoUser(): SagaIterator {
   })
 }
 
-function* logoutUserError({
-  error,
-}: LogoutUserErrorAction): SagaIterator {
+function* logoutUserError({ error }: LogoutUserErrorAction): SagaIterator {
   try {
     yield call(resetInfoUser)
     ToastCus.fire({
@@ -60,7 +58,7 @@ function* loginUser({
   payload,
   navigate,
   action,
-}: any): SagaIterator {
+}: import('../../types').LoginAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
@@ -111,8 +109,10 @@ function* loginUser({
     // Persist user info to localStorage so page refresh retains it
     yield call(() => localStorage.setItem('infoUser', JSON.stringify(userInfo)))
     yield call(() => localStorage.setItem('loginFirstTime', 'true'))
-    yield navigate('/')
-    yield action.resetForm()
+    // navigate is not an effect - wrap in call to keep saga typing consistent
+    yield call(() => navigate && navigate('/'))
+    // action.resetForm is a plain function; call it inside an effect to avoid yielding void
+    yield call(() => action && action.resetForm && action.resetForm())
 
     ToastCus.fire({
       icon: 'success',
@@ -153,10 +153,13 @@ function* getInfoUser(): SagaIterator {
   }
 }
 
-function* logoutUser({ navigate }: any): SagaIterator {
+function* logoutUser({
+  navigate,
+}: import('../../types').LogoutAction): import('../../types/saga.types').SagaGen {
   try {
     yield call(resetInfoUser)
-    yield navigate('/login')
+    // wrap navigation in call to make it a proper effect
+    yield call(() => navigate && navigate('/login'))
     ToastCus.fire({
       icon: 'success',
       title: 'Đăng xuất thành công',
@@ -175,7 +178,10 @@ function* logoutUser({ navigate }: any): SagaIterator {
   }
 }
 
-function* putChangePasswordSaga({ payload, handleReload }: any): SagaIterator {
+function* putChangePasswordSaga({
+  payload,
+  handleReload,
+}: import('../../types').ChangePasswordAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
@@ -187,7 +193,8 @@ function* putChangePasswordSaga({ payload, handleReload }: any): SagaIterator {
         newPassword: payload?.newPassword,
       }),
     )
-    yield handleReload()
+    // handleReload is an optional callback; call directly if provided
+    if (handleReload) handleReload()
     ToastCus.fire({
       icon: 'success',
       title: 'Đổi mật khẩu thành công',
@@ -202,7 +209,9 @@ function* putChangePasswordSaga({ payload, handleReload }: any): SagaIterator {
   }
 }
 
-function* getCompaniesForUserSaga({ payload }: any): SagaIterator {
+function* getCompaniesForUserSaga({
+  payload,
+}: import('../../types').GetCompaniesForUserAction): import('../../types/saga.types').SagaGen {
   try {
     const { data } = yield call(() => userServices.getCompaniesForUser(payload))
     const list = data?.data ?? []
@@ -219,7 +228,9 @@ function* getCompaniesForUserSaga({ payload }: any): SagaIterator {
   }
 }
 
-function* getDepartmentsForUserSaga({ payload }: any): SagaIterator {
+function* getDepartmentsForUserSaga({
+  payload,
+}: import('../../types').GetDepartmentsForUserAction): import('../../types/saga.types').SagaGen {
   try {
     const { taiKhoan, idCongTy } = payload
     const { data } = yield call(() =>
@@ -240,11 +251,11 @@ function* getDepartmentsForUserSaga({ payload }: any): SagaIterator {
 }
 
 export function* userSaga(): SagaIterator {
-  yield takeLatest(USER.GET_LOGIN_API as any, loginUser)
-  yield takeLatest(USER.LOGOUT_USER as any, logoutUser)
-  yield takeLatest(USER.LOGOUT_USER_ERROR as any, logoutUserError)
-  yield takeLatest(USER.UPDATE_INFO_USER_ACCESS_TOKEN as any, getInfoUser)
-  yield takeLatest(USER.PUT_CHANGE_PASSWORD as any, putChangePasswordSaga)
-  yield takeLatest(USER.GET_COMPANIES_FOR_USER as any, getCompaniesForUserSaga)
-  yield takeLatest(USER.GET_DEPARTMENTS_FOR_USER as any, getDepartmentsForUserSaga)
+  yield takeLatest(USER.GET_LOGIN_API, loginUser)
+  yield takeLatest(USER.LOGOUT_USER, logoutUser)
+  yield takeLatest(USER.LOGOUT_USER_ERROR, logoutUserError)
+  yield takeLatest(USER.UPDATE_INFO_USER_ACCESS_TOKEN, getInfoUser)
+  yield takeLatest(USER.PUT_CHANGE_PASSWORD, putChangePasswordSaga)
+  yield takeLatest(USER.GET_COMPANIES_FOR_USER, getCompaniesForUserSaga)
+  yield takeLatest(USER.GET_DEPARTMENTS_FOR_USER, getDepartmentsForUserSaga)
 }

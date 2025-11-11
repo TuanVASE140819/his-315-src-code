@@ -10,7 +10,7 @@ import {
   Spin,
 } from 'antd'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons'
-import { useDispatch, useSelector } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
 import { getListNhanVienAction } from '../../../redux/actions/nhanVienActions'
 import getColumns from './columns'
 
@@ -35,8 +35,8 @@ const NhanVien = () => {
   const [pageIndex, setPageIndex] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [keyword, setKeyword] = useState('')
-  const dispatch = useDispatch()
-  const stateNhanVien = useSelector((s) => s.NhanVien)
+  const dispatch = useAppDispatch()
+  const stateNhanVien = useAppSelector((s) => s.NhanVien)
   const pageSizeSyncedRef = useRef(false)
   const pageSizeRef = useRef(pageSize)
 
@@ -88,11 +88,16 @@ const NhanVien = () => {
 
   const toggleDaNghi = useCallback((key) => {
     setData((prev) =>
-      prev.map((r) => (r.key === key ? { ...r, daNghiViec: !r.daNghiViec } : r)),
+      prev.map((r) =>
+        r.key === key ? { ...r, daNghiViec: !r.daNghiViec } : r,
+      ),
     )
   }, [])
 
-  const columns = useMemo(() => getColumns({ toggleDaNghi, handleDelete }), [toggleDaNghi, handleDelete])
+  const columns = useMemo(
+    () => getColumns({ toggleDaNghi, handleDelete }),
+    [toggleDaNghi, handleDelete],
+  )
 
   return (
     <div className='p-4'>

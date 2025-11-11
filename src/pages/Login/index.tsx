@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import FormLogin from './FormLogin'
 import { motion } from 'framer-motion'
-import { useDispatch, useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import { ConfigProvider } from 'antd'

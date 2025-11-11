@@ -3,14 +3,17 @@ import { CATEGORY, COMMON } from '../constants/constants'
 import { categoryServices } from '../services/categoryServices'
 import ToastCus from '../../components/common/Toast'
 
-function* postInfoCategorySaga({ payload, handleReload }) {
+function* postInfoCategorySaga({
+  payload,
+  handleReload,
+}: import('../../types').PostCategoryAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => categoryServices.postInfoCategory({ name: payload?.name }))
-    yield handleReload()
+    if (handleReload) handleReload()
     ToastCus.fire({
       icon: 'success',
       title: 'Thêm bộ môn thành công',
@@ -24,7 +27,10 @@ function* postInfoCategorySaga({ payload, handleReload }) {
     })
   }
 }
-function* putInfoCategorySaga({ payload, handleReload }) {
+function* putInfoCategorySaga({
+  payload,
+  handleReload,
+}: import('../../types').PutCategoryAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
@@ -36,7 +42,7 @@ function* putInfoCategorySaga({ payload, handleReload }) {
         name: payload?.name,
       }),
     )
-    yield handleReload()
+    if (handleReload) handleReload()
     ToastCus.fire({
       icon: 'success',
       title: 'Chỉnh sửa bộ môn thành công',
@@ -50,14 +56,17 @@ function* putInfoCategorySaga({ payload, handleReload }) {
     })
   }
 }
-function* putToggleActiveCategorySaga({ payload, onLoadCategory }) {
+function* putToggleActiveCategorySaga({
+  payload,
+  onLoadCategory,
+}: import('../../types').ToggleActiveCategoryAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => categoryServices.putToggleActiveCategory(payload?.id))
-    yield onLoadCategory()
+    if (onLoadCategory) onLoadCategory()
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng bộ môn thành công',
@@ -72,12 +81,11 @@ function* putToggleActiveCategorySaga({ payload, onLoadCategory }) {
   }
 }
 
-export function* categorySaga() {
-  // cast action types to any during migration to satisfy overloads
-  yield takeLatest(CATEGORY.POST_INFO_CATEGORY as any, postInfoCategorySaga as any)
-  yield takeLatest(CATEGORY.PUT_INFO_CATEGORY as any, putInfoCategorySaga as any)
+export function* categorySaga(): import('../../types/saga.types').SagaGen {
+  yield takeLatest(CATEGORY.POST_INFO_CATEGORY, postInfoCategorySaga)
+  yield takeLatest(CATEGORY.PUT_INFO_CATEGORY, putInfoCategorySaga)
   yield takeLatest(
-    CATEGORY.PUT_TOGGLE_ACTIVE_CATEGORY as any,
-    putToggleActiveCategorySaga as any,
+    CATEGORY.PUT_TOGGLE_ACTIVE_CATEGORY,
+    putToggleActiveCategorySaga,
   )
 }

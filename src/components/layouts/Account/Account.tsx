@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, Input, Divider, Select } from 'antd'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import AccountList from './AccountList/AccountList'
-import { useSelector, useDispatch } from 'react-redux'
+import { useAppSelector, useAppDispatch } from '../../../redux/store/hooks'
 import { RootState } from '../../../types'
 import {
   getCompaniesForUser,
@@ -10,13 +10,15 @@ import {
 } from '../../../redux/actions/userActions'
 
 const Account = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const [company, setCompany] = useState<any>(null)
   const [department, setDepartment] = useState<any>(null)
 
-  const user = useSelector((state: RootState) => state.User.infoUser)
-  const companies = useSelector((state: RootState) => state.User.companies)
-  const departments = useSelector((state: RootState) => state.User.departments)
+  const user = useAppSelector((state: RootState) => state.User.infoUser)
+  const companies = useAppSelector((state: RootState) => state.User.companies)
+  const departments = useAppSelector(
+    (state: RootState) => state.User.departments,
+  )
 
   useEffect(() => {
     // fetch companies for current user

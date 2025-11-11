@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useAppSelector } from '../../../../../redux/store/hooks'
 import { Avatar, Input, DatePicker, Popover, Select } from 'antd'
 import {
   FileImageOutlined,
@@ -26,7 +26,7 @@ const EditGameRow = ({
   handleCloseEdit,
   handleSubmitEdit,
 }) => {
-  const { listTeam } = useSelector((state) => state.Common)
+  const { listTeam } = useAppSelector((state) => state.Common)
   const valueDate = useMemo(
     () => (infoEdit?.startTime ? dayjs(infoEdit?.startTime, dateMoment) : null),
     [infoEdit?.startTime],
@@ -126,7 +126,7 @@ const EditGameRow = ({
                 allowClear
                 needConfirm={false}
                 placeholder='Chọn thời điểm diễn ra...'
-                locale={{ ...locale, week: { start: 1 } }}
+                locale={locale}
                 format={dateView}
                 value={valueDate}
                 status={!valueDate ? 'error' : ''}

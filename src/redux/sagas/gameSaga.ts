@@ -3,14 +3,17 @@ import { GAME, COMMON } from '../constants/constants'
 import { gameServices } from '../services/gameServices'
 import ToastCus from '../../components/common/Toast'
 
-function* postInfoGameSaga({ payload, handleReloadAddGame }) {
+function* postInfoGameSaga({
+  payload,
+  handleReloadAddGame,
+}: import('../../types').PostGameAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => gameServices.postInfoGame(payload))
-    yield handleReloadAddGame()
+    if (handleReloadAddGame) handleReloadAddGame()
     ToastCus.fire({
       icon: 'success',
       title: 'Thêm trận đấu thành công',
@@ -24,14 +27,17 @@ function* postInfoGameSaga({ payload, handleReloadAddGame }) {
     })
   }
 }
-function* putInfoGameSaga({ payload, handleCloseEditGame }) {
+function* putInfoGameSaga({
+  payload,
+  handleCloseEditGame,
+}: import('../../types').PutGameAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => gameServices.putInfoGame(payload))
-    yield handleCloseEditGame()
+    if (handleCloseEditGame) handleCloseEditGame()
     ToastCus.fire({
       icon: 'success',
       title: 'Chỉnh sửa trận đấu thành công',
@@ -45,14 +51,17 @@ function* putInfoGameSaga({ payload, handleCloseEditGame }) {
     })
   }
 }
-function* putToggleActiveGameSaga({ payload, onLoadGame }) {
+function* putToggleActiveGameSaga({
+  payload,
+  onLoadGame,
+}: import('../../types').ToggleActiveGameAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => gameServices.putToggleActiveGame(payload?.id))
-    yield onLoadGame()
+    if (onLoadGame) onLoadGame()
     ToastCus.fire({
       icon: 'success',
       title: 'Thay đổi sử dụng trận đấu thành công',
@@ -66,14 +75,17 @@ function* putToggleActiveGameSaga({ payload, onLoadGame }) {
     })
   }
 }
-function* putMatchResultGameSaga({ payload, onLoadGame }) {
+function* putMatchResultGameSaga({
+  payload,
+  onLoadGame,
+}: import('../../types').UpdateGameResultAction): import('../../types/saga.types').SagaGen {
   yield put({
     type: COMMON.DISPATCH_LOADING_SCREEN,
     payload: true,
   })
   try {
     yield call(() => gameServices.putMatchResultGame(payload?.infoGameItem?.id))
-    yield onLoadGame()
+    if (onLoadGame) onLoadGame()
     ToastCus.fire({
       icon: 'success',
       title: 'Trả kết quả trận đấu thành công',
@@ -88,9 +100,9 @@ function* putMatchResultGameSaga({ payload, onLoadGame }) {
   }
 }
 
-export function* gameSaga() {
-  yield takeLatest(GAME.POST_INFO_GAME as any, postInfoGameSaga as any)
-  yield takeLatest(GAME.PUT_INFO_GAME as any, putInfoGameSaga as any)
-  yield takeLatest(GAME.PUT_TOGGLE_ACTIVE_GAME as any, putToggleActiveGameSaga as any)
-  yield takeLatest(GAME.PUT_MATCH_RESULT_GAME as any, putMatchResultGameSaga as any)
+export function* gameSaga(): import('../../types/saga.types').SagaGen {
+  yield takeLatest(GAME.POST_INFO_GAME, postInfoGameSaga)
+  yield takeLatest(GAME.PUT_INFO_GAME, putInfoGameSaga)
+  yield takeLatest(GAME.PUT_TOGGLE_ACTIVE_GAME, putToggleActiveGameSaga)
+  yield takeLatest(GAME.PUT_MATCH_RESULT_GAME, putMatchResultGameSaga)
 }

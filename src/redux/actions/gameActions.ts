@@ -1,6 +1,6 @@
 import { GAME } from '../constants/constants'
 import {
-  CreateGamePayload,
+  CreateGameBatchPayload,
   UpdateGamePayload,
   UpdateGameResultPayload,
   PostGameAction,
@@ -10,7 +10,7 @@ import {
 } from '../../types'
 
 export const postInfoGameAction = (
-  payload: CreateGamePayload,
+  payload: CreateGameBatchPayload,
   handleReloadAddGame?: () => void,
 ): PostGameAction => ({
   type: GAME.POST_INFO_GAME,

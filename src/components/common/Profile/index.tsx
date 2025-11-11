@@ -1,10 +1,10 @@
 import React from 'react'
 import { Avatar } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
-import { useSelector } from 'react-redux'
+import { useAppSelector } from '../../../redux/store/hooks'
 
 const Profile = () => {
-  const { infoUser } = useSelector((state) => state.User)
+  const { infoUser } = useAppSelector((state) => state.User)
   return (
     <div className='flex items-center'>
       <Avatar icon={<UserOutlined />} size='large' />

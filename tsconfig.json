@@ -8,19 +8,19 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-  "allowJs": true,
+    "allowJs": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
 
-  /* Linting (relaxed during migration) */
-  "strict": false,
-  "noImplicitAny": false,
-  "noUnusedLocals": false,
-  "noUnusedParameters": false,
-  "noFallthroughCasesInSwitch": true,
+    /* Linting (relaxed during migration) */
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
 
     /* Additional options */
     "esModuleInterop": true,

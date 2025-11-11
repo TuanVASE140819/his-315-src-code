@@ -20,6 +20,7 @@ import {
 import {
   Game,
   CreateGamePayload,
+  CreateGameBatchPayload,
   UpdateGamePayload,
   UpdateGameResultPayload,
 } from './game.types'
@@ -63,6 +64,29 @@ export interface LogoutAction {
 export interface LogoutErrorAction {
   type: string
   error: any
+}
+
+export interface GetCompaniesForUserAction {
+  type: string
+  payload: string // taiKhoan
+}
+
+export interface GetDepartmentsForUserAction {
+  type: string
+  payload: {
+    taiKhoan: string
+    idCongTy: number | string
+  }
+}
+
+export interface DispatchCompaniesForUserAction {
+  type: string
+  payload: Company[]
+}
+
+export interface DispatchDepartmentsForUserAction {
+  type: string
+  payload: Department[]
 }
 
 export interface UpdateInfoUserAction {
@@ -178,7 +202,7 @@ export interface ToggleActiveLeagueAction {
 // Game Actions
 export interface PostGameAction {
   type: string
-  payload: CreateGamePayload
+  payload: CreateGameBatchPayload
   handleReloadAddGame?: () => void
 }
 
@@ -192,6 +216,24 @@ export interface ToggleActiveGameAction {
   type: string
   payload: { id: number }
   onLoadGame?: () => void
+}
+
+// Nhân viên Actions
+export interface GetListNhanVienAction {
+  type: string
+  payload?: {
+    keyword?: string
+    pageIndex?: number
+  }
+}
+
+export interface DispatchListNhanVienAction {
+  type: string
+  payload: {
+    data: any[]
+    totalCount: number
+    totalPages?: number
+  }
 }
 
 export interface UpdateGameResultAction {

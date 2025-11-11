@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../../redux/store/hooks'
 import { Button, Input, Divider, Spin, Tag } from 'antd'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { categoryServices } from '../../../redux/services/categoryServices'
@@ -13,7 +13,7 @@ import TeamModal from './TeamModal/TeamModal'
 import ToastCus from '../../common/Toast'
 
 const Team = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const [searchCategory, setsearchCategory] = useState('')
   const [listCategory, setlistCategory] = useState([])
   const [infoCategory, setinfoCategory] = useState(null)

@@ -24,17 +24,21 @@ const CommonReducer = (
         break
       case COMMON.DISPATCH_LIST_CATEGORY:
         if ('payload' in action && Array.isArray(action.payload)) {
-          draft.listCategory = action.payload as any
+          // Narrow action to DispatchListCategoryAction to access typed payload
+          const act = action as any
+          draft.listCategory = act.payload
         }
         break
       case COMMON.DISPATCH_LIST_TEAM:
         if ('payload' in action && Array.isArray(action.payload)) {
-          draft.listTeam = action.payload as any
+          const act = action as any
+          draft.listTeam = act.payload
         }
         break
       case COMMON.DISPATCH_LIST_TRANSACTION_TYPE:
         if ('payload' in action && Array.isArray(action.payload)) {
-          draft.listTransactionType = action.payload as any
+          const act = action as any
+          draft.listTransactionType = act.payload
         }
         break
       default:

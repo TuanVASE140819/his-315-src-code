@@ -2,14 +2,22 @@ import React, { useState } from 'react'
 import { Image, Upload } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
-const getBase64 = (file) =>
+const getBase64 = (file: File) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => resolve(reader.result)
     reader.onerror = (error) => reject(error)
   })
-const UploadImage = ({ fileList, setfileList, maxLength }) => {
+const UploadImage = ({
+  fileList,
+  setfileList,
+  maxLength,
+}: {
+  fileList: any[]
+  setfileList: (f: any[]) => void
+  maxLength: number
+}) => {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
 
@@ -48,7 +56,7 @@ const UploadImage = ({ fileList, setfileList, maxLength }) => {
         fileList={fileList}
         onPreview={handlePreview}
         onChange={handleChange}
-        customRequest={(e) => e.onSuccess()}
+        customRequest={(e) => e.onSuccess && e.onSuccess(undefined)}
         className='upload-custom'
       >
         {fileList?.length >= maxLength ? null : uploadButton}

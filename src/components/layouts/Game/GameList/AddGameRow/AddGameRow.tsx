@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useAppSelector } from '../../../../../redux/store/hooks'
 import { Avatar, Input, DatePicker, Popover, Select } from 'antd'
 import {
   FileImageOutlined,
@@ -18,7 +18,7 @@ const dateView = 'HH:mm - DD/MM/YYYY'
 const dateMoment = 'YYYY-MM-DDTHH:mm:00'
 
 const AddGameRow = ({ info, setlistAdd }) => {
-  const { listTeam } = useSelector((state) => state.Common)
+  const { listTeam } = useAppSelector((state) => state.Common)
   const valueDate = useMemo(
     () => (info?.startTime ? dayjs(info?.startTime, dateMoment) : null),
     [info?.startTime],
@@ -152,13 +152,11 @@ const AddGameRow = ({ info, setlistAdd }) => {
         </div>
         <div className='pl-1.5 flex justify-between items-center'>
           <DatePicker
-            showTime
             size='small'
             className='w-1/2'
             allowClear
-            needConfirm={false}
             placeholder='Chọn thời điểm diễn ra...'
-            locale={{ ...locale, week: { start: 1 } }}
+            locale={locale}
             format={dateView}
             value={valueDate}
             status={!valueDate ? 'error' : ''}

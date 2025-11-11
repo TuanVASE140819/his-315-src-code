@@ -1,9 +1,9 @@
 import React from 'react'
 import { Spin } from 'antd'
-import { useSelector } from 'react-redux'
+import { useAppSelector } from '../../redux/store/hooks'
 
 const LoadingPage = () => {
-  const { isLoadingScreen } = useSelector((state) => state.Common)
+  const { isLoadingScreen } = useAppSelector((state) => state.Common)
   return <Spin size='large' spinning={isLoadingScreen} fullscreen />
 }
 
