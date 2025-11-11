@@ -11,7 +11,10 @@ import {
 import ModalCreatePartner from './ModalCreatePartner/ModalCreatePartner'
 import ModalEditPartner from './ModalEditPartner/ModalEditPartner'
 import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
-import { getListPartnerAction, deletePartnerAction } from '../../../redux/actions/partnerActions'
+import {
+  getListPartnerAction,
+  deletePartnerAction,
+} from '../../../redux/actions/partnerActions'
 import { debounce } from 'lodash'
 import * as XLSX from 'xlsx'
 
@@ -54,7 +57,7 @@ const Partner = () => {
   useEffect(() => {
     // load first page
     dispatch(getListPartnerAction({ keyword: '', pageNumber: 1 }))
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     // update local data when store changes
@@ -77,7 +80,10 @@ const Partner = () => {
     setListPartner(mapped)
     setData2(mapped)
     setValueExport(mapped)
-    setPagination((prev) => ({ ...prev, current: statePartner?.pageNumber || 1 }))
+    setPagination((prev) => ({
+      ...prev,
+      current: statePartner?.pageNumber || 1,
+    }))
   }, [statePartner])
 
   const debounceGetDataSearch = useCallback(
@@ -96,9 +102,19 @@ const Partner = () => {
     setSearch('')
   }
 
-  const onChangeTable = (pagination) => {
-    setPagination(pagination)
+  const onChangeTable = (pg) => {
+    const { current = 1 } = pg || {}
+    setPagination((prev) => ({ ...prev, current }))
+    dispatch(getListPartnerAction({ keyword: search, pageNumber: current }))
   }
+
+  // Server-side search/pagination: when `search` changes we request page 1 from server
+  useEffect(() => {
+    // reset to first page on new search
+    setPagination((prev) => ({ ...prev, current: 1 }))
+    const page = 1
+    dispatch(getListPartnerAction({ keyword: search, pageNumber: page }))
+  }, [search, dispatch])
 
   const filteredData2 = (data) =>
     data?.filter((item) =>
@@ -120,7 +136,16 @@ const Partner = () => {
     )
 
   const handleDeleteById = (id) => {
-    dispatch(deletePartnerAction(id, () => dispatch(getListPartnerAction({ keyword: search, pageNumber: pagination.current }))))
+    dispatch(
+      deletePartnerAction(id, () =>
+        dispatch(
+          getListPartnerAction({
+            keyword: search,
+            pageNumber: pagination.current,
+          }),
+        ),
+      ),
+    )
   }
 
   const columns = [
@@ -203,7 +228,7 @@ const Partner = () => {
           </li>
           <li>
             <Tooltip title='Xoá' color='red'>
-                <Popconfirm
+              <Popconfirm
                 title='Xóa đối tác'
                 onConfirm={() => handleDeleteById(record.id)}
                 okText='Xác nhận'
@@ -312,15 +337,19 @@ const Partner = () => {
               <Table
                 bordered
                 scroll={{
-                  x: filteredData2(data2)?.length ? 'max-content' : 1500,
+                  x: listPartner?.length ? 'max-content' : 1500,
+                  // set vertical scroll height so the table has a fixed viewport
+                  y: 500,
                 }}
                 pagination={{
+                  current: pagination.current,
                   pageSize: pagination.pageSize,
+                  total: statePartner?.totalCount || 0,
                   showSizeChanger: false,
                 }}
                 onChange={onChangeTable}
                 columns={columns}
-                dataSource={filteredData2(data2)?.map((item, index) => ({
+                dataSource={listPartner?.map((item) => ({
                   key: item.id,
                   ...item,
                 }))}

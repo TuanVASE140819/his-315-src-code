@@ -7,9 +7,21 @@ function* getListPartnerSaga(action: any) {
     const { keyword = '', pageNumber = 1 } = action.payload || {}
     // set loading if you have common loading
     yield put({ type: COMMON.DISPATCH_LOADING_SCREEN, payload: true })
-    const res = yield call(partnerServices.searchPartnerPaged, keyword, pageNumber)
+    const res = yield call(
+      partnerServices.searchPartnerPaged,
+      keyword,
+      pageNumber,
+    )
     if (res?.data) {
-      yield put({ type: PARTNER.DISPATCH_LIST_PARTNER, payload: res.data })
+      // API returns structure: { status, message, data: { totalCount, totalPages, pageNumber, data: [...] } }
+      const items = res.data?.data?.data || []
+      const totalCount = res.data?.data?.totalCount || 0
+      const totalPages = res.data?.data?.totalPages || 0
+      const page = res.data?.data?.pageNumber || pageNumber || 1
+      yield put({
+        type: PARTNER.DISPATCH_LIST_PARTNER,
+        payload: { data: items, totalCount, totalPages, pageNumber: page },
+      })
     }
   } catch (error) {
     console.error('getListPartnerSaga', error)
