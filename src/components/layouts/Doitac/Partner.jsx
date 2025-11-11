@@ -10,6 +10,8 @@ import {
 } from '@ant-design/icons'
 import ModalCreatePartner from './ModalCreatePartner/ModalCreatePartner'
 import ModalEditPartner from './ModalEditPartner/ModalEditPartner'
+import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
+import { getListPartnerAction, deletePartnerAction } from '../../../redux/actions/partnerActions'
 import { debounce } from 'lodash'
 import * as XLSX from 'xlsx'
 
@@ -33,6 +35,8 @@ const defaultData = [
 const PAGE_SIZE = 20
 
 const Partner = () => {
+  const dispatch = useAppDispatch()
+  const statePartner = useAppSelector((s) => s.Partner)
   const [listPartner, setListPartner] = useState(defaultData)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isModalOpenEdit, setIsModalOpenEdit] = useState({
@@ -48,9 +52,33 @@ const Partner = () => {
   })
 
   useEffect(() => {
-    setData2(listPartner)
-    setValueExport(listPartner)
-  }, [listPartner])
+    // load first page
+    dispatch(getListPartnerAction({ keyword: '', pageNumber: 1 }))
+  }, [])
+
+  useEffect(() => {
+    // update local data when store changes
+    const payload = statePartner?.list || []
+    // normalize to UI shape (map backend fields to front fields)
+    const mapped = payload.map((it) => ({
+      id: it.iddoitac,
+      maDoiTac: (it.madoitac || '').trim(),
+      maDoiTac_New: it.madoitac || '',
+      tenVietTat: it.tenviettat || '',
+      tenDoiTac: it.tendoitac || '',
+      diaChi: it.diachi || '',
+      tenPhuongXa: it.tenphuongxa || '',
+      tenTinhTP: it.tentinh || '',
+      dienThoai: it.dienthoai || '',
+      maSoThue: it.masothue || '',
+      email: it.email || '',
+      website: it.website || '',
+    }))
+    setListPartner(mapped)
+    setData2(mapped)
+    setValueExport(mapped)
+    setPagination((prev) => ({ ...prev, current: statePartner?.pageNumber || 1 }))
+  }, [statePartner])
 
   const debounceGetDataSearch = useCallback(
     debounce((keyword) => {
@@ -92,7 +120,7 @@ const Partner = () => {
     )
 
   const handleDeleteById = (id) => {
-    setListPartner((prev) => prev.filter((p) => p.id !== id))
+    dispatch(deletePartnerAction(id, () => dispatch(getListPartnerAction({ keyword: search, pageNumber: pagination.current }))))
   }
 
   const columns = [
@@ -175,7 +203,7 @@ const Partner = () => {
           </li>
           <li>
             <Tooltip title='Xoá' color='red'>
-              <Popconfirm
+                <Popconfirm
                 title='Xóa đối tác'
                 onConfirm={() => handleDeleteById(record.id)}
                 okText='Xác nhận'

@@ -25,6 +25,7 @@ import {
   UpdateGameResultPayload,
 } from './game.types'
 import { TransactionTypeOption } from './customer.types'
+import { PartnerItem, PartnerPagedResponse } from './partner.types'
 
 // ============ STATE TYPES ============
 
@@ -39,11 +40,18 @@ export interface CommonState {
   listCategory: Category[]
   listTeam: Team[]
   listTransactionType: TransactionTypeOption[]
+  // partner list is kept in its own reducer (Partner)
 }
 
 export interface RootState {
   User: UserState
   Common: CommonState
+  Partner: {
+    list: PartnerItem[]
+    totalCount: number
+    totalPages: number
+    pageNumber: number
+  }
 }
 
 // ============ ACTION TYPES ============
@@ -234,6 +242,20 @@ export interface DispatchListNhanVienAction {
     totalCount: number
     totalPages?: number
   }
+}
+
+// Partner Actions
+export interface GetListPartnerAction {
+  type: string
+  payload?: {
+    keyword?: string
+    pageNumber?: number
+  }
+}
+
+export interface DispatchListPartnerAction {
+  type: string
+  payload: PartnerPagedResponse
 }
 
 export interface UpdateGameResultAction {
