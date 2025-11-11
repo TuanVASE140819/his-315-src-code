@@ -1,6 +1,8 @@
 import { PARTNER } from '../constants/constants'
 
-export const getListPartnerAction = (payload = { keyword: '', pageNumber: 1 }) => ({
+export const getListPartnerAction = (
+  payload = { keyword: '', pageNumber: 1 },
+) => ({
   type: PARTNER.GET_LIST_PARTNER,
   payload,
 })

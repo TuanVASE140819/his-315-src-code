@@ -17,7 +17,7 @@ export function* rootSaga() {
     teamSaga(),
     categorySaga(),
     nhanVienSaga(),
-  partnerSaga(),
+    partnerSaga(),
     commonSaga(),
     userSaga(),
   ])
