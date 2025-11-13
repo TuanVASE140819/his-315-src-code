@@ -1,10 +1,11 @@
 import axiosInstance from '../../utils/axiosConfig'
 import { AxiosResponse } from 'axios'
+import { CreateTeamPayload, UpdateTeamPayload } from '../../types/team.types'
 
 export const teamServices = {
-  postInfoTeam: (payload: any): Promise<AxiosResponse> =>
+  postInfoTeam: (payload: CreateTeamPayload): Promise<AxiosResponse> =>
     axiosInstance.post('Team/Admin/AddTeam', payload),
-  putInfoTeam: (payload: any): Promise<AxiosResponse> =>
+  putInfoTeam: (payload: UpdateTeamPayload): Promise<AxiosResponse> =>
     axiosInstance.put('Team/Admin/UpdateTeam', payload),
   putToggleActiveTeam: (id: string | number): Promise<AxiosResponse> =>
     axiosInstance.put(`Team/Admin/ToggleActive/${id}`),

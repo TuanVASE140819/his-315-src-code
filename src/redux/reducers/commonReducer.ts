@@ -1,6 +1,12 @@
 import { produce } from 'immer'
 import { COMMON } from '../constants/constants'
-import { CommonState, CommonActionTypes } from '../../types'
+import {
+  CommonState,
+  CommonActionTypes,
+  DispatchListCategoryAction,
+  DispatchListTeamAction,
+  DispatchListTransactionTypeAction,
+} from '../../types'
 
 const initialState: CommonState = {
   isLoadingScreen: false,
@@ -24,21 +30,19 @@ const CommonReducer = (
         break
       case COMMON.DISPATCH_LIST_CATEGORY:
         if ('payload' in action && Array.isArray(action.payload)) {
-          // Narrow action to DispatchListCategoryAction to access typed payload
-          const act = action as any
-          draft.listCategory = act.payload
+          draft.listCategory = (action as DispatchListCategoryAction).payload
         }
         break
       case COMMON.DISPATCH_LIST_TEAM:
         if ('payload' in action && Array.isArray(action.payload)) {
-          const act = action as any
-          draft.listTeam = act.payload
+          draft.listTeam = (action as DispatchListTeamAction).payload
         }
         break
       case COMMON.DISPATCH_LIST_TRANSACTION_TYPE:
         if ('payload' in action && Array.isArray(action.payload)) {
-          const act = action as any
-          draft.listTransactionType = act.payload
+          draft.listTransactionType = (
+            action as DispatchListTransactionTypeAction
+          ).payload
         }
         break
       default:

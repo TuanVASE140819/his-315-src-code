@@ -1,10 +1,11 @@
 import axiosInstance from '../../utils/axiosConfig'
 import { AxiosResponse } from 'axios'
+import { CreateCategoryPayload, UpdateCategoryPayload } from '../../types/category.types'
 
 export const categoryServices = {
-  postInfoCategory: (payload: any): Promise<AxiosResponse> =>
+  postInfoCategory: (payload: CreateCategoryPayload): Promise<AxiosResponse> =>
     axiosInstance.post('Category/Admin/AddCategory', payload),
-  putInfoCategory: (payload: any): Promise<AxiosResponse> =>
+  putInfoCategory: (payload: UpdateCategoryPayload): Promise<AxiosResponse> =>
     axiosInstance.put('Category/Admin/UpdateCategory', payload),
   putToggleActiveCategory: (id: string | number): Promise<AxiosResponse> =>
     axiosInstance.put(`Category/Admin/ToggleActive/${id}`),

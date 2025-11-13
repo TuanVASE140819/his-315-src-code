@@ -4,8 +4,9 @@ import Account from '../components/layouts/Account/Account'
 import Game from '../components/layouts/Game/Game'
 import Team from '../components/layouts/Team/Team'
 import Customer from '../components/layouts/Customer/Customer'
-import NhanVien from '../pages/HeThong/NhanVien/index.jsx'
+import NhanVien from '../pages/HeThong/NhanVien/index'
 import Doitac from '../components/layouts/Doitac/Doitac'
+import DichVu from '../components/layouts/DichVu/DichVu'
 
 export const route: RouteConfig[] = [
   {
@@ -46,6 +47,13 @@ export const route: RouteConfig[] = [
   {
     path: '/danhmuc/doitac',
     Component: Doitac,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/danhmuc/dichvu',
+    Component: DichVu,
     isLayout: true,
     isAuth: true,
     redirectPath: '/login',

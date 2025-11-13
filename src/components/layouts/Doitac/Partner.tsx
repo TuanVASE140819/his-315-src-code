@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { ExportOutlined } from '@ant-design/icons'
 import { Button, ConfigProvider, Input, Popconfirm, Table, Tooltip } from 'antd'
+import type { TablePaginationConfig } from 'antd'
 import {
   PlusOutlined,
   ContainerOutlined,
@@ -17,8 +18,14 @@ import {
 } from '../../../redux/actions/partnerActions'
 import { debounce } from 'lodash'
 import * as XLSX from 'xlsx'
+import type {
+  PartnerUI,
+  PartnerFormValues,
+  ModalEditPartnerState,
+  PartnerItem,
+} from '../../../types/partner.types'
 
-const defaultData = [
+const defaultData: PartnerUI[] = [
   {
     id: 1,
     maDoiTac: 'DT001',
@@ -37,18 +44,20 @@ const defaultData = [
 
 const PAGE_SIZE = 20
 
-const Partner = () => {
+const Partner: React.FC = () => {
   const dispatch = useAppDispatch()
   const statePartner = useAppSelector((s) => s.Partner)
-  const [listPartner, setListPartner] = useState(defaultData)
+  const [listPartner, setListPartner] = useState<PartnerUI[]>(defaultData)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isModalOpenEdit, setIsModalOpenEdit] = useState({
-    show: false,
-    data: {},
-  })
+  const [isModalOpenEdit, setIsModalOpenEdit] = useState<ModalEditPartnerState>(
+    {
+      show: false,
+      data: {},
+    },
+  )
   const [search, setSearch] = useState('')
-  const [data2, setData2] = useState(defaultData)
-  const [valueExport, setValueExport] = useState([])
+  const [data2, setData2] = useState<PartnerUI[]>(defaultData)
+  const [valueExport, setValueExport] = useState<PartnerUI[]>([])
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: PAGE_SIZE,
@@ -61,9 +70,9 @@ const Partner = () => {
 
   useEffect(() => {
     // update local data when store changes
-    const payload = statePartner?.list || []
+    const payload: PartnerItem[] = statePartner?.list || []
     // normalize to UI shape (map backend fields to front fields)
-    const mapped = payload.map((it) => ({
+    const mapped: PartnerUI[] = payload.map((it) => ({
       id: it.iddoitac,
       maDoiTac: (it.madoitac || '').trim(),
       maDoiTac_New: it.madoitac || '',
@@ -87,13 +96,13 @@ const Partner = () => {
   }, [statePartner])
 
   const debounceGetDataSearch = useCallback(
-    debounce((keyword) => {
+    debounce((keyword: string) => {
       setSearch(keyword)
     }, 400),
     [],
   )
 
-  const handleSearchInput = (e) => {
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     debounceGetDataSearch(value)
   }
@@ -102,7 +111,7 @@ const Partner = () => {
     setSearch('')
   }
 
-  const onChangeTable = (pg) => {
+  const onChangeTable = (pg: TablePaginationConfig) => {
     const { current = 1 } = pg || {}
     setPagination((prev) => ({ ...prev, current }))
     dispatch(getListPartnerAction({ keyword: search, pageNumber: current }))
@@ -116,7 +125,7 @@ const Partner = () => {
     dispatch(getListPartnerAction({ keyword: search, pageNumber: page }))
   }, [search, dispatch])
 
-  const filteredData2 = (data) =>
+  const filteredData2 = (data: PartnerUI[]) =>
     data?.filter((item) =>
       !search
         ? true
@@ -135,7 +144,7 @@ const Partner = () => {
             .includes(search.toLowerCase()),
     )
 
-  const handleDeleteById = (id) => {
+  const handleDeleteById = (id: number) => {
     dispatch(
       deletePartnerAction(id, () =>
         dispatch(
@@ -154,9 +163,9 @@ const Partner = () => {
       dataIndex: 'STT',
       key: 'STT',
       width: 60,
-      fixed: 'left',
-      align: 'center',
-      render: (_, __, index) =>
+      fixed: 'left' as const,
+      align: 'center' as const,
+      render: (_: any, __: any, index: number) =>
         (pagination.current - 1) * pagination.pageSize + index + 1,
     },
     { title: 'Mã đối tác', dataIndex: 'maDoiTac', key: 'maDoiTac', width: 140 },
@@ -184,36 +193,36 @@ const Partner = () => {
       dataIndex: 'dienThoai',
       key: 'dienThoai',
       width: 140,
-      align: 'center',
+      align: 'center' as const,
     },
     {
       title: 'Mã số thuế',
       dataIndex: 'maSoThue',
       key: 'maSoThue',
       width: 160,
-      align: 'center',
+      align: 'center' as const,
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
       width: 200,
-      align: 'center',
+      align: 'center' as const,
     },
     {
       title: 'Website',
       dataIndex: 'website',
       key: 'website',
       width: 200,
-      align: 'center',
+      align: 'center' as const,
     },
     {
       title: '',
       dataIndex: 'action',
       key: 'action',
       width: 100,
-      fixed: 'right',
-      render: (_, record) => (
+      fixed: 'right' as const,
+      render: (_: any, record: PartnerUI) => (
         <ul
           className='flex justify-around m-0 p-0'
           style={{ listStyle: 'none' }}
@@ -363,8 +372,23 @@ const Partner = () => {
         <ModalCreatePartner
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
-          onCreate={(newItem) => {
-            setListPartner((prev) => [{ ...newItem, id: Date.now() }, ...prev])
+          onCreate={(newItem: PartnerFormValues) => {
+            setListPartner((prev) => [
+              {
+                ...newItem,
+                id: Date.now(),
+                maDoiTac_New: newItem.maDoiTac,
+                tenVietTat: newItem.tenVietTat || '',
+                diaChi: newItem.diaChi || '',
+                tenPhuongXa: '',
+                tenTinhTP: '',
+                dienThoai: newItem.dienThoai || '',
+                maSoThue: newItem.maSoThue || '',
+                email: newItem.email || '',
+                website: newItem.website || '',
+              },
+              ...prev,
+            ])
           }}
         />
       )}
@@ -372,7 +396,7 @@ const Partner = () => {
         <ModalEditPartner
           isModalOpenEdit={isModalOpenEdit}
           setIsModalOpenEdit={setIsModalOpenEdit}
-          onUpdate={(updated) => {
+          onUpdate={(updated: PartnerUI) => {
             setListPartner((prev) =>
               prev.map((p) => (p.id === updated.id ? updated : p)),
             )

@@ -92,6 +92,11 @@ const menuItems = [
         title: 'Đối tác',
         label: <Link to={'/danhmuc/doitac'}>Đối tác</Link>,
       },
+      {
+        key: '/danhmuc/dichvu',
+        title: 'Dịch vụ',
+        label: <Link to={'/danhmuc/dichvu'}>Dịch vụ</Link>,
+      },
     ],
   },
 ]

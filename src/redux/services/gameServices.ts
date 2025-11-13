@@ -1,10 +1,11 @@
 import axiosInstance from '../../utils/axiosConfig'
 import { AxiosResponse } from 'axios'
+import { CreateGamePayload, UpdateGamePayload } from '../../types/game.types'
 
 export const gameServices = {
-  postInfoGame: (payload: any): Promise<AxiosResponse> =>
+  postInfoGame: (payload: CreateGamePayload): Promise<AxiosResponse> =>
     axiosInstance.post('Game/Admin/AddGame', payload),
-  putInfoGame: (payload: any): Promise<AxiosResponse> =>
+  putInfoGame: (payload: UpdateGamePayload): Promise<AxiosResponse> =>
     axiosInstance.put('Game/Admin/UpdateGame', payload),
   putToggleActiveGame: (id: string | number): Promise<AxiosResponse> =>
     axiosInstance.put(`Game/Admin/ToggleActive/${id}`),
