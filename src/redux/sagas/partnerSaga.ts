@@ -86,5 +86,31 @@ function* deletePartnerSaga(action: DeletePartnerAction) {
 
 export function* partnerSaga() {
   yield takeLatest(PARTNER.GET_LIST_PARTNER, getListPartnerSaga)
+  yield takeLatest(PARTNER.GET_ALL_DOITAC, function* () {
+    try {
+      yield put({ type: COMMON.DISPATCH_LOADING_SCREEN, payload: true })
+      const res: AxiosResponse = yield call(partnerServices.getAllDoiTac)
+      if (res?.data?.status === 200 || res?.status === 200) {
+        const items = res.data?.data || []
+        // dispatch in same shape as paged response: data array inside payload.data
+        yield put({
+          type: PARTNER.DISPATCH_LIST_PARTNER,
+          payload: {
+            data: items,
+            totalCount: items.length,
+            totalPages: 1,
+            pageNumber: 1,
+          },
+        })
+      } else {
+        const errorMsg = res.data?.message || 'Lỗi khi tải danh sách đối tác'
+        // use message to notify
+      }
+    } catch (error) {
+      console.error('getAllDoiTac saga error', error)
+    } finally {
+      yield put({ type: COMMON.DISPATCH_LOADING_SCREEN, payload: false })
+    }
+  })
   yield takeLatest(PARTNER.DELETE_PARTNER, deletePartnerSaga)
 }

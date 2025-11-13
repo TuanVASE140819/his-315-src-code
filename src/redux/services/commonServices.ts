@@ -3,9 +3,11 @@ import { AxiosResponse } from 'axios'
 import { Category, Team, TransactionTypeOption, ApiResponse } from '../../types'
 
 // Public API base for external selects. Try VITE_PUBLIC_API_URL, then VITE_API_URL from .env, otherwise fallback.
+// Ensure we never call replace on undefined: fall back to empty string when env vars are missing.
 const PUBLIC_API = (
   (import.meta.env.VITE_PUBLIC_API_URL as string) ||
-  (import.meta.env.VITE_API_URL as string)
+  (import.meta.env.VITE_API_URL as string) ||
+  ''
 ).replace(/\/+$/, '')
 
 const publicUrl = (path: string) => `${PUBLIC_API}/${path.replace(/^\/+/, '')}`
@@ -35,6 +37,19 @@ export const commonServices = {
     // params when using axios `params`).
     axiosInstance.get(
       `${publicUrl('PhuongXa/GetPhuongXaByIdTinh')}?idTinh=${encodeURIComponent(String(idTinh))}`,
+    ),
+  // KhoaPhong public endpoints
+  getAllKhoaPhongSuDung: (): Promise<AxiosResponse<any>> =>
+    axiosInstance.get(
+      'https://benhviennhi.api.315healthcare.com/api/KhoaPhong/GetAllKhoaPhongSuDung',
+    ),
+  getKhoByIdKhoaPhong: (
+    idKhoaPhong: number | string,
+  ): Promise<AxiosResponse<any>> =>
+    axiosInstance.get(
+      `https://benhviennhi.api.315healthcare.com/api/KhoKhoaPhong/GetKhoByIdKhoaPhong?idKhoaPhong=${encodeURIComponent(
+        String(idKhoaPhong),
+      )}`,
     ),
 }
 

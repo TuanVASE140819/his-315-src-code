@@ -7,6 +7,8 @@ import Customer from '../components/layouts/Customer/Customer'
 import NhanVien from '../pages/HeThong/NhanVien/index'
 import Doitac from '../components/layouts/Doitac/Doitac'
 import DichVu from '../components/layouts/DichVu/DichVu'
+import NhapKho from '../pages/ThuMuaKho/NhapKho'
+import ChuyenKho from '../pages/ThuMuaKho/ChuyenKho'
 
 export const route: RouteConfig[] = [
   {
@@ -54,6 +56,20 @@ export const route: RouteConfig[] = [
   {
     path: '/danhmuc/dichvu',
     Component: DichVu,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/thumuakho/nhapkho',
+    Component: NhapKho,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/thumuakho/chuyenkho',
+    Component: ChuyenKho,
     isLayout: true,
     isAuth: true,
     redirectPath: '/login',

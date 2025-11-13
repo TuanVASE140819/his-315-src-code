@@ -44,6 +44,8 @@ export interface CommonState {
   listChucDanh?: any[]
   listTinh?: any[]
   listPhuongXa?: any[]
+  listKhoaPhong?: any[]
+  listKhoByKhoaPhong?: any[]
   // partner list is kept in its own reducer (Partner)
 }
 
@@ -187,6 +189,25 @@ export interface GetListPhuongXaAction {
 }
 
 export interface DispatchListPhuongXaAction {
+  type: string
+  payload: any[]
+}
+
+export interface GetListKhoaPhongAction {
+  type: string
+}
+
+export interface DispatchListKhoaPhongAction {
+  type: string
+  payload: any[]
+}
+
+export interface GetListKhoByKhoaPhongAction {
+  type: string
+  idKhoaPhong: number | string
+}
+
+export interface DispatchListKhoByKhoaPhongAction {
   type: string
   payload: any[]
 }
@@ -339,5 +360,9 @@ export type CommonActionTypes =
   | DispatchListTinhAction
   | GetListPhuongXaAction
   | DispatchListPhuongXaAction
+  | GetListKhoaPhongAction
+  | DispatchListKhoaPhongAction
+  | GetListKhoByKhoaPhongAction
+  | DispatchListKhoByKhoaPhongAction
 
 export type AllActionTypes = UserActionTypes | CommonActionTypes

@@ -99,6 +99,23 @@ const menuItems = [
       },
     ],
   },
+  {
+    key: '/thumuakho',
+    label: 'Thu mua kho',
+    icon: <FolderOpenOutlined />,
+    children: [
+      {
+        key: '/thumuakho/nhapkho',
+        title: 'Nhập kho',
+        label: <Link to={'/thumuakho/nhapkho'}>Nhập kho</Link>,
+      },
+      {
+        key: '/thumuakho/chuyenkho',
+        title: 'Chuyển kho',
+        label: <Link to={'/thumuakho/chuyenkho'}>Chuyển kho</Link>,
+      },
+    ],
+  },
 ]
 
 const RootLayout = () => {
