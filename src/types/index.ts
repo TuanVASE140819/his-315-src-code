@@ -10,6 +10,7 @@ export * from './api.types'
 export * from './common.types'
 export * from './route'
 export * from './dichvu.types'
+export * from './nhanVien.types'
 
 // Note: store.ts contains RootState which conflicts with redux.types
 // Import from redux.types for the proper RootState definition

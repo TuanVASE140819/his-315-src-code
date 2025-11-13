@@ -45,6 +45,26 @@ const CommonReducer = (
           ).payload
         }
         break
+      case COMMON.DISPATCH_LIST_BANGCAP:
+        if ('payload' in action && Array.isArray(action.payload)) {
+          draft.listBangCap = (action as any).payload
+        }
+        break
+      case COMMON.DISPATCH_LIST_CHUCDANH:
+        if ('payload' in action && Array.isArray(action.payload)) {
+          draft.listChucDanh = (action as any).payload
+        }
+        break
+      case COMMON.DISPATCH_LIST_TINH:
+        if ('payload' in action && Array.isArray(action.payload)) {
+          draft.listTinh = (action as any).payload
+        }
+        break
+      case COMMON.DISPATCH_LIST_PHUONGXA:
+        if ('payload' in action && Array.isArray(action.payload)) {
+          draft.listPhuongXa = (action as any).payload
+        }
+        break
       default:
         return state
     }

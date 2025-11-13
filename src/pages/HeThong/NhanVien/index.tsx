@@ -5,6 +5,7 @@ import { PlusOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
 import { getListNhanVienAction } from '../../../redux/actions/nhanVienActions'
 import getColumns from './columns'
+import ModalCreateNhanVien from '../../../components/layouts/NhanVien/ModalCreateNhanVien/ModalCreateNhanVien'
 
 const mapApiToRow = (item: any, index: number) => ({
   key: item.id,
@@ -28,6 +29,7 @@ const NhanVien = () => {
   const [pageIndex, setPageIndex] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [keyword, setKeyword] = useState<string>('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const dispatch = useAppDispatch()
   const stateNhanVien: any = useAppSelector((s: any) => s.NhanVien)
   const pageSizeSyncedRef = useRef(false)
@@ -116,11 +118,24 @@ const NhanVien = () => {
           <Button onClick={onSearch}>Tìm</Button>
         </div>
         <div>
-          <Button type='primary' icon={<PlusOutlined />}>
+          <Button
+            type='primary'
+            icon={<PlusOutlined />}
+            onClick={() => setShowCreateModal(true)}
+          >
             Thêm
           </Button>
         </div>
       </div>
+
+      <ModalCreateNhanVien
+        visible={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={() => {
+          setPageIndex(1)
+          dispatch(getListNhanVienAction({ keyword, pageIndex: 1 }))
+        }}
+      />
 
       <Spin spinning={loading}>
         <Table

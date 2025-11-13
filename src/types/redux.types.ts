@@ -40,6 +40,10 @@ export interface CommonState {
   listCategory: Category[]
   listTeam: Team[]
   listTransactionType: TransactionTypeOption[]
+  listBangCap?: any[]
+  listChucDanh?: any[]
+  listTinh?: any[]
+  listPhuongXa?: any[]
   // partner list is kept in its own reducer (Partner)
 }
 
@@ -148,6 +152,43 @@ export interface GetListTransactionTypeAction {
 export interface DispatchListTransactionTypeAction {
   type: string
   payload: TransactionTypeOption[]
+}
+
+export interface GetListBangCapAction {
+  type: string
+}
+
+export interface DispatchListBangCapAction {
+  type: string
+  payload: any[]
+}
+
+export interface GetListChucDanhAction {
+  type: string
+}
+
+export interface DispatchListChucDanhAction {
+  type: string
+  payload: any[]
+}
+
+export interface GetListTinhAction {
+  type: string
+}
+
+export interface DispatchListTinhAction {
+  type: string
+  payload: any[]
+}
+
+export interface GetListPhuongXaAction {
+  type: string
+  idTinh?: string | number
+}
+
+export interface DispatchListPhuongXaAction {
+  type: string
+  payload: any[]
 }
 
 // Category Actions
@@ -290,5 +331,13 @@ export type CommonActionTypes =
   | DispatchListTeamAction
   | GetListTransactionTypeAction
   | DispatchListTransactionTypeAction
+  | GetListBangCapAction
+  | DispatchListBangCapAction
+  | GetListChucDanhAction
+  | DispatchListChucDanhAction
+  | GetListTinhAction
+  | DispatchListTinhAction
+  | GetListPhuongXaAction
+  | DispatchListPhuongXaAction
 
 export type AllActionTypes = UserActionTypes | CommonActionTypes

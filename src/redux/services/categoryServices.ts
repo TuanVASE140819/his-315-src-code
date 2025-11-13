@@ -1,6 +1,9 @@
 import axiosInstance from '../../utils/axiosConfig'
 import { AxiosResponse } from 'axios'
-import { CreateCategoryPayload, UpdateCategoryPayload } from '../../types/category.types'
+import {
+  CreateCategoryPayload,
+  UpdateCategoryPayload,
+} from '../../types/category.types'
 
 export const categoryServices = {
   postInfoCategory: (payload: CreateCategoryPayload): Promise<AxiosResponse> =>

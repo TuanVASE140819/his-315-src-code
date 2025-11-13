@@ -1,6 +1,9 @@
 import axiosInstance from '../../utils/axiosConfig'
 import { AxiosResponse } from 'axios'
-import { CreateLeaguePayload, UpdateLeaguePayload } from '../../types/league.types'
+import {
+  CreateLeaguePayload,
+  UpdateLeaguePayload,
+} from '../../types/league.types'
 
 export const leagueServices = {
   postInfoLeague: (payload: CreateLeaguePayload): Promise<AxiosResponse> =>
