@@ -13,4 +13,8 @@ export const partnerServices = {
     axiosInstance.delete(`/DoiTac/DeleteDoiTac?id=${id}`),
   getAllDoiTac: (): Promise<AxiosResponse<any>> =>
     axiosInstance.get('/DoiTac/GetAllDoiTac'),
+  createPartner: (payload: any): Promise<AxiosResponse<any>> =>
+    axiosInstance.post('/DoiTac/InsertDoiTac', payload),
+  updatePartner: (payload: any): Promise<AxiosResponse<any>> =>
+    axiosInstance.put('/DoiTac/UpdateDoiTac', payload),
 }

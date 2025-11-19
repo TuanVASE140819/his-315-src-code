@@ -46,6 +46,8 @@ export const commonServices = {
         String(idKhoaPhong),
       )}`,
     ),
+  getAllNhomNguoiDung: (): Promise<AxiosResponse<any>> =>
+    axiosInstance.get(publicUrl('NhomNguoiDung/GetAllNhomNguoiDung')),
 }
 
 export default commonServices

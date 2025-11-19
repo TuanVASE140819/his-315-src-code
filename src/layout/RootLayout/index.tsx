@@ -41,6 +41,11 @@ const menuItems = [
         title: 'Nhân viên',
         label: <Link to={'/hethong/nhanvien'}>Nhân viên</Link>,
       },
+      {
+        key: '/hethong/nguoidung',
+        title: 'Người dùng',
+        label: <Link to={'/hethong/nguoidung'}>Người dùng</Link>,
+      },
     ],
   },
   {

@@ -5,6 +5,7 @@ import Game from '../components/layouts/Game/Game'
 import Team from '../components/layouts/Team/Team'
 import Customer from '../components/layouts/Customer/Customer'
 import NhanVien from '../pages/HeThong/NhanVien/index'
+import NguoiDung from '../pages/HeThong/NguoiDung/index'
 import Doitac from '../components/layouts/Doitac/Doitac'
 import DichVu from '../components/layouts/DichVu/DichVu'
 import NhapKho from '../pages/ThuMuaKho/NhapKho'
@@ -77,6 +78,13 @@ export const route: RouteConfig[] = [
   {
     path: '/hethong/nhanvien',
     Component: NhanVien,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/hethong/nguoidung',
+    Component: NguoiDung,
     isLayout: true,
     isAuth: true,
     redirectPath: '/login',

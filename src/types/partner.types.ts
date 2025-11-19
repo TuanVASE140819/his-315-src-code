@@ -43,9 +43,18 @@ export interface PartnerFormValues {
   tenVietTat?: string
   diaChi?: string
   dienThoai?: string
+  diDong?: string
   maSoThue?: string
   email?: string
   website?: string
+  tinh?: number | null
+  phuong?: number | null
+  fax?: string
+  nguoiLienHe?: string
+  ghiChu?: string
+  taiKhoanNganHang?: string
+  nganHang?: string
+  tenTaiKhoan?: string
 }
 
 export interface ModalEditPartnerState {
