@@ -4,9 +4,11 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 export const getColumns = ({
   toggleDaNghi,
   handleDelete,
+  onEdit,
 }: {
   toggleDaNghi: any
   handleDelete: any
+  onEdit?: (record: any) => void
 }) => {
   return [
     { title: 'STT', dataIndex: 'stt', width: 70, fixed: 'left' },
@@ -92,7 +94,11 @@ export const getColumns = ({
       render: (_: any, record: any) => (
         <Space>
           <Tooltip title='Sửa'>
-            <Button type='text' icon={<EditOutlined />} />
+            <Button
+              type='text'
+              icon={<EditOutlined />}
+              onClick={() => onEdit && onEdit(record)}
+            />
           </Tooltip>
           <Popconfirm
             title='Xác nhận xoá?'

@@ -12,6 +12,7 @@ import {
 import ModalCreateDichVu from './ModalCreateDichVu/ModalCreateDichVu'
 import ModalEditDichVu from './ModalEditDichVu/ModalEditDichVu'
 import { debounce } from 'lodash'
+import { Select } from 'antd'
 import * as XLSX from 'xlsx'
 import axiosInstance from '../../../utils/axiosConfig'
 import type {
@@ -40,8 +41,13 @@ const DichVu: React.FC = () => {
     data: {},
   })
   const [search, setSearch] = useState('')
+  const [groups, setGroups] = useState<any[]>([])
+  const [selectedGroup, setSelectedGroup] = useState<number | null>(1)
   const [valueExport, setValueExport] = useState<DichVu[]>([])
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<{
+    current: number
+    pageSize: number
+  }>({
     current: 1,
     pageSize: PAGE_SIZE,
   })
@@ -68,21 +74,31 @@ const DichVu: React.FC = () => {
   const onChangeTable = (pg: TablePaginationConfig) => {
     const { current = 1 } = pg || {}
     setPagination((prev) => ({ ...prev, current }))
+    // fetch new page explicitly
+    fetchDichVu({ idNhomDv: selectedGroup, page: current, keyword: search })
   }
 
   const fetchDichVu = useCallback(
     async ({
-      idNhomDv = 1,
+      idNhomDv,
       page = 1,
-      pageSize = PAGE_SIZE,
       keyword = '',
+    }: {
+      idNhomDv?: number | null
+      page?: number
+      keyword?: string
     } = {}) => {
       try {
         setLoading(true)
-        const url = `/DichVu/SearchDichVuPhanTrang?idNhomDv=${idNhomDv}&pageNumber=${page}&pageSize=${pageSize}${keyword ? `&keyword=${encodeURIComponent(keyword)}` : ''}`
+        // If idNhomDv is undefined or null (meaning 'Tất cả'), omit idNhomDv param
+        const base = '/DichVu/SearchDichVuPhanTrang'
+        const groupParam = idNhomDv == null ? '' : `idNhomDv=${idNhomDv}&`
+        const url = `${base}?${groupParam}pageNumber=${page}${keyword ? `&keyword=${encodeURIComponent(keyword)}` : ''}`
+        console.debug('fetchDichVu url:', url)
         const res = await axiosInstance.get(url)
         const items = res?.data?.data?.data || []
-        const total = res?.data?.data?.totalCount || 0
+        const total = res?.data?.data?.totalCount ?? 0
+        const totalPages = res?.data?.data?.totalPages ?? 0
         const mapped: DichVu[] = items.map((it: any) => ({
           id: it.iddv,
           maDichVu: it.madichvu,
@@ -94,6 +110,15 @@ const DichVu: React.FC = () => {
         }))
         setList(mapped)
         setTotalCount(total)
+        // If backend provides totalPages, compute server pageSize and sync UI
+        if (totalPages && total) {
+          const serverPageSize = Math.ceil(total / totalPages)
+          setPagination((p) => ({ ...p, pageSize: serverPageSize }))
+          // Ensure current page is within range
+          if (page > totalPages) {
+            setPagination((p) => ({ ...p, current: totalPages }))
+          }
+        }
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -102,6 +127,28 @@ const DichVu: React.FC = () => {
     },
     [],
   )
+
+  // Fetch service groups from external API
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const res = await axiosInstance.get(
+          'https://benhviennhi.api.315healthcare.com/api/DichVuNhom/GetAllDichVuNhom',
+        )
+        const items = res?.data?.data || []
+        setGroups(items)
+        if (!selectedGroup && items.length) setSelectedGroup(items[0].idnhom)
+      } catch (error) {
+        console.error('Error fetching groups:', error)
+      }
+    }
+    fetchGroups()
+  }, [])
+
+  // Reset to first page when group or search changes
+  useEffect(() => {
+    setPagination((p) => ({ ...p, current: 1 }))
+  }, [selectedGroup, search])
 
   const exportToExcel = () => {
     const headers = ['Mã dịch vụ', 'Tên dịch vụ', 'Mô tả', 'Giá', 'Đơn vị']
@@ -202,17 +249,39 @@ const DichVu: React.FC = () => {
   ]
 
   useEffect(() => {
+    // Call fetch with explicit selectedGroup to avoid closure issues
+    console.debug('calling fetchDichVu with', {
+      selectedGroup,
+      pagination,
+      search,
+    })
     fetchDichVu({
+      idNhomDv: selectedGroup,
       page: pagination.current,
-      pageSize: pagination.pageSize,
       keyword: search,
     })
-  }, [fetchDichVu, pagination, search])
+  }, [fetchDichVu, selectedGroup, pagination.current, search])
 
   return (
     <>
       <div className='p-2 bg-white rounded-xl border'>
         <div className='flex justify-between gap-2'>
+          <div className='w-60'>
+            <Select
+              value={selectedGroup}
+              onChange={(v) => setSelectedGroup(v)}
+              options={[
+                { label: 'Tất cả', value: null },
+                ...groups.map((g) => ({
+                  label: g.tennhom,
+                  value: g.idnhom,
+                })),
+              ]}
+              placeholder='Nhóm dịch vụ'
+              allowClear
+              style={{ width: '100%' }}
+            />
+          </div>
           <div className='w-80'>
             <Input
               allowClear

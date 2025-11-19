@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store/hooks'
 import { getListNhanVienAction } from '../../../redux/actions/nhanVienActions'
 import getColumns from './columns'
 import ModalCreateNhanVien from '../../../components/layouts/NhanVien/ModalCreateNhanVien/ModalCreateNhanVien'
+import ModalUpdateNhanVien from '../../../components/layouts/NhanVien/ModalUpdateNhanVien/ModalUpdateNhanVien'
 
 const mapApiToRow = (item: any, index: number) => ({
   key: item.id,
@@ -30,6 +31,8 @@ const NhanVien = () => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [keyword, setKeyword] = useState<string>('')
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
+  const [editingRecord, setEditingRecord] = useState<any | null>(null)
   const dispatch = useAppDispatch()
   const stateNhanVien: any = useAppSelector((s: any) => s.NhanVien)
   const pageSizeSyncedRef = useRef(false)
@@ -97,7 +100,15 @@ const NhanVien = () => {
   }, [])
 
   const columns = useMemo(
-    () => getColumns({ toggleDaNghi, handleDelete }),
+    () =>
+      getColumns({
+        toggleDaNghi,
+        handleDelete,
+        onEdit: (record: any) => {
+          setEditingRecord(record.raw || record)
+          setShowUpdateModal(true)
+        },
+      }),
     [toggleDaNghi, handleDelete],
   )
 
@@ -134,6 +145,16 @@ const NhanVien = () => {
         onCreated={() => {
           setPageIndex(1)
           dispatch(getListNhanVienAction({ keyword, pageIndex: 1 }))
+        }}
+      />
+
+      <ModalUpdateNhanVien
+        visible={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+        data={editingRecord}
+        onUpdated={() => {
+          setShowUpdateModal(false)
+          dispatch(getListNhanVienAction({ keyword, pageIndex: pageIndex }))
         }}
       />
 

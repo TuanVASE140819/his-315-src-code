@@ -8,5 +8,7 @@ export const nhanVienServices = {
       `/NhanVien/SearchNhanVienPhanTrang?keyword=${encodeURIComponent(keyword)}&pageIndex=${pageIndex}`,
     ),
   postInfoNhanVien: (payload: CreateNhanVienPayload): Promise<AxiosResponse> =>
-    axiosInstance.post('/NhanVien/Admin/AddNhanVien', payload),
+    axiosInstance.post('/NhanVien/InsertNhanVien', payload),
+  putInfoNhanVien: (payload: CreateNhanVienPayload): Promise<AxiosResponse> =>
+    axiosInstance.put('/NhanVien/UpdateNhanVien', payload),
 }

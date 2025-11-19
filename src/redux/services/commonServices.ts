@@ -32,22 +32,17 @@ export const commonServices = {
   getTinh: (): Promise<AxiosResponse<any>> =>
     axiosInstance.get(publicUrl('TinhTP/GetAllTinhTP')),
   getPhuongXaByTinh: (idTinh: number | string): Promise<AxiosResponse<any>> =>
-    // Build the full URL including query param explicitly so the network
-    // request always contains ?idTinh=... (some environments/tools hide
-    // params when using axios `params`).
     axiosInstance.get(
       `${publicUrl('PhuongXa/GetPhuongXaByIdTinh')}?idTinh=${encodeURIComponent(String(idTinh))}`,
     ),
-  // KhoaPhong public endpoints
+
   getAllKhoaPhongSuDung: (): Promise<AxiosResponse<any>> =>
-    axiosInstance.get(
-      'https://benhviennhi.api.315healthcare.com/api/KhoaPhong/GetAllKhoaPhongSuDung',
-    ),
+    axiosInstance.get(publicUrl('KhoaPhong/GetAllKhoaPhongSuDung')),
   getKhoByIdKhoaPhong: (
     idKhoaPhong: number | string,
   ): Promise<AxiosResponse<any>> =>
     axiosInstance.get(
-      `https://benhviennhi.api.315healthcare.com/api/KhoKhoaPhong/GetKhoByIdKhoaPhong?idKhoaPhong=${encodeURIComponent(
+      `${publicUrl('KhoKhoaPhong/GetKhoByIdKhoaPhong')}?idKhoaPhong=${encodeURIComponent(
         String(idKhoaPhong),
       )}`,
     ),

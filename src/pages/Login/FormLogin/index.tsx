@@ -16,10 +16,10 @@ function FormLogin() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const [company, setCompany] = useState<any>(null)
+  // Company is fixed to 1 for this deployment; remove UI selection.
+  const [company] = useState<any>(1)
   const [department, setDepartment] = useState<any>(null)
 
-  const companies = useAppSelector((state: RootState) => state.User.companies)
   const departments = useAppSelector(
     (state: RootState) => state.User.departments,
   )
@@ -46,33 +46,13 @@ function FormLogin() {
     validationSchema: loginSchema,
   })
 
-  // Fetch companies when username changes
+  // Fetch departments for the fixed company when username changes
   useEffect(() => {
     const username = formik.values.email
     if (username) {
-      dispatch(getCompaniesForUser(username))
+      dispatch(getDepartmentsForUser(username, company))
     }
-  }, [formik.values.email, dispatch])
-
-  // Fetch departments when company changes
-  useEffect(() => {
-    if (company && formik.values.email) {
-      dispatch(getDepartmentsForUser(formik.values.email, company))
-    }
-  }, [company, formik.values.email, dispatch])
-
-  // Auto-select company if only one
-  useEffect(() => {
-    if (companies.length === 1 && !company) {
-      setCompany(companies[0].idct)
-    }
-  }, [companies, company])
-
-  // Transform companies to options
-  const companyOptions = companies.map((c) => ({
-    label: c.tenct,
-    value: c.idct,
-  }))
+  }, [formik.values.email, company, dispatch])
 
   // Transform departments to options
   const departmentOptions = departments.map((d) => ({
@@ -125,17 +105,7 @@ function FormLogin() {
               : ''}
           </div>
         </div>
-        <div className='flex flex-col'>
-          <label className='text-base text-left'>Công Ty</label>
-          <Select
-            size='large'
-            value={company}
-            onChange={(v) => setCompany(v)}
-            options={companyOptions}
-            placeholder='Chọn công ty / cơ sở / chi nhánh'
-            allowClear
-          />
-        </div>
+        {/* Company selection removed — company is fixed to `1`. */}
         <div className='flex flex-col'>
           <label className='text-base text-left'>Khoa Phòng</label>
           <Select
