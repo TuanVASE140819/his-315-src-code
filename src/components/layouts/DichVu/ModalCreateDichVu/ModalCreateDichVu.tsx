@@ -46,19 +46,31 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
   }, [])
 
   React.useEffect(() => {
+    const controller = new AbortController()
     const fetchChuyenKhoa = async () => {
       try {
         const res = await axiosInstance.get(
           'https://benhviennhi.api.315healthcare.com/api/ChuyenKhoa/GetAllChuyenKhoa',
+          { signal: controller.signal },
         )
-        const items = res?.data?.data || []
+        const raw = res?.data?.data?.data ?? res?.data?.data ?? res?.data ?? []
+        const items = Array.isArray(raw) ? raw : []
         setChuyenkhoas(items)
-      } catch (error) {
+      } catch (error: any) {
+        if (error.name === 'AbortError') return
         console.error('Error fetching chuyen khoa:', error)
       }
     }
 
     fetchChuyenKhoa()
+
+    return () => {
+      try {
+        controller.abort()
+      } catch (e) {
+        // ignore
+      }
+    }
   }, [])
 
   const handleOk = async () => {
