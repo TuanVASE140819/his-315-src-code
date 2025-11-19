@@ -8,6 +8,7 @@ import { gameSaga } from './gameSaga'
 import { customerSaga } from './customerSaga'
 import { nhanVienSaga } from './nhanVienSaga'
 import { partnerSaga } from './partnerSaga'
+import { dichvuSaga } from './dichvuSaga'
 
 export function* rootSaga() {
   yield all([
@@ -18,6 +19,7 @@ export function* rootSaga() {
     categorySaga(),
     nhanVienSaga(),
     partnerSaga(),
+    dichvuSaga(),
     commonSaga(),
     userSaga(),
   ])

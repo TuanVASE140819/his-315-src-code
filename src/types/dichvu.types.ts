@@ -16,6 +16,16 @@ export interface DichVuFormValues {
   moTa?: string
   gia: number
   donvi?: string
+  nhomDichVu?: number | null
+  ghiChu?: string
+  tenVietTat?: string
+  tienGuiMau?: number
+  tienChietKhau?: number
+  tienGiaCong?: number
+  tienVanChuyen?: number
+  giaVon?: number
+  chuyenKhoa?: number | null
+  bhyt?: boolean | number
 }
 
 export interface ModalEditDichVuState {
