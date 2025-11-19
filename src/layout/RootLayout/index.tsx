@@ -226,47 +226,63 @@ const RootLayout = () => {
             trigger={null}
             width={collapsed ? 80 : 200}
             style={{
-              background: 'linear-gradient(180deg, #E97195 0%, #D6497A 100%)',
+              background: '#ffffff',
               overflow: 'auto',
               height: '100vh',
               position: 'fixed',
               left: 0,
               top: 0,
               bottom: 0,
+              padding: 6,
+              boxSizing: 'border-box',
+              borderRadius: 12,
             }}
             collapsible
             collapsed={collapsed}
           >
-            <div className='h-16 flex justify-center items-center'>
-              {!collapsed ? (
-                <Link to='/'>
-                  <div className='flex items-center justify-center transition-all duration-300'>
+            <div
+              style={{
+                background: '#ffffff',
+                height: '100%',
+                borderRadius: 8,
+                overflow: 'hidden',
+                borderRight: '3px solid #E97195',
+                borderTop: '3px solid #E97195',
+                borderBottom: '2px solid #E97195',
+                boxSizing: 'border-box',
+              }}
+            >
+              <div className='h-16 flex justify-center items-center'>
+                {!collapsed ? (
+                  <Link to='/'>
+                    <div className='flex items-center justify-center transition-all duration-300'>
+                      <img
+                        className='w-16 h-16 hover:w-[4.5rem] hover:h-[4.5rem] object-contain transition-all duration-300'
+                        src={logo}
+                        alt='Logo'
+                      />
+                    </div>
+                  </Link>
+                ) : (
+                  <Link to='/'>
                     <img
-                      className='w-16 h-16 hover:w-[4.5rem] hover:h-[4.5rem] object-contain transition-all duration-300'
+                      className='w-11 hover:w-[2.85rem] transition-transform duration-300 py-3 img-outline'
                       src={logo}
                       alt='Logo'
                     />
-                  </div>
-                </Link>
-              ) : (
-                <Link to='/'>
-                  <img
-                    className='w-11 hover:w-[2.85rem] transition-transform duration-300 py-3 img-outline'
-                    src={logo}
-                    alt='Logo'
-                  />
-                </Link>
-              )}
+                  </Link>
+                )}
+              </div>
+              <Menu
+                theme='light'
+                mode='inline'
+                selectedKeys={selectedKeys}
+                openKeys={openKeys}
+                onOpenChange={handleOpenChange}
+                onSelect={onSelect}
+                items={menuItems}
+              />
             </div>
-            <Menu
-              theme='dark'
-              mode='inline'
-              selectedKeys={selectedKeys}
-              openKeys={openKeys}
-              onOpenChange={handleOpenChange}
-              onSelect={onSelect}
-              items={menuItems}
-            />
           </Sider>
           <Layout
             style={{
