@@ -17,7 +17,7 @@ import type {
   ModalEditDichVuState,
 } from '../../../../types'
 import axiosInstance from '../../../../utils/axiosConfig'
-import { useAppDispatch } from '../../../../redux/store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../../redux/store/hooks'
 import { putInfoDichVuAction } from '../../../../redux/actions/dichvuActions'
 
 interface ModalEditDichVuProps {
@@ -35,6 +35,7 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
   const [groups, setGroups] = React.useState<any[]>([])
   const [chuyenkhoas, setChuyenkhoas] = React.useState<any[]>([])
   const dispatch = useAppDispatch()
+  const infoUser = useAppSelector((s: any) => s.User?.infoUser)
 
   useEffect(() => {
     if (
@@ -98,7 +99,7 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
       const values = await form.validateFields()
       if ('id' in isModalOpenEdit.data) {
         const payload = {
-          id: (isModalOpenEdit.data as any).id,
+          iddv: (isModalOpenEdit.data as any).id,
           maDichVu: values.maDichVu,
           tenDichVu: values.tenDichVu,
           idNhomDV: values.nhomDichVu ?? null,
@@ -113,6 +114,7 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
           giaVon: values.giaVon ?? 0,
           idChuyenKhoa: values.chuyenKhoa ?? null,
           bhyt: values.bhyt ? 1 : 0,
+          nguOiSUA: infoUser?.id ?? null,
         }
 
         // Dispatch redux action to handle update
