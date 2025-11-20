@@ -102,6 +102,11 @@ const menuItems = [
         title: 'Dịch vụ',
         label: <Link to={'/danhmuc/dichvu'}>Dịch vụ</Link>,
       },
+      {
+        key: '/danhmuc/phongkham',
+        title: 'Phòng khám',
+        label: <Link to={'/danhmuc/phongkham'}>Phòng khám</Link>,
+      },
     ],
   },
   {

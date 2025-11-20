@@ -10,6 +10,7 @@ import Doitac from '../components/layouts/Doitac/Doitac'
 import DichVu from '../components/layouts/DichVu/DichVu'
 import NhapKho from '../pages/ThuMuaKho/NhapKho'
 import ChuyenKho from '../pages/ThuMuaKho/ChuyenKho'
+import PhongKham from '../components/layouts/PhongKham/index'
 
 export const route: RouteConfig[] = [
   {
@@ -57,6 +58,13 @@ export const route: RouteConfig[] = [
   {
     path: '/danhmuc/dichvu',
     Component: DichVu,
+    isLayout: true,
+    isAuth: true,
+    redirectPath: '/login',
+  },
+  {
+    path: '/danhmuc/phongkham',
+    Component: PhongKham,
     isLayout: true,
     isAuth: true,
     redirectPath: '/login',
