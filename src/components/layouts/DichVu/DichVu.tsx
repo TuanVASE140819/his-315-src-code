@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { ExportOutlined } from '@ant-design/icons'
 import { Button, ConfigProvider, Input, Popconfirm, Table, Tooltip } from 'antd'
 import type { TablePaginationConfig } from 'antd'
@@ -58,24 +58,27 @@ const DichVu: React.FC = () => {
     setValueExport(list)
   }, [list])
 
-  const debounceGetDataSearch = useCallback(
-    (keyword: string) => {
-      debounce(() => {
-        setSearch(keyword)
-      }, 400)()
-    },
-    [setSearch],
+  // stable debounced setter to avoid creating a new debounced fn on every call
+  const debouncedSetSearch = useRef(
+    debounce((keyword: string) => {
+      setSearch(keyword)
+    }, 400),
   )
 
+  useEffect(() => {
+    return () => {
+      // cancel any pending debounce on unmount
+      debouncedSetSearch.current.cancel()
+    }
+  }, [])
+
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    debounceGetDataSearch(e.target.value)
+    debouncedSetSearch.current(e.target.value)
   }
 
   const onChangeTable = (pg: TablePaginationConfig) => {
     const { current = 1 } = pg || {}
     setPagination((prev) => ({ ...prev, current }))
-    // fetch new page explicitly
-    fetchDichVu({ idNhomDv: selectedGroup, page: current, keyword: search })
   }
 
   const fetchDichVu = useCallback(
