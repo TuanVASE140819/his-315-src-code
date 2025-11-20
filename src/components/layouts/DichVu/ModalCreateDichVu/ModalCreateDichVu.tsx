@@ -1,4 +1,6 @@
 import React from 'react'
+import { useAppDispatch, useAppSelector } from '../../../../redux/store/hooks'
+import { COMMON } from '../../../../redux/constants/constants'
 import {
   Modal,
   Input,
@@ -28,50 +30,31 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
   const [form] = Form.useForm<DichVuFormValues>()
   const [groups, setGroups] = React.useState<any[]>([])
   const [chuyenkhoas, setChuyenkhoas] = React.useState<any[]>([])
+  const dispatch = useAppDispatch()
+  const chuyenKhoaFromStore = useAppSelector(
+    (s: any) => s.Common?.listChuyenKhoa || [],
+  )
+
+  const dichVuNhomFromStore = useAppSelector(
+    (s: any) => s.Common?.listDichVuNhom || [],
+  )
 
   React.useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const res = await axiosInstance.get(
-          'https://benhviennhi.api.315healthcare.com/api/DichVuNhom/GetAllDichVuNhom',
-        )
-        const items = res?.data?.data || []
-        setGroups(items)
-      } catch (error) {
-        console.error('Error fetching groups:', error)
-      }
-    }
-
-    fetchGroups()
-  }, [])
+    dispatch({ type: COMMON.GET_LIST_DICHVU_NHOM })
+  }, [dispatch])
 
   React.useEffect(() => {
-    const controller = new AbortController()
-    const fetchChuyenKhoa = async () => {
-      try {
-        const res = await axiosInstance.get(
-          'https://benhviennhi.api.315healthcare.com/api/ChuyenKhoa/GetAllChuyenKhoa',
-          { signal: controller.signal },
-        )
-        const raw = res?.data?.data?.data ?? res?.data?.data ?? res?.data ?? []
-        const items = Array.isArray(raw) ? raw : []
-        setChuyenkhoas(items)
-      } catch (error: any) {
-        if (error.name === 'AbortError') return
-        console.error('Error fetching chuyen khoa:', error)
-      }
-    }
+    setGroups(dichVuNhomFromStore)
+  }, [dichVuNhomFromStore])
 
-    fetchChuyenKhoa()
+  React.useEffect(() => {
+    // dispatch a redux action to load chuyen khoa once
+    dispatch({ type: COMMON.GET_LIST_CHUYENKHOA })
+  }, [dispatch])
 
-    return () => {
-      try {
-        controller.abort()
-      } catch (e) {
-        // ignore
-      }
-    }
-  }, [])
+  React.useEffect(() => {
+    setChuyenkhoas(chuyenKhoaFromStore)
+  }, [chuyenKhoaFromStore])
 
   const handleOk = async () => {
     try {

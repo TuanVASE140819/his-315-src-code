@@ -146,6 +146,44 @@ function* getListKhoaPhongSaga(): SagaIterator {
   }
 }
 
+function* getListDichVuNhomSaga(): SagaIterator {
+  try {
+    const response: any = yield call(commonServices.getAllDichVuNhom)
+    const data = response && response.data
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data?.results)
+            ? data.results
+            : []
+    yield put({ type: COMMON.DISPATCH_LIST_DICHVU_NHOM, payload: list })
+  } catch (error) {
+    console.log('getListDichVuNhomSaga : ', error)
+  }
+}
+
+function* getListChuyenKhoaSaga(): SagaIterator {
+  try {
+    const response: any = yield call(commonServices.getChuyenKhoa)
+    const data = response && response.data
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data?.results)
+            ? data.results
+            : []
+    yield put({ type: COMMON.DISPATCH_LIST_CHUYENKHOA, payload: list })
+  } catch (error) {
+    console.log('getListChuyenKhoaSaga : ', error)
+  }
+}
+
 function* getListKhoByKhoaPhongSaga({
   idKhoaPhong,
 }: import('../../types').GetListKhoByKhoaPhongAction): SagaIterator {
@@ -179,4 +217,6 @@ export function* commonSaga(): SagaIterator {
   yield takeLatest(COMMON.GET_LIST_PHUONGXA, getListPhuongXaSaga)
   yield takeLatest(COMMON.GET_LIST_KHOAPHONG, getListKhoaPhongSaga)
   yield takeLatest(COMMON.GET_LIST_KHO_BY_KHOAPHONG, getListKhoByKhoaPhongSaga)
+  yield takeLatest(COMMON.GET_LIST_CHUYENKHOA, getListChuyenKhoaSaga)
+  yield takeLatest(COMMON.GET_LIST_DICHVU_NHOM, getListDichVuNhomSaga)
 }

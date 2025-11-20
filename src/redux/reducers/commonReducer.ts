@@ -13,6 +13,8 @@ const initialState: CommonState = {
   listCategory: [],
   listTeam: [],
   listTransactionType: [],
+  listChuyenKhoa: [],
+  listDichVuNhom: [],
 }
 
 const CommonReducer = (
@@ -73,6 +75,16 @@ const CommonReducer = (
       case COMMON.DISPATCH_LIST_KHO_BY_KHOAPHONG:
         if ('payload' in action && Array.isArray(action.payload)) {
           draft.listKhoByKhoaPhong = (action as any).payload
+        }
+        break
+      case COMMON.DISPATCH_LIST_CHUYENKHOA:
+        if ('payload' in action && Array.isArray(action.payload)) {
+          draft.listChuyenKhoa = (action as any).payload
+        }
+        break
+      case COMMON.DISPATCH_LIST_DICHVU_NHOM:
+        if ('payload' in action && Array.isArray(action.payload)) {
+          draft.listDichVuNhom = (action as any).payload
         }
         break
         break

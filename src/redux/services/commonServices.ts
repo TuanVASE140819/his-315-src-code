@@ -48,6 +48,10 @@ export const commonServices = {
     ),
   getAllNhomNguoiDung: (): Promise<AxiosResponse<any>> =>
     axiosInstance.get(publicUrl('NhomNguoiDung/GetAllNhomNguoiDung')),
+  getChuyenKhoa: (): Promise<AxiosResponse<any>> =>
+    axiosInstance.get(publicUrl('ChuyenKhoa/GetAllChuyenKhoa')),
+  getAllDichVuNhom: (): Promise<AxiosResponse<any>> =>
+    axiosInstance.get(publicUrl('DichVuNhom/GetAllDichVuNhom')),
 }
 
 export default commonServices

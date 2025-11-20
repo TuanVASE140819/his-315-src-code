@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   Modal,
   Input,
@@ -18,6 +18,7 @@ import type {
 } from '../../../../types'
 import axiosInstance from '../../../../utils/axiosConfig'
 import { useAppDispatch, useAppSelector } from '../../../../redux/store/hooks'
+import { COMMON } from '../../../../redux/constants/constants'
 import { putInfoDichVuAction } from '../../../../redux/actions/dichvuActions'
 
 interface ModalEditDichVuProps {
@@ -37,7 +38,7 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
   const dispatch = useAppDispatch()
   const infoUser = useAppSelector((s: any) => s.User?.infoUser)
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       isModalOpenEdit.show &&
       isModalOpenEdit.data &&
@@ -65,47 +66,28 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
   }, [isModalOpenEdit, form])
 
   React.useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const res = await axiosInstance.get(
-          'https://benhviennhi.api.315healthcare.com/api/DichVuNhom/GetAllDichVuNhom',
-        )
-        const items = res?.data?.data || []
-        setGroups(items)
-      } catch (error) {
-        console.error('Error fetching groups:', error)
-      }
-    }
-    fetchGroups()
-  }, [])
+    dispatch({ type: COMMON.GET_LIST_DICHVU_NHOM })
+  }, [dispatch])
+
+  const dichVuNhomFromStore = useAppSelector(
+    (s: any) => s.Common?.listDichVuNhom || [],
+  )
 
   React.useEffect(() => {
-    const controller = new AbortController()
-    const fetchChuyenKhoa = async () => {
-      try {
-        const res = await axiosInstance.get(
-          'https://benhviennhi.api.315healthcare.com/api/ChuyenKhoa/GetAllChuyenKhoa',
-          { signal: controller.signal },
-        )
-        const raw = res?.data?.data?.data ?? res?.data?.data ?? res?.data ?? []
-        const items = Array.isArray(raw) ? raw : []
-        setChuyenkhoas(items)
-      } catch (error: any) {
-        if (error.name === 'AbortError') return
-        console.error('Error fetching chuyen khoa:', error)
-      }
-    }
+    setGroups(dichVuNhomFromStore)
+  }, [dichVuNhomFromStore])
 
-    fetchChuyenKhoa()
+  React.useEffect(() => {
+    dispatch({ type: COMMON.GET_LIST_CHUYENKHOA })
+  }, [dispatch])
 
-    return () => {
-      try {
-        controller.abort()
-      } catch (e) {
-        // ignore
-      }
-    }
-  }, [])
+  const chuyenKhoaFromStore = useAppSelector(
+    (s: any) => s.Common?.listChuyenKhoa || [],
+  )
+
+  React.useEffect(() => {
+    setChuyenkhoas(chuyenKhoaFromStore)
+  }, [chuyenKhoaFromStore])
 
   const handleOk = async () => {
     try {

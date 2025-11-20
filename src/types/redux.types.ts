@@ -40,6 +40,8 @@ export interface CommonState {
   listCategory: Category[]
   listTeam: Team[]
   listTransactionType: TransactionTypeOption[]
+  listChuyenKhoa?: any[]
+  listDichVuNhom?: any[]
   listBangCap?: any[]
   listChucDanh?: any[]
   listTinh?: any[]
@@ -195,6 +197,24 @@ export interface DispatchListPhuongXaAction {
 
 export interface GetListKhoaPhongAction {
   type: string
+}
+
+export interface GetListDichVuNhomAction {
+  type: string
+}
+
+export interface DispatchListDichVuNhomAction {
+  type: string
+  payload: any[]
+}
+
+export interface GetListChuyenKhoaAction {
+  type: string
+}
+
+export interface DispatchListChuyenKhoaAction {
+  type: string
+  payload: any[]
 }
 
 export interface DispatchListKhoaPhongAction {
@@ -362,6 +382,8 @@ export type CommonActionTypes =
   | DispatchListPhuongXaAction
   | GetListKhoaPhongAction
   | DispatchListKhoaPhongAction
+  | GetListChuyenKhoaAction
+  | DispatchListChuyenKhoaAction
   | GetListKhoByKhoaPhongAction
   | DispatchListKhoByKhoaPhongAction
 
