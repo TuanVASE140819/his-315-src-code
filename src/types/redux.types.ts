@@ -1,31 +1,42 @@
-import { NavigateFunction } from 'react-router-dom'
-import {
+import type { NavigateFunction } from 'react-router-dom'
+import type {
   User,
   LoginCredentials,
   ChangePasswordPayload,
   Company,
   Department,
 } from './user.types'
-import {
+import type {
   Category,
   CreateCategoryPayload,
   UpdateCategoryPayload,
 } from './category.types'
-import { Team, CreateTeamPayload, UpdateTeamPayload } from './team.types'
-import {
+import type { Team, CreateTeamPayload, UpdateTeamPayload } from './team.types'
+import type {
   League,
   CreateLeaguePayload,
   UpdateLeaguePayload,
 } from './league.types'
-import {
+import type {
   Game,
   CreateGamePayload,
   CreateGameBatchPayload,
   UpdateGamePayload,
   UpdateGameResultPayload,
 } from './game.types'
-import { TransactionTypeOption } from './customer.types'
-import { PartnerItem, PartnerPagedResponse } from './partner.types'
+import type { TransactionTypeOption } from './customer.types'
+import type { PartnerItem, PartnerPagedResponse } from './partner.types'
+
+// ============ COMMON TYPE ALIASES ============
+
+type PagedList<T = any> = {
+  list: T[]
+  totalCount: number
+  totalPages: number
+  pageNumber: number
+}
+
+type ReloadCallback = () => void
 
 // ============ STATE TYPES ============
 
@@ -54,12 +65,8 @@ export interface CommonState {
 export interface RootState {
   User: UserState
   Common: CommonState
-  Partner: {
-    list: PartnerItem[]
-    totalCount: number
-    totalPages: number
-    pageNumber: number
-  }
+  Partner: PagedList<PartnerItem>
+  DichVu?: PagedList
 }
 
 // ============ ACTION TYPES ============
@@ -112,7 +119,7 @@ export interface UpdateInfoUserAction {
 export interface ChangePasswordAction {
   type: string
   payload: ChangePasswordPayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface DispatchUserInfoAction {
@@ -217,6 +224,20 @@ export interface DispatchListChuyenKhoaAction {
   payload: any[]
 }
 
+export interface GetListDichVuAction {
+  type: string
+  payload?: {
+    idNhomDv?: number | null
+    pageNumber?: number
+    keyword?: string
+  }
+}
+
+export interface DispatchListDichVuAction {
+  type: string
+  payload: Omit<PagedList, 'list'> & { data: any[] }
+}
+
 export interface DispatchListKhoaPhongAction {
   type: string
   payload: any[]
@@ -236,76 +257,76 @@ export interface DispatchListKhoByKhoaPhongAction {
 export interface PostCategoryAction {
   type: string
   payload: CreateCategoryPayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface PutCategoryAction {
   type: string
   payload: UpdateCategoryPayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface ToggleActiveCategoryAction {
   type: string
   payload: { id: number }
-  onLoadCategory?: () => void
+  onLoadCategory?: ReloadCallback
 }
 
 // Team Actions
 export interface PostTeamAction {
   type: string
   payload: CreateTeamPayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface PutTeamAction {
   type: string
   payload: UpdateTeamPayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface ToggleActiveTeamAction {
   type: string
   payload: { id: number }
-  onLoadTeam?: () => void
+  onLoadTeam?: ReloadCallback
 }
 
 // League Actions
 export interface PostLeagueAction {
   type: string
   payload: CreateLeaguePayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface PutLeagueAction {
   type: string
   payload: UpdateLeaguePayload
-  handleReload?: () => void
+  handleReload?: ReloadCallback
 }
 
 export interface ToggleActiveLeagueAction {
   type: string
   payload: { id: number }
-  onLoadLeague?: () => void
+  onLoadLeague?: ReloadCallback
 }
 
 // Game Actions
 export interface PostGameAction {
   type: string
   payload: CreateGameBatchPayload
-  handleReloadAddGame?: () => void
+  handleReloadAddGame?: ReloadCallback
 }
 
 export interface PutGameAction {
   type: string
   payload: UpdateGamePayload
-  handleCloseEditGame?: () => void
+  handleCloseEditGame?: ReloadCallback
 }
 
 export interface ToggleActiveGameAction {
   type: string
   payload: { id: number }
-  onLoadGame?: () => void
+  onLoadGame?: ReloadCallback
 }
 
 // Nhân viên Actions
@@ -319,9 +340,8 @@ export interface GetListNhanVienAction {
 
 export interface DispatchListNhanVienAction {
   type: string
-  payload: {
+  payload: Omit<PagedList, 'list' | 'pageNumber'> & {
     data: any[]
-    totalCount: number
     totalPages?: number
   }
 }
@@ -343,14 +363,14 @@ export interface DispatchListPartnerAction {
 export interface UpdateGameResultAction {
   type: string
   payload: UpdateGameResultPayload
-  onLoadGame?: () => void
+  onLoadGame?: ReloadCallback
 }
 
 // Customer Actions
 export interface ToggleActiveCustomerAction {
   type: string
   payload: { id: number }
-  onLoad?: () => void
+  onLoad?: ReloadCallback
 }
 
 // Union type for all actions

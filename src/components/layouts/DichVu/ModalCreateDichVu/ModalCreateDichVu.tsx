@@ -1,6 +1,7 @@
-import React from 'react'
+import { useMemo, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../../redux/store/hooks'
-import { COMMON } from '../../../../redux/constants/constants'
+import { COMMON, DICHVU } from '../../../../redux/constants/constants'
+import { postInfoDichVuAction } from '../../../../redux/actions/dichvuActions'
 import {
   Modal,
   Input,
@@ -14,47 +15,60 @@ import {
   message,
 } from 'antd'
 import type { DichVuFormValues } from '../../../../types/dichvu.types'
-import axiosInstance from '../../../../utils/axiosConfig'
+import {
+  numberFormatter,
+  numberParser,
+} from '../../../../utils/numberFormatter'
 
 interface ModalCreateDichVuProps {
   isModalOpen: boolean
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   onCreate: (values: DichVuFormValues) => void
+  currentFilters?: {
+    idNhomDv?: number | null
+    pageNumber?: number
+    keyword?: string
+  }
 }
 
 const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
   isModalOpen,
   setIsModalOpen,
   onCreate,
+  currentFilters,
 }) => {
   const [form] = Form.useForm<DichVuFormValues>()
-  const [groups, setGroups] = React.useState<any[]>([])
-  const [chuyenkhoas, setChuyenkhoas] = React.useState<any[]>([])
   const dispatch = useAppDispatch()
-  const chuyenKhoaFromStore = useAppSelector(
+
+  const listChuyenKhoa = useAppSelector(
     (s: any) => s.Common?.listChuyenKhoa || [],
   )
-
-  const dichVuNhomFromStore = useAppSelector(
+  const listDichVuNhom = useAppSelector(
     (s: any) => s.Common?.listDichVuNhom || [],
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch({ type: COMMON.GET_LIST_DICHVU_NHOM })
-  }, [dispatch])
-
-  React.useEffect(() => {
-    setGroups(dichVuNhomFromStore)
-  }, [dichVuNhomFromStore])
-
-  React.useEffect(() => {
-    // dispatch a redux action to load chuyen khoa once
     dispatch({ type: COMMON.GET_LIST_CHUYENKHOA })
   }, [dispatch])
 
-  React.useEffect(() => {
-    setChuyenkhoas(chuyenKhoaFromStore)
-  }, [chuyenKhoaFromStore])
+  const groupOptions = useMemo(
+    () =>
+      listDichVuNhom.map((g: any) => ({
+        label: g.tennhom,
+        value: g.idnhom,
+      })),
+    [listDichVuNhom],
+  )
+
+  const chuyenKhoaOptions = useMemo(
+    () =>
+      listChuyenKhoa.map((c: any) => ({
+        label: c.tenchuyenkhoa || c.ten,
+        value: c.idchuyenkhoa || c.id,
+      })),
+    [listChuyenKhoa],
+  )
 
   const handleOk = async () => {
     try {
@@ -77,23 +91,30 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
         bhyt: values.bhyt ? 1 : 0,
       }
 
-      await axiosInstance.post('/DichVu/InsertDichVu', payload)
-      message.success('Tạo dịch vụ thành công')
+      dispatch(
+        postInfoDichVuAction(payload, () => {
+          if (currentFilters) {
+            dispatch({
+              type: DICHVU.GET_LIST_DICHVU,
+              payload: currentFilters,
+            })
+          }
 
-      // Call parent with minimal shape expected by DichVuFormValues
-      onCreate({
-        maDichVu: payload.maDichVu,
-        tenDichVu: payload.tenDichVu,
-        moTa: payload.ghiChu,
-        gia: payload.donGia,
-        donvi: payload.donVi,
-      })
+          onCreate({
+            maDichVu: payload.maDichVu,
+            tenDichVu: payload.tenDichVu,
+            moTa: payload.ghiChu,
+            gia: payload.donGia,
+            donvi: payload.donVi,
+          })
 
-      form.resetFields()
-      setIsModalOpen(false)
+          form.resetFields()
+          setIsModalOpen(false)
+        }),
+      )
     } catch (error) {
-      console.error('Validation or API failed:', error)
-      message.error('Không thể tạo dịch vụ. Vui lòng thử lại.')
+      console.error('Validation failed:', error)
+      message.error('Vui lòng kiểm tra lại thông tin.')
     }
   }
 
@@ -149,10 +170,7 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <Select
                 placeholder='Chọn nhóm'
                 allowClear
-                options={groups.map((g: any) => ({
-                  label: g.tennhom,
-                  value: g.idnhom,
-                }))}
+                options={groupOptions}
                 style={{ width: '100%' }}
               />
             </Form.Item>
@@ -162,14 +180,8 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -187,14 +199,8 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -204,14 +210,8 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -242,14 +242,8 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -259,14 +253,8 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -279,14 +267,8 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -296,10 +278,7 @@ const ModalCreateDichVu: React.FC<ModalCreateDichVuProps> = ({
               <Select
                 placeholder='Chọn chuyên khoa'
                 allowClear
-                options={chuyenkhoas.map((c: any) => ({
-                  label: c.tenchuyenkhoa || c.ten,
-                  value: c.idchuyenkhoa || c.id,
-                }))}
+                options={chuyenKhoaOptions}
                 style={{ width: '100%' }}
               />
             </Form.Item>

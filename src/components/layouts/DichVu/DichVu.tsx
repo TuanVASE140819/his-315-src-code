@@ -1,35 +1,36 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { ExportOutlined } from '@ant-design/icons'
-import { Button, ConfigProvider, Input, Popconfirm, Table, Tooltip } from 'antd'
-import type { TablePaginationConfig } from 'antd'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import {
+  ExportOutlined,
   PlusOutlined,
   ContainerOutlined,
   DeleteOutlined,
   SearchOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
+import {
+  Button,
+  ConfigProvider,
+  Input,
+  Popconfirm,
+  Table,
+  Tooltip,
+  Select,
+} from 'antd'
+import type { TablePaginationConfig } from 'antd'
 import ModalCreateDichVu from './ModalCreateDichVu/ModalCreateDichVu'
 import ModalEditDichVu from './ModalEditDichVu/ModalEditDichVu'
 import { debounce } from 'lodash'
-import { Select } from 'antd'
 import * as XLSX from 'xlsx'
-import axiosInstance from '../../../utils/axiosConfig'
+import { useDispatch, useSelector } from 'react-redux'
+import { DICHVU, COMMON } from '../../../redux/constants/constants'
 import type {
   DichVu,
   DichVuFormValues,
   ModalEditDichVuState,
 } from '../../../types'
+import type { RootState } from '../../../redux/reducers/rootReducer'
 
-const defaultData: DichVu[] = [
-  {
-    id: 1,
-    maDichVu: 'DV001',
-    tenDichVu: 'Kiểm tra sức khỏe',
-    moTa: 'Gói kiểm tra tổng quát',
-    gia: 500000,
-  },
-]
+const defaultData: DichVu[] = []
 
 const PAGE_SIZE = 10
 
@@ -41,7 +42,12 @@ const DichVu: React.FC = () => {
     data: {},
   })
   const [search, setSearch] = useState('')
-  const [groups, setGroups] = useState<any[]>([])
+  const dispatch = useDispatch()
+
+  const groups = useSelector(
+    (state: RootState) => (state.Common?.listDichVuNhom as any[]) || [],
+  )
+  const dichvuState = useSelector((state: RootState) => state.DichVu as any)
   const [selectedGroup, setSelectedGroup] = useState<number | null>(1)
   const [valueExport, setValueExport] = useState<DichVu[]>([])
   const [pagination, setPagination] = useState<{
@@ -51,14 +57,41 @@ const DichVu: React.FC = () => {
     current: 1,
     pageSize: PAGE_SIZE,
   })
-  const [totalCount, setTotalCount] = useState(0)
-  const [loading, setLoading] = useState(false)
+
+  const loading = useSelector(
+    (state: RootState) => state.Common?.isLoadingScreen,
+  )
+  const totalCount = dichvuState?.totalCount || 0
+  const listFromStore = dichvuState?.list || []
+
+  useEffect(() => {
+    dispatch({ type: COMMON.GET_LIST_DICHVU_NHOM })
+  }, [dispatch])
 
   useEffect(() => {
     setValueExport(list)
   }, [list])
 
-  // stable debounced setter to avoid creating a new debounced fn on every call
+  const filtered = (data: DichVu[]) =>
+    data?.filter((item) =>
+      !search
+        ? true
+        : [item.maDichVu, item.tenDichVu, item.moTa, item.gia]
+            .join(' ')
+            .toLowerCase()
+            .includes(search.toLowerCase()),
+    )
+
+  const memoFiltered = useMemo(() => filtered(list), [list, search])
+  const selectOptions = useMemo(
+    () => [
+      { label: 'Tất cả', value: null },
+      ...groups.map((g) => ({ label: g.tennhom, value: g.idnhom })),
+    ],
+    [groups],
+  )
+  const memoExport = useMemo(() => filtered(valueExport), [valueExport, search])
+
   const debouncedSetSearch = useRef(
     debounce((keyword: string) => {
       setSearch(keyword)
@@ -67,7 +100,6 @@ const DichVu: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      // cancel any pending debounce on unmount
       debouncedSetSearch.current.cancel()
     }
   }, [])
@@ -81,74 +113,21 @@ const DichVu: React.FC = () => {
     setPagination((prev) => ({ ...prev, current }))
   }
 
-  const fetchDichVu = useCallback(
-    async ({
-      idNhomDv,
-      page = 1,
-      keyword = '',
-    }: {
-      idNhomDv?: number | null
-      page?: number
-      keyword?: string
-    } = {}) => {
-      try {
-        setLoading(true)
-        // If idNhomDv is undefined or null (meaning 'Tất cả'), omit idNhomDv param
-        const base = '/DichVu/SearchDichVuPhanTrang'
-        const groupParam = idNhomDv == null ? '' : `idNhomDv=${idNhomDv}&`
-        const url = `${base}?${groupParam}pageNumber=${page}${keyword ? `&keyword=${encodeURIComponent(keyword)}` : ''}`
-        console.debug('fetchDichVu url:', url)
-        const res = await axiosInstance.get(url)
-        const items = res?.data?.data?.data || []
-        const total = res?.data?.data?.totalCount ?? 0
-        const totalPages = res?.data?.data?.totalPages ?? 0
-        const mapped: DichVu[] = items.map((it: any) => ({
-          id: it.iddv,
-          maDichVu: it.madichvu,
-          tenDichVu: it.tendichvu,
-          moTa: it.ghichu || '',
-          gia: it.dongia ?? 0,
-          donvi: it.donvi || '',
-          raw: it,
-        }))
-        setList(mapped)
-        setTotalCount(total)
-        // If backend provides totalPages, compute server pageSize and sync UI
-        if (totalPages && total) {
-          const serverPageSize = Math.ceil(total / totalPages)
-          setPagination((p) => ({ ...p, pageSize: serverPageSize }))
-          // Ensure current page is within range
-          if (page > totalPages) {
-            setPagination((p) => ({ ...p, current: totalPages }))
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      } finally {
-        setLoading(false)
-      }
+  const loadList = useCallback(
+    (params: any) => {
+      const { idNhomDv = null, page = 1, keyword = '' } = params || {}
+      dispatch({
+        type: DICHVU.GET_LIST_DICHVU,
+        payload: { idNhomDv, pageNumber: page, keyword },
+      })
     },
-    [],
+    [dispatch],
   )
 
-  // Fetch service groups from external API
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const res = await axiosInstance.get(
-          'https://benhviennhi.api.315healthcare.com/api/DichVuNhom/GetAllDichVuNhom',
-        )
-        const items = res?.data?.data || []
-        setGroups(items)
-        if (!selectedGroup && items.length) setSelectedGroup(items[0].idnhom)
-      } catch (error) {
-        console.error('Error fetching groups:', error)
-      }
-    }
-    fetchGroups()
-  }, [])
+    setList(listFromStore)
+  }, [listFromStore])
 
-  // Reset to first page when group or search changes
   useEffect(() => {
     setPagination((p) => ({ ...p, current: 1 }))
   }, [selectedGroup, search])
@@ -172,19 +151,8 @@ const DichVu: React.FC = () => {
     setIsModalOpenEdit({ show: true, data: record })
   }, [])
 
-  const filtered = (data: DichVu[]) =>
-    data?.filter((item) =>
-      !search
-        ? true
-        : [item.maDichVu, item.tenDichVu, item.moTa, item.gia]
-            .join(' ')
-            .toLowerCase()
-            .includes(search.toLowerCase()),
-    )
-
   const handleDelete = (id: number) => {
     setList((prev) => prev.filter((p) => p.id !== id))
-    setTotalCount((t) => Math.max(0, t - 1))
   }
 
   const columns = [
@@ -252,18 +220,12 @@ const DichVu: React.FC = () => {
   ]
 
   useEffect(() => {
-    // Call fetch with explicit selectedGroup to avoid closure issues
-    console.debug('calling fetchDichVu with', {
-      selectedGroup,
-      pagination,
-      search,
-    })
-    fetchDichVu({
+    loadList({
       idNhomDv: selectedGroup,
       page: pagination.current,
       keyword: search,
     })
-  }, [fetchDichVu, selectedGroup, pagination.current, search])
+  }, [loadList, selectedGroup, pagination.current, search])
 
   return (
     <>
@@ -273,13 +235,7 @@ const DichVu: React.FC = () => {
             <Select
               value={selectedGroup}
               onChange={(v) => setSelectedGroup(v)}
-              options={[
-                { label: 'Tất cả', value: null },
-                ...groups.map((g) => ({
-                  label: g.tennhom,
-                  value: g.idnhom,
-                })),
-              ]}
+              options={selectOptions}
               placeholder='Nhóm dịch vụ'
               allowClear
               style={{ width: '100%' }}
@@ -301,7 +257,7 @@ const DichVu: React.FC = () => {
             icon={<SyncOutlined />}
           />
           <Button
-            disabled={!filtered(valueExport)?.length}
+            disabled={!memoExport?.length}
             onClick={exportToExcel}
             type='text'
             size='middle'
@@ -335,7 +291,10 @@ const DichVu: React.FC = () => {
             <Table
               bordered
               loading={loading}
-              scroll={{ x: list?.length ? 'max-content' : 1500, y: 500 }}
+              scroll={{
+                x: memoFiltered?.length ? 'max-content' : 1500,
+                y: 500,
+              }}
               pagination={{
                 current: pagination.current,
                 pageSize: pagination.pageSize,
@@ -344,7 +303,7 @@ const DichVu: React.FC = () => {
               }}
               onChange={onChangeTable}
               columns={columns}
-              dataSource={filtered(list)?.map((item) => ({
+              dataSource={memoFiltered?.map((item) => ({
                 key: item.id,
                 ...item,
               }))}
@@ -357,6 +316,11 @@ const DichVu: React.FC = () => {
         <ModalCreateDichVu
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
+          currentFilters={{
+            idNhomDv: selectedGroup,
+            pageNumber: pagination.current,
+            keyword: search,
+          }}
           onCreate={(newItem: DichVuFormValues) => {
             setList((prev) => [
               { ...newItem, id: Date.now(), moTa: newItem.moTa || '' },
@@ -369,6 +333,11 @@ const DichVu: React.FC = () => {
         <ModalEditDichVu
           isModalOpenEdit={isModalOpenEdit}
           setIsModalOpenEdit={setIsModalOpenEdit}
+          currentFilters={{
+            idNhomDv: selectedGroup,
+            pageNumber: pagination.current,
+            keyword: search,
+          }}
           onUpdate={(updated: DichVu) =>
             setList((prev) =>
               prev.map((p) => (p.id === updated.id ? updated : p)),

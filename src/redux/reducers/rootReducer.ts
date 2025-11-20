@@ -8,6 +8,9 @@ import { DICHVU } from '../constants/constants'
 // lightweight DichVu reducer inside rootReducer to hold transient updates
 const initialDichVuState = {
   list: [] as any[],
+  totalCount: 0,
+  totalPages: 0,
+  pageNumber: 1,
 }
 
 function dichvuReducer(state = initialDichVuState, action: any) {
@@ -20,6 +23,14 @@ function dichvuReducer(state = initialDichVuState, action: any) {
         list: state.list.map((it: any) =>
           it.id === updated.id ? { ...it, ...updated } : it,
         ),
+      }
+    case DICHVU.DISPATCH_LIST_DICHVU:
+      return {
+        ...state,
+        list: action.payload?.data || [],
+        totalCount: action.payload?.totalCount || 0,
+        totalPages: action.payload?.totalPages || 0,
+        pageNumber: action.payload?.pageNumber || 1,
       }
     default:
       return state

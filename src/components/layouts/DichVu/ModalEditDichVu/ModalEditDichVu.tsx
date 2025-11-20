@@ -20,17 +20,28 @@ import axiosInstance from '../../../../utils/axiosConfig'
 import { useAppDispatch, useAppSelector } from '../../../../redux/store/hooks'
 import { COMMON } from '../../../../redux/constants/constants'
 import { putInfoDichVuAction } from '../../../../redux/actions/dichvuActions'
+import { DICHVU } from '../../../../redux/constants/constants'
+import {
+  numberFormatter,
+  numberParser,
+} from '../../../../utils/numberFormatter'
 
 interface ModalEditDichVuProps {
   isModalOpenEdit: ModalEditDichVuState
   setIsModalOpenEdit: React.Dispatch<React.SetStateAction<ModalEditDichVuState>>
   onUpdate: (updated: DichVu) => void
+  currentFilters?: {
+    idNhomDv?: number | null
+    pageNumber?: number
+    keyword?: string
+  }
 }
 
 const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
   isModalOpenEdit,
   setIsModalOpenEdit,
   onUpdate,
+  currentFilters,
 }) => {
   const [form] = Form.useForm<DichVuFormValues>()
   const [groups, setGroups] = React.useState<any[]>([])
@@ -45,22 +56,24 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
       'id' in isModalOpenEdit.data
     ) {
       const d: any = isModalOpenEdit.data
+      const raw = d.raw || {}
+
       form.setFieldsValue({
-        maDichVu: d.maDichVu,
-        tenDichVu: d.tenDichVu,
-        moTa: d.moTa,
-        gia: d.gia,
-        donvi: d.donvi,
-        nhomDichVu: d.raw?.idnhom || d.idNhomDV || undefined,
-        chuyenKhoa: d.raw?.idchuyenkhoa || d.idChuyenKhoa || undefined,
-        tienGuiMau: d.raw?.tienGuiMau || d.tienGuiMau || undefined,
-        tienChietKhau: d.raw?.tienChietKhau || d.tienChietKhau || undefined,
-        tienGiaCong: d.raw?.tienGiaCong || d.tienGiaCong || undefined,
-        tienVanChuyen: d.raw?.tienCongVanChuyen || d.tienVanChuyen || undefined,
-        giaVon: d.raw?.giaVon || d.giaVon || undefined,
-        tenVietTat: d.raw?.tenVietTat || d.tenVietTat || undefined,
-        ghiChu: d.raw?.ghichu || d.moTa || undefined,
-        bhyt: d.raw?.bhyt === 1 || d.bhyt === 1 || false,
+        maDichVu: d.maDichVu || raw.madichvu,
+        tenDichVu: d.tenDichVu || raw.tendichvu,
+        moTa: d.moTa || raw.ghichu,
+        gia: d.gia ?? raw.dongia,
+        donvi: d.donvi || raw.donvi,
+        nhomDichVu: raw.idnhomdv ?? d.idNhomDV,
+        chuyenKhoa: raw.idchuyenkhoa ?? d.idChuyenKhoa,
+        tienGuiMau: raw.tienguimau ?? d.tienGuiMau,
+        tienChietKhau: raw.tienchietkhau ?? d.tienChietKhau,
+        tienGiaCong: raw.tiengiacong ?? d.tienGiaCong,
+        tienVanChuyen: raw.tiencongvanchuyen ?? d.tienVanChuyen,
+        giaVon: raw.giavon ?? d.giaVon,
+        tenVietTat: raw.tenviettat ?? d.tenVietTat,
+        ghiChu: raw.ghichu ?? d.ghiChu ?? d.moTa,
+        bhyt: raw.bhyt === 1 || d.bhyt === 1,
       })
     }
   }, [isModalOpenEdit, form])
@@ -109,12 +122,21 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
           giaVon: values.giaVon ?? 0,
           idChuyenKhoa: values.chuyenKhoa ?? null,
           bhyt: values.bhyt ? 1 : 0,
-          nguOiSUA: infoUser?.id ?? null,
+          nguOiSUA: infoUser?.idNv ?? 0,
         }
+
+        console.log('Update DichVu payload:', payload)
 
         // Dispatch redux action to handle update
         dispatch(
           putInfoDichVuAction(payload, () => {
+            // Reload list after successful update
+            if (currentFilters) {
+              dispatch({
+                type: DICHVU.GET_LIST_DICHVU,
+                payload: currentFilters,
+              })
+            }
             onUpdate({ ...(isModalOpenEdit.data as any), ...values } as DichVu)
           }),
         )
@@ -215,14 +237,8 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -232,14 +248,8 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -270,14 +280,8 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -287,14 +291,8 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
@@ -307,14 +305,8 @@ const ModalEditDichVu: React.FC<ModalEditDichVuProps> = ({
               <InputNumber
                 min={0}
                 style={{ width: '100%' }}
-                formatter={(value) =>
-                  value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''
-                }
-                parser={(value: any) =>
-                  (value
-                    ? Number(String(value).replace(/\$|,/g, ''))
-                    : 0) as any
-                }
+                formatter={numberFormatter}
+                parser={numberParser}
                 placeholder='0'
               />
             </Form.Item>
